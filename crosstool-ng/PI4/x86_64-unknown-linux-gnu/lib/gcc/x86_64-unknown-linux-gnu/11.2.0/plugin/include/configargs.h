@@ -1,0 +1,7 @@
+/* Generated automatically. */
+static const char configuration_arguments[] = "/work/codebase/x86_64-unknown-linux-gnu/.build/x86_64-unknown-linux-gnu/src/gcc/configure --build=aarch64-build_unknown-linux-gnu --host=aarch64-build_unknown-linux-gnu --target=x86_64-unknown-linux-gnu --prefix=/home/pi/x-tools/x86_64-unknown-linux-gnu --exec_prefix=/home/pi/x-tools/x86_64-unknown-linux-gnu --with-sysroot=/home/pi/x-tools/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/sysroot --enable-languages=c,c++ --with-pkgversion='crosstool-NG UNKNOWN' --enable-__cxa_atexit --disable-libmudflap --disable-libgomp --disable-libssp --disable-libquadmath --disable-libquadmath-support --disable-libsanitizer --enable-libmpx --disable-libstdcxx-verbose --with-gmp=/work/codebase/x86_64-unknown-linux-gnu/.build/x86_64-unknown-linux-gnu/buildtools --with-mpfr=/work/codebase/x86_64-unknown-linux-gnu/.build/x86_64-unknown-linux-gnu/buildtools --with-mpc=/work/codebase/x86_64-unknown-linux-gnu/.build/x86_64-unknown-linux-gnu/buildtools --with-isl=/work/codebase/x86_64-unknown-linux-gnu/.build/x86_64-unknown-linux-gnu/buildtools --enable-lto --enable-threads=posix --enable-target-optspace --with-linker-hash-style=both --enable-plugin --enable-gold --disable-nls --disable-multilib --with-local-prefix=/home/pi/x-tools/x86_64-unknown-linux-gnu/x86_64-unknown-linux-gnu/sysroot --enable-long-long";
+static const char thread_model[] = "posix";
+
+static const struct {
+  const char *name, *value;
+} configure_default_options[] = { { "cpu", "generic" }, { "arch", "x86-64" } };
