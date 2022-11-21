@@ -1,3 +1,19 @@
+[![](https://img.shields.io/badge/Powered%20by-lankahsu%20-brightgreen.svg)](https://github.com/lankahsu520/CrossCompilationX)
+[![GitHub license][license-image]][license-url]
+[![GitHub stars][stars-image]][stars-url]
+[![GitHub forks][forks-image]][forks-url]
+[![GitHub issues][issues-image]][issues-image]
+
+
+[license-image]: https://img.shields.io/github/license/lankahsu520/CrossCompilationX.svg
+[license-url]: https://github.com/lankahsu520/CrossCompilationX/blob/master/LICENSE
+[stars-image]: https://img.shields.io/github/stars/lankahsu520/CrossCompilationX.svg
+[stars-url]: https://github.com/lankahsu520/CrossCompilationX/stargazers
+[forks-image]: https://img.shields.io/github/forks/lankahsu520/CrossCompilationX.svg
+[forks-url]: https://github.com/lankahsu520/CrossCompilationX/network
+[issues-image]: https://img.shields.io/github/issues/lankahsu520/CrossCompilationX.svg
+[issues-url]: https://github.com/lankahsu520/CrossCompilationX/issues
+
 # Native-Compilation vs Cross-Compilation
 
 # 1. Host (Ubuntu 20.04.4 LTS) and Target (Raspberry Pi 3 B+)
@@ -259,7 +275,7 @@ $ vi .config
 
 ```
 
-# III. crosstool-ng
+# III. [crosstool-ng](https://github.com/crosstool-ng/crosstool-ng)
 
 ## III.1. Install and Build
 
@@ -661,4 +677,11 @@ $ export PATH=~/x-tools/x86_64-unknown-linux-gnu/bin:$PATH
 ```
 
 
-# 
+# Author
+
+Created and designed by [Lanka Hsu](lankahsu@gmail.com).
+
+# License
+
+[HelperX](https://github.com/lankahsu520/HelperX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
+
