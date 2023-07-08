@@ -14,11 +14,11 @@
 [issues-image]: https://img.shields.io/github/issues/lankahsu520/CrossCompilationX.svg
 [issues-url]: https://github.com/lankahsu520/CrossCompilationX/issues
 
-# Native-Compilation vs Cross-Compilation
+# 1. Native-Compilation vs Cross-Compilation
 
-# 1. Host (Ubuntu 20.04.4 LTS) and Target (Raspberry Pi 3 B+)
+## 1.1. Host (Ubuntu 20.04.4 LTS) and Target (Raspberry Pi 3 B+)
 
-## 1.1. Native compiler
+### 1.1.1. Native compiler
 
 ```mermaid
 flowchart LR
@@ -60,7 +60,7 @@ helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically 
 
 ```
 
-## 1.2. Cross compiler
+### 1.1.2. Cross compiler
 
 ```mermaid
 flowchart LR
@@ -133,9 +133,9 @@ helloworld: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamical
 
 ```
 
-# 2. Host (Raspberry Pi 3 B+) and Target (Ubuntu 20.04.4 LTS)
+## 1.2. Host (Raspberry Pi 3 B+) and Target (Ubuntu 20.04.4 LTS)
 
-## 2.1. Native compiler
+### 1.2.1. Native compiler
 
 ```mermaid
 flowchart LR
@@ -167,7 +167,7 @@ flowchart LR
 	gcc --> |run|helloworld_run_ubuntu_pi_docker
 	
 ```
-## 2.2. Cross compiler
+### 1.2.2. Cross compiler
 
 ```mermaid
 flowchart LR
@@ -199,6 +199,51 @@ flowchart LR
 	gcc --> |run|helloworld_run_ubuntu_pi_docker
 	
 ```
+
+# 2. Native-Compilation on the same Releases
+
+> 這邊只是要告訴大家，就算都是在 ubuntu 上編譯和執行，只要其中引用的 libraries 不同，也會有無法執行的狀況。
+>
+> [The GNU C Library (glibc)](https://www.gnu.org/software/libc/)，The GNU C Library project provides *the* core libraries for the GNU system and GNU/Linux systems, as well as many other systems that use Linux as the kernel. 
+>
+> 知道 libc 的嚴重性吧！
+>
+> 當然 OpenSSL 1.1.1 和 3.0  也會衍其它相依的 libraries 出錯。
+
+## 2.1. Host (Ubuntu 20.04.4 LTS) and Target (Ubuntu 22.04.2 LTS)
+```mermaid
+flowchart LR
+	subgraph Host[Host - Ubuntu 20.04.4 LTS]
+		subgraph Native[Native compiler]
+			gcc[gcc helloworld.c]
+		end
+	end
+
+	subgraph Target[Target - Ubuntu 22.04.2 LTS]
+		helloworld_run_ubuntu2204["-bash: ./helloworld: /lib64/libc.so.6: version GLIBC_2.29 not found (required by ./helloworld)"]
+	end
+	
+	gcc --> |run|helloworld_run_ubuntu2204
+	
+```
+
+## 2.2. Host (Ubuntu 22.04.2 LTS) and Target (Ubuntu 20.04.4 LTS)
+```mermaid
+flowchart LR
+	subgraph Host[Host - Ubuntu 22.04.2 LTS]
+		subgraph Native[Native compiler]
+			gcc[gcc helloworld.c]
+		end
+	end
+
+	subgraph Target[Target - Ubuntu 20.04.4 LTS]
+		helloworld_run_ubuntu2004["-bash: ./helloworld: /lib64/libc.so.6: version GLIBC_2.34 not found (required by ./helloworld)"]
+	end
+	
+	gcc --> |run|helloworld_run_ubuntu2004
+	
+```
+
 
 # Appendix
 
