@@ -22,7 +22,7 @@
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 20.04.4 LTS]
+	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
@@ -35,8 +35,7 @@ flowchart LR
 		end
 	end
 
-
-	subgraph HostA[Host - Ubuntu 20.04.4 LTS]
+	subgraph HostA[Host - Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_host[Hello world !!!]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[Hello world !!!]
@@ -45,14 +44,27 @@ flowchart LR
 			helloworld_run_AU2204_docker[Hello world !!!]
 		end
   end
-	
+
+	subgraph Host-arm64[Host - Ubuntu 20.04.4 LTS arm64]
+		helloworld_run_host-arm64[bash: ./helloworld: cannot execute binary file: Exec format error]
+		subgraph DockerAU2004-arm64[Docker - Ubuntu 20.04]
+			helloworld_run_AU2004_docker-arm64[bash: ./helloworld: cannot execute binary file: Exec format error]
+		end
+ 		subgraph DockerAU2204-arm64[Docker - Ubuntu 22.04]
+			helloworld_run_AU2204_docker-arm64[bash: ./helloworld: cannot execute binary file: Exec format error]
+		end
+  end
+
 	gcc --> |run|helloworld_run_host
 	gcc --> |run|helloworld_run_AU2004_docker
 	gcc --> |run|helloworld_run_AU2204_docker
 
 	gcc --> |run|helloworld_run_pi
 	gcc --> |run|helloworld_run_pi_u_docker
-	
+
+	gcc --> |run|helloworld_run_host-arm64
+	gcc --> |run|helloworld_run_AU2004_docker-arm64
+	gcc --> |run|helloworld_run_AU2204_docker-arm64
 ```
 ```bash
 $ file helloworld
@@ -64,7 +76,7 @@ helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically 
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 20.04.4 LTS]
+	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
 		subgraph Cross[Cross compiler]
 			gcc[arm-linux-gnueabihf-gcc helloworld.c]
 		end
@@ -77,8 +89,7 @@ flowchart LR
 		end
 	end
 
-
-	subgraph HostA[Host - Ubuntu 20.04.4 LTS]
+	subgraph HostA[Host - Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_host[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[bash: ./helloworld: cannot execute binary file: Exec format error]
@@ -87,14 +98,27 @@ flowchart LR
 			helloworld_run_AU2204_docker[bash: ./helloworld: cannot execute binary file: Exec format error]
 		end
   end
-	
+
+	subgraph Host-arm64[Host - Ubuntu 20.04.4 LTS arm64]
+		helloworld_run_host-arm64[???]
+		subgraph DockerAU2004-arm64[Docker - Ubuntu 20.04]
+			helloworld_run_AU2004_docker-arm64[???]
+		end
+ 		subgraph DockerAU2204-arm64[Docker - Ubuntu 22.04]
+			helloworld_run_AU2204_docker-arm64[???]
+		end
+  end
+
 	gcc --> |run|helloworld_run_host
 	gcc --> |run|helloworld_run_AU2004_docker
 	gcc --> |run|helloworld_run_AU2204_docker
 
 	gcc --> |run|helloworld_run_pi
 	gcc --> |run|helloworld_run_pi_u_docker
-	
+
+	gcc --> |run|helloworld_run_host-arm64
+	gcc --> |run|helloworld_run_AU2004_docker-arm64
+	gcc --> |run|helloworld_run_AU2204_docker-arm64
 ```
 ```bash
 $ sudo apt install crossbuild-essential-armhf
@@ -139,13 +163,13 @@ helloworld: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamical
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Raspberry Pi]
+	subgraph Host[Host - Raspberry Pi arm64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 20.04.4 LTS]
+	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerUbuntuPI[Docker - Raspberry Pi]
 			helloworld_run_ubuntu_pi_docker[4-???]
@@ -153,7 +177,7 @@ flowchart LR
 	end
 
 
-	subgraph HostA[Host - Raspberry Pi]
+	subgraph HostA[Host - Raspberry Pi arm64]
 		helloworld_run_host[Hello world !!!]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[Hello world !!!]
@@ -171,7 +195,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Raspberry Pi]
+	subgraph Host[Host - Raspberry Pi arm64]
 		subgraph Cross[Cross compiler]
 			gcc[x86_64-unknown-linux-gnu-gcc helloworld.c]
 		end
@@ -185,7 +209,7 @@ flowchart LR
 	end
 
 
-	subgraph HostA[Host - Raspberry Pi]
+	subgraph HostA[Host - Raspberry Pi arm64]
 		helloworld_run_host[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[bash: ./helloworld: cannot execute binary file: Exec format error]
@@ -213,13 +237,13 @@ flowchart LR
 ## 2.1. Host (Ubuntu 20.04.4 LTS) and Target (Ubuntu 22.04.2 LTS)
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 20.04.4 LTS]
+	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 22.04.2 LTS]
+	subgraph Target[Target - Ubuntu 22.04.2 LTS x86_64]
 		helloworld_run_ubuntu2204["-bash: ./helloworld: /lib64/libc.so.6: version GLIBC_2.29 not found (required by ./helloworld)"]
 	end
 	
@@ -230,13 +254,13 @@ flowchart LR
 ## 2.2. Host (Ubuntu 22.04.2 LTS) and Target (Ubuntu 20.04.4 LTS)
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 22.04.2 LTS]
+	subgraph Host[Host - Ubuntu 22.04.2 LTS  x86_64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 20.04.4 LTS]
+	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu2004["-bash: ./helloworld: /lib64/libc.so.6: version GLIBC_2.34 not found (required by ./helloworld)"]
 	end
 	
@@ -244,12 +268,18 @@ flowchart LR
 	
 ```
 
-# 3. Setup Cross compiler Environment
+# 3. SDK and Codebase
+
+## 3.1. [helper_SDKAndCodebase.md](https://github.com/lankahsu520/HelperX/blob/master/helper_SDKAndCodebase.md) - SDK and Codebase helper
+
+> 在建立 Cross compiler 的環境前，希望每個人對 Codebase 有基本概念，並且對<font color="red">建立 Codebase 的人</font>有著感恩的心，
+
+# 4. Setup Cross-Compilation Environment
 
 > 因為手邊都是用 ubuntu 當 Host，$PJ_ARCH 代表選擇的 Target
 
 ```mermaid
-flowchart TB
+flowchart LR
 	subgraph Target[Target - $PJ_ARCH]
 		helloworld_run_$PJ_ARCH
 	end
@@ -260,19 +290,20 @@ flowchart TB
 		end
 	end
 
+	gcc --> |run|helloworld_run_$PJ_ARCH
 ```
 
-## 3.1. [helper_SDKAndCodebase.md](https://github.com/lankahsu520/HelperX/blob/master/helper_SDKAndCodebase.md) - SDK and Codebase helper
+## 4.1. [helper_SDKAndCodebase.md](https://github.com/lankahsu520/HelperX/blob/master/helper_SDKAndCodebase.md) - SDK and Codebase helper
 
 > 在建立 Cross compiler 的環境前，希望每個人對 Codebase 有基本概念，並且對<font color="red">建立 Codebase 的人</font>有著感恩的心，
 
-## 3.2. Toolchain ! Toolchain ! Toolchain !
+## 4.2. Toolchain ! Toolchain ! Toolchain !
 
 > 因為要進行 Cross-Compilation，沒有編譯工具，什麼事都不能做。
 >
 > 如何取得 Toolchain 有幾種方式
 
-### 3.2.1. System integration
+### 4.2.1. System integration
 
 > 如果你本身就是要從事新平台（嵌入式系統）的開發，基本上會使用此種方法。
 >
@@ -284,7 +315,7 @@ flowchart TB
 
 #### C. [Yocto](https://www.yoctoproject.org)
 
-### 3.2.2. Toolchain generator
+### 4.2.2. Toolchain generator
 
 >使用一些 Toolchain 的產生器。
 >
@@ -292,7 +323,7 @@ flowchart TB
 
 #### A. [crosstool-NG](https://crosstool-ng.github.io/)
 
-### 3.2.3. Get from XXX
+### 4.2.3. Get from XXX
 
 > 此方法最快，也比較一致性
 
@@ -302,6 +333,20 @@ flowchart TB
 
 #### C. 從官網取得“有可能不能用”的版本。
 
+# 5. Setup Native-Compilation Environment
+
+## 5.1. Physical Hardware
+
+>能使用此方式的條件，在於平台上能不能安裝 gcc、make、 Python 等工具。
+>
+>另外就是硬碟空間 （SSD、SD、CF or Flash 等）
+
+## 5.2. CPU emulator
+
+#### ~~A. VirtualBox is not a CPU emulator~~
+
+#### ~~B. VMware is not a CPU emulator~~
+
 # Appendix
 
 # I. Study
@@ -310,7 +355,6 @@ flowchart TB
 - [Crosstool-NG 紀錄](https://www.eebreakdown.com/2015/05/crosstool-ng.html)
 - [crosstool-ng的配置参数详解](https://www.crifan.com/files/doc/docbook/crosstool_ng/release/htmls/crosstool_ng_config_para.html)
 - [Using the toolchain](https://crosstool-ng.github.io/docs/toolchain-usage/)
-
 
 # II. Debug
 
