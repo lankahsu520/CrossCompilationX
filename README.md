@@ -65,7 +65,7 @@ helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically 
 ```mermaid
 flowchart LR
 	subgraph Host[Host - Ubuntu 20.04.4 LTS]
-		subgraph Native[Cross compiler]
+		subgraph Cross[Cross compiler]
 			gcc[arm-linux-gnueabihf-gcc helloworld.c]
 		end
 	end
@@ -172,7 +172,7 @@ flowchart LR
 ```mermaid
 flowchart LR
 	subgraph Host[Host - Raspberry Pi]
-		subgraph Native[Cross compiler]
+		subgraph Cross[Cross compiler]
 			gcc[x86_64-unknown-linux-gnu-gcc helloworld.c]
 		end
 	end
@@ -244,6 +244,63 @@ flowchart LR
 	
 ```
 
+# 3. Setup Cross compiler Environment
+
+> 因為手邊都是用 ubuntu 當 Host，$PJ_ARCH 代表選擇的 Target
+
+```mermaid
+flowchart TB
+	subgraph Target[Target - $PJ_ARCH]
+		helloworld_run_$PJ_ARCH
+	end
+
+	subgraph Host[ubuntu]
+		subgraph Cross[Cross compiler]
+			gcc[$PJ_ARCH-unknown-linux-gnu-gcc helloworld.c]
+		end
+	end
+
+```
+
+## 3.1. [helper_SDKAndCodebase.md](https://github.com/lankahsu520/HelperX/blob/master/helper_SDKAndCodebase.md) - SDK and Codebase helper
+
+> 在建立 Cross compiler 的環境前，希望每個人對 Codebase 有基本概念，並且對<font color="red">建立 Codebase 的人</font>有著感恩的心，
+
+## 3.2. Toolchain ! Toolchain ! Toolchain !
+
+> 因為要進行 Cross-Compilation，沒有編譯工具，什麼事都不能做。
+>
+> 如何取得 Toolchain 有幾種方式
+
+### 3.2.1. System integration
+
+> 如果你本身就是要從事新平台（嵌入式系統）的開發，基本上會使用此種方法。
+>
+> 使用此方法，時間冗長，因為就連 linux kernel 都會進行編譯。以下是市面常使的
+
+#### A. [Buildroot](https://buildroot.org)
+
+#### B. [OpenWrt](https://openwrt.org)
+
+#### C. [Yocto](https://www.yoctoproject.org)
+
+### 3.2.2. Toolchain generator
+
+>使用一些 Toolchain 的產生器。
+>
+><font color="red">但是會有 Toolchain 裏的 lib 會與 Target 的 lib 不同！</font>
+
+#### A. [crosstool-NG](https://crosstool-ng.github.io/)
+
+### 3.2.3. Get from XXX
+
+> 此方法最快，也比較一致性
+
+#### A. 可以從 FAE 取得舊舊的版本，
+
+#### B. 從你的同事取得目前使用的版本。
+
+#### C. 從官網取得“有可能不能用”的版本。
 
 # Appendix
 
