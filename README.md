@@ -74,6 +74,8 @@ helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically 
 
 ### 1.1.2. Cross compiler
 
+> 這邊取決於 Toolchain 裏的內容物（專門為了 Pi 製作），因些有可能 Raspberry Pi  (arm64) 可行，而 Ubuntu (arm64) 會有問題。
+
 ```mermaid
 flowchart LR
 	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
@@ -172,7 +174,7 @@ flowchart LR
 	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerUbuntuPI[Docker - Raspberry Pi]
-			helloworld_run_ubuntu_pi_docker[4-???]
+			helloworld_run_ubuntu_pi_docker[??? 因為測試時，還沒有 Pi 的 Docker]
 		end
 	end
 
@@ -201,7 +203,7 @@ flowchart LR
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 20.04.4 LTS]
+	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu[Hello world !!!]
 		subgraph DockerUbuntuPI[Docker - Raspberry Pi]
 			helloworld_run_ubuntu_pi_docker[Hello world !!!]
@@ -284,7 +286,7 @@ flowchart LR
 		helloworld_run_$PJ_ARCH
 	end
 
-	subgraph Host[ubuntu]
+	subgraph Host[Ubuntu]
 		subgraph Cross[Cross compiler]
 			gcc[$PJ_ARCH-unknown-linux-gnu-gcc helloworld.c]
 		end
@@ -293,17 +295,11 @@ flowchart LR
 	gcc --> |run|helloworld_run_$PJ_ARCH
 ```
 
-## 4.1. [helper_SDKAndCodebase.md](https://github.com/lankahsu520/HelperX/blob/master/helper_SDKAndCodebase.md) - SDK and Codebase helper
-
-> 在建立 Cross compiler 的環境前，希望每個人對 Codebase 有基本概念，並且對<font color="red">建立 Codebase 的人</font>有著感恩的心，
-
-## 4.2. Toolchain ! Toolchain ! Toolchain !
-
-> 因為要進行 Cross-Compilation，沒有編譯工具，什麼事都不能做。
+> <font color="red">Toolchain ! Toolchain ! Toolchain !</font>
 >
-> 如何取得 Toolchain 有幾種方式
+> 因為要進行 Cross-Compilation，沒有編譯工具，什麼事都不能做。而 Toolchain 就是這個救命稻草。
 
-### 4.2.1. System integration
+## 4.1. System integration
 
 > 如果你本身就是要從事新平台（嵌入式系統）的開發，基本上會使用此種方法。
 >
@@ -315,7 +311,7 @@ flowchart LR
 
 #### C. [Yocto](https://www.yoctoproject.org)
 
-### 4.2.2. Toolchain generator
+## 4.2. Toolchain generator
 
 >使用一些 Toolchain 的產生器。
 >
@@ -323,7 +319,24 @@ flowchart LR
 
 #### A. [crosstool-NG](https://crosstool-ng.github.io/)
 
-### 4.2.3. Get from XXX
+> 使用此方法，時間冗長
+
+#### B. crossbuild-essential-XXX
+
+```bash
+$ sudo apt install crossbuild-essential-
+crossbuild-essential-amd64
+crossbuild-essential-arm64
+crossbuild-essential-armel
+crossbuild-essential-armhf
+crossbuild-essential-i386
+crossbuild-essential-powerpc
+crossbuild-essential-ppc64el
+crossbuild-essential-riscv64
+crossbuild-essential-s390x
+```
+
+## 4.3. Get from XXX
 
 > 此方法最快，也比較一致性
 
@@ -333,19 +346,65 @@ flowchart LR
 
 #### C. 從官網取得“有可能不能用”的版本。
 
-# 5. Setup Native-Compilation Environment
+# 5. Setup Native-Compilation Environment on Architecture-XXX
 
 ## 5.1. Physical Hardware
 
->能使用此方式的條件，在於平台上能不能安裝 gcc、make、 Python 等工具。
+>能使用此方式的條件，取決於平台上能不能安裝 gcc、make、 Python 等工具。
 >
 >另外就是硬碟空間 （SSD、SD、CF or Flash 等）
 
-## 5.2. CPU emulator
+```mermaid
+flowchart LR
+	subgraph Target[Target - $PJ_ARCH]
+		subgraph Native[Native compiler]
+			helloworld[gcc helloworld.c]
+		end
+	end
+```
+
+## 5.2. Architecture-XXX -> x86_64
+
+>利用 x86_64 的取得方便，將原有的程式（無硬體相依性）移入，進行編譯、執行和測試。
+
+```mermaid
+flowchart LR
+	subgraph Target[Target - $PJ_ARCH]
+		helloworld-arm64[helloworld.c]
+	end
+
+	subgraph Host[Host - Ubuntu x86_64]
+		helloworld[gcc helloworld.c]
+	end
+
+	helloworld-arm64 --> helloworld
+```
+
+# 6. CPU emulator on x86
+
+## ~~6.1. Virtual Machine~~
 
 #### ~~A. VirtualBox is not a CPU emulator~~
 
 #### ~~B. VMware is not a CPU emulator~~
+
+## ~~6.2. Container~~
+
+#### ~~A. Docker~~
+
+## 6.3. ARM CPU
+
+#### A. QEMU（Quick Emulator）
+
+#### B. RM DS-5 Community Edition
+
+#### C. Microsoft Visual Studio Emulator for Android
+
+#### D. MIPSsim
+
+#### E. Bochs
+
+#### F. PearPC
 
 # Appendix
 
