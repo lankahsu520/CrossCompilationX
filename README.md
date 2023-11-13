@@ -325,6 +325,8 @@ flowchart LR
 
 #### B. crossbuild-essential-XXX
 
+> 只適用通用的平台，客製化過多的平台可能會出錯。
+
 ```bash
 $ sudo apt install crossbuild-essential-
 crossbuild-essential-amd64
@@ -350,7 +352,7 @@ crossbuild-essential-s390x
 
 # 5. Setup Native-Compilation Environment on Architecture-XXX
 
-## 5.1. Compile on Physical Hardware
+## 5.1. Directly Compile on Physical Hardware
 
 >能使用此方式的條件，取決於平台上能不能安裝 gcc、make、 Python 等工具。
 >
@@ -365,7 +367,7 @@ flowchart LR
 	end
 ```
 
-## 5.2. Move Architecture-XXX -> x86_64
+## 5.2. Only Copy Sources (Architecture-XXX) -> Compile and Run on x86_64
 
 >利用 x86_64 的取得方便，將原有的程式（無硬體相依性）移入，進行編譯、執行和測試。
 
@@ -383,6 +385,10 @@ flowchart LR
 ```
 
 # 6. CPU emulator on x86
+
+> 利用 x86 平台的方便性，在上面執行 CPU 模擬器。
+>
+> 此處有一定的難度，網路參考的文件參差不齊！
 
 ## ~~6.1. Virtual Machine~~
 
