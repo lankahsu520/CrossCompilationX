@@ -14,11 +14,105 @@
 [issues-image]: https://img.shields.io/github/issues/lankahsu520/CrossCompilationX.svg
 [issues-url]: https://github.com/lankahsu520/CrossCompilationX/issues
 
-# 1. Native-Compilation vs Cross-Compilation
+# 1. Overview
 
-## 1.1. Host (Ubuntu 20.04.4 LTS) and Target (Raspberry Pi 3 B+)
+> 基本上會討論到 Cross-Compilation ，就是因為開發的平台和實際運行的平台不同，所造成的結果。
+>
+> [ChatGPT] 為什麼要 Cross-Compilation
+>
+> 交叉編譯（Cross-Compilation）是指在一個平台上生成目標平台上可執行的二進制代碼。這個過程涉及到兩個不同的體系結構或平台之間的編譯。以下是一些使用交叉編譯的主要原因：
+>
+> 1. **目標平台不同：** 在某些情況下，你可能需要在一個平台上開發軟件，但是要在另一個不同的平台上運行。這可以是因為目標設備的體系結構不同，例如在開發機器上編譯 ARM 架構的二進制文件，以在嵌入式系統上運行。
+> 2. **資源受限：** 在一些嵌入式系統或嵌入式設備上，資源可能非常有限，無法支持直接在目標設備上進行編譯。通過交叉編譯，你可以在更強大的開發機器上進行編譯，然後將生成的二進制文件傳輸到目標設備上運行。
+> 3. **開發效率：** 在一些情況下，直接在目標平台上進行編譯可能會很慢，因為目標設備可能不具備強大的處理能力。通過在更快速的開發機器上進行交叉編譯，可以提高開發效率。
+> 4. **不同的操作系統：** 有時，你可能在一個操作系統上進行開發，但是目標設備運行另一個操作系統。例如，在 Windows 上開發並交叉編譯為在嵌入式 Linux 系統上運行的應用程序。
+> 5. **版本和依賴：** 在某些情況下，目標設備上可能缺少必要的開發工具、庫和依賴項。通過在開發機器上進行交叉編譯，可以確保所需的所有組件都包含在生成的二進制文件中。
+>
+> 總的來說，交叉編譯允許開發人員在一個平台上進行開發和構建，同時將生成的二進制文件傳輸到目標平台上執行。這在嵌入式系統、嵌入式設備和一些特殊情況下非常常見。
 
-### 1.1.1. Native compiler
+## 1.1. Target Platform
+
+> 先確定將在什麼環境上執行
+
+```mermaid
+mindmap
+	Target Platform
+		Loader
+			BIOS
+			Bootloader
+		Operating system
+			Linux
+			MacOS
+			Windows
+		Processor
+			[64-bit]
+			[32-bit]
+		Endianness
+			[Big-Endian]
+			[Little-Endian]
+		Architecture
+			ARM
+			MIPS
+			INTEL
+		Connecter
+			TTY
+			USB
+			Bluetooth
+		Disk
+			Flash
+			SD card
+			SSD
+```
+
+## 1.2. Development Platform
+
+> 決定開發的環境和可用之工具
+
+```mermaid
+mindmap
+	Development Platform
+		Build tools
+			make
+			cmake
+			Shell script
+			Ninja
+			npm
+		Editor
+			Notepad++
+			Keil
+			Eclipse
+		Language
+			C, C++
+			Node.js
+			Python
+    Partition
+      Dual Images
+      Single Image
+		Runtime dependency
+			library
+		System integration
+			Buildroot
+			OpenWrt
+			Yocto
+		Update
+      OTA
+			tools?
+				flashtool
+				Imager
+		Toolchain
+			Toolchain generator
+				crosstool[crosstool-ng]
+			Compiler
+				Cross
+				Native
+			[libxxx-dev]
+```
+
+# 2. Native-Compilation vs Cross-Compilation
+
+## 2.1. Host (Ubuntu 20.04.4 LTS) and Target (Raspberry Pi 3 B+)
+
+### 2.1.1. Native compiler
 
 ```mermaid
 flowchart LR
@@ -72,7 +166,7 @@ helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically 
 
 ```
 
-### 1.1.2. Cross compiler
+### 2.1.2. Cross compiler
 
 > 這邊取決於 Toolchain 裏的內容物（專門為了 Pi 製作），因些有可能 Raspberry Pi  (arm64) 可行，而 Ubuntu (arm64) 會有問題。
 
@@ -159,9 +253,9 @@ helloworld: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamical
 
 ```
 
-## 1.2. Host (Raspberry Pi 3 B+) and Target (Ubuntu 20.04.4 LTS)
+## 2.2. Host (Raspberry Pi 3 B+) and Target (Ubuntu 20.04.4 LTS)
 
-### 1.2.1. Native compiler
+### 2.2.1. Native compiler
 
 ```mermaid
 flowchart LR
@@ -193,7 +287,7 @@ flowchart LR
 	gcc --> |run|helloworld_run_ubuntu_pi_docker
 	
 ```
-### 1.2.2. Cross compiler
+### 2.2.2. Cross compiler
 
 ```mermaid
 flowchart LR
@@ -226,7 +320,7 @@ flowchart LR
 	
 ```
 
-# 2. Native-Compilation on the same Releases
+# 3. Native-Compilation on the same Releases
 
 > 這邊只是要告訴大家，就算都是在 ubuntu 上編譯和執行，只要其中引用的 libraries 不同，也會有無法執行的狀況。
 >
@@ -236,7 +330,7 @@ flowchart LR
 >
 > 當然 OpenSSL 1.1.1 和 3.0  也會衍其它相依的 libraries 出錯。
 
-## 2.1. Host (Ubuntu 20.04.4 LTS) and Target (Ubuntu 22.04.2 LTS)
+## 3.1. Host (Ubuntu 20.04.4 LTS) and Target (Ubuntu 22.04.2 LTS)
 ```mermaid
 flowchart LR
 	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
@@ -253,7 +347,7 @@ flowchart LR
 	
 ```
 
-## 2.2. Host (Ubuntu 22.04.2 LTS) and Target (Ubuntu 20.04.4 LTS)
+## 3.2. Host (Ubuntu 22.04.2 LTS) and Target (Ubuntu 20.04.4 LTS)
 ```mermaid
 flowchart LR
 	subgraph Host[Host - Ubuntu 22.04.2 LTS  x86_64]
@@ -269,12 +363,6 @@ flowchart LR
 	gcc --> |run|helloworld_run_ubuntu2004
 	
 ```
-
-# 3. SDK and Codebase
-
-## 3.1. [helper_SDKAndCodebase.md](https://github.com/lankahsu520/HelperX/blob/master/helper_SDKAndCodebase.md) - SDK and Codebase helper
-
-> 在建立 Cross compiler 的環境前，希望每個人對 Codebase 有基本概念，並且對<font color="red">建立 Codebase 的人</font>有著感恩的心，
 
 # 4. Setup Cross-Compilation Environment
 
@@ -321,7 +409,7 @@ flowchart LR
 
 > 自行建立 toolchain，不過要對系統本身有了解，才不會浪費時間做了白工，
 
-#### A.1. [helper_crosstool-ng.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstool-ng.md) - Crosstool-NG helper
+##### A.1. [helper_crosstool-ng.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstool-ng.md) - Crosstool-NG helper
 
 #### B. crossbuild-essential-XXX
 
@@ -384,23 +472,47 @@ flowchart LR
 	helloworld-arm64 --> |copy|helloworld
 ```
 
-# 6. CPU emulator on x86
+# 6. file - determine file type
+
+> [ChatGPT]
+>
+> 這個輸出表明你有一個 ELF 格式的二進制文件，這是一種在類 Unix 操作系統中常見的可執行文件格式。下面是輸出中的一些信息的解釋：
+>
+> - **ELF 64-bit LSB shared object:** 說明這是一個 64 位的 ELF（Executable and Linkable Format）二進制文件，LSB（Least Significant Byte）表示它是按照小端序（低位字節序）進行存儲的。
+> - **ARM aarch64:** 表示該二進制文件是為 ARM 架構的 64 位版本（aarch64）編譯的。
+> - **version 1 (SYSV):** 指定了二進制文件使用的 ELF 文件格式的版本，這里是 SYSV（System V）格式。
+> - **dynamically linked:** 表示這是一個動態鏈接的二進制文件，它依賴於系統上存在的共享庫。
+> - **interpreter /lib/ld-linux-aarch64.so.1:** 這是動態鏈接器的路徑，用於在運行時解析和加載共享庫。
+> - **for GNU/Linux 3.14.0:** 表示這個二進制文件是為 GNU/Linux 內核版本 3.14.0 構建的。
+> - **BuildID[xxHash]=ebddec09ace4f611:** 這是二進制文件的構建標識符，通常用於唯一標識二進制文件的特定版本。
+> - **with debug_info:** 表示該二進制文件包含調試信息。
+> - **not stripped:** 表示該二進制文件沒有被剝離（stripped），即保留了符號信息，這對調試很有幫助。
+>
+> 綜合起來，這是一個針對 ARM 64 位架構的共享對象文件，用於在 GNU/Linux 系統上執行，包含調試信息。
+
+```bash
+$ file helloworld
+helloworld: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 3.14.0, BuildID[xxHash]=ebddec09ace4f611, with debug_info, not stripped
+
+```
+
+# 7. CPU emulator on x86
 
 > 利用 x86 平台的方便性，在上面執行 CPU 模擬器。
 >
 > 此處有一定的難度，網路參考的文件參差不齊！
 
-## ~~6.1. Virtual Machine~~
+## ~~7.1. Virtual Machine~~
 
 #### ~~A. VirtualBox is not a CPU emulator~~
 
 #### ~~B. VMware is not a CPU emulator~~
 
-## ~~6.2. Container~~
+## ~~7.2. Container~~
 
 #### ~~A. Docker~~
 
-## 6.3. ARM CPU
+## 7.3. ARM CPU
 
 #### A. QEMU（Quick Emulator）
 
