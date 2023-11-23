@@ -391,7 +391,9 @@ flowchart LR
 
 > 如果你本身就是要從事新平台（嵌入式系統）的開發，基本上會使用此種方法。
 >
-> 使用此方法，時間冗長，因為就連 linux kernel 都會進行編譯。以下是市面常使的
+> 使用此方法，時間冗長，因為就連 linux kernel 都會進行編譯，因為不只是 Toolchain，就連 Target  的 Image 都會產生。
+>
+> 以下是市面常使用的
 
 #### A. [Buildroot](https://buildroot.org)
 
@@ -403,7 +405,7 @@ flowchart LR
 
 >使用一些 Toolchain 的產生器。
 >
-><font color="red">但是會有 Toolchain 裏的 lib 會與 Target 的 lib 不同！</font>
+><font color="red">但是會有些 Toolchain 裏的 lib 版本 會與 Target 的 lib 版本有所不同！</font>
 
 #### A. [Crosstool-NG](https://crosstool-ng.github.io/)
 
@@ -413,7 +415,7 @@ flowchart LR
 
 #### B. crossbuild-essential-XXX
 
-> 只適用通用的平台，客製化過多的平台可能會出錯。
+> 只適用通用的平台。相對的 sysroot 也比較不完整。
 
 ```bash
 $ sudo apt install crossbuild-essential-
@@ -437,6 +439,39 @@ crossbuild-essential-s390x
 #### B. 從你的同事取得目前使用的版本。
 
 #### C. 從官網取得“有可能不能用”的版本。
+
+#### D. 其它網路上的資源
+
+- [gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu](https://releases.linaro.org/components/toolchain/binaries/5.5-2017.10/aarch64-linux-gnu/)
+
+```bash
+ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 3.7.0, BuildID[sha1]=fd5a00b5d3d663e302e7d45cdd21009e0375e3f8, with debug_info, not stripped
+```
+
+- [gcc-linaro-5.5.0-2017.10-x86_64_arm-linux-gnueabihf](https://releases.linaro.org/components/toolchain/binaries/5.5-2017.10/arm-linux-gnueabihf/)
+
+```bash
+ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, for GNU/Linux 2.6.32, BuildID[sha1]=feeeb83f160a3b40fb81cf4854dc480be916ea36, with debug_info, not stripped
+```
+
+## 4.4. <font color="red">sysroot</font>
+
+> 之所以把 sysroot 當成一個章節來說明，就代表它的重要性。
+>
+> 從這幾個章節中，你就會知道所謂的 Toolchain 包含了工具（如 XXX-gcc、XXX-ld 等）和 sysroot。當 sysroot 越是完整複製 Target  裏的環境，之後所需要的功夫也就越少。
+>
+> 一個簡的例子，如果你的 sysroot 中沒有 libssl.so 時，你就得依以下動作擇一處理
+>
+> - 從 Target 中複製出 libssl.so，並且併入 到 sysroot。
+> - 自行編譯出 libssl.so
+```mermaid
+flowchart TB
+	subgraph Toolchain[Toolchain]
+		compiler[??? compiler]
+		sysroot
+	end
+```
+
 
 # 5. Setup Native-Compilation Environment on Architecture-XXX
 
@@ -534,6 +569,9 @@ helloworld: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamic
 
 # II. Debug
 
+# III. Glossary
+
+# IV. Tool Usage
 
 # Author
 
