@@ -82,12 +82,12 @@ mindmap
 			Keil
 			Eclipse
 		Language
-			C, C++
-			Node.js
+			C["C, C++"]
+			Node["Node.js"]
 			Python
-    Partition
-      Dual Images
-      Single Image
+		Partition
+			Dual Images
+			Single Image
 		Runtime dependency
 			library
 		System integration
@@ -95,8 +95,8 @@ mindmap
 			OpenWrt
 			Yocto
 		Update
-      OTA
-			tools?
+			OTA
+			Burn tools
 				flashtool
 				Imager
 		Toolchain
@@ -105,7 +105,11 @@ mindmap
 			Compiler
 				Cross
 				Native
-			[libxxx-dev]
+			sysroot
+				lib
+				usr
+					include
+					lib
 ```
 
 # 2. Native-Compilation vs Cross-Compilation
