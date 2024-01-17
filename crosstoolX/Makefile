@@ -91,4 +91,9 @@ distclean: clean
 
 .001-folder:
 	@echo '=>> $@'
+	mkdir -p $(PJ_CROSSTOOLX_SDK)/pkgs
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_BINUTILS_VERSION).tar.xz" ] && curl -C - https://ftp.gnu.org/gnu/binutils/$(PJ_BINUTILS_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_BINUTILS_VERSION).tar.xz || echo -n ""
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GCC_VERSION).tar.xz" ] && curl -C - https://ftp.gnu.org/gnu/gcc/$(PJ_GCC_VERSION)/$(PJ_GCC_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GCC_VERSION).tar.xz || echo -n ""
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_LINUX_KERNEL_VERSION).tar.xz" ] && curl -C - https://cdn.kernel.org/pub/linux/kernel/v$(PJ_LINUX_KERNEL_VERSION_FOLDER)/$(PJ_LINUX_KERNEL_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_LINUX_KERNEL_VERSION).tar.xz || echo -n ""
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GLIBC_VERSION).tar.xz" ] && curl -C - https://ftp.gnu.org/gnu/glibc/$(PJ_GLIBC_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GLIBC_VERSION).tar.xz || echo -n ""
 	touch $@
