@@ -26,7 +26,6 @@
 export PJ_HOST=aarch64-linux
 export PJ_ARCH=arm64
 export PJ_GCC_CONFIGURE_FLAGS=
-export PJ_TOOLCHAIN_PATH="/opt/lanka-aarch64-gcc720"
 ```
 
 #### B. i386-linux
@@ -35,88 +34,102 @@ export PJ_TOOLCHAIN_PATH="/opt/lanka-aarch64-gcc720"
 export PJ_HOST=i486-linux
 export PJ_ARCH=i386
 export PJ_GCC_CONFIGURE_FLAGS=--disable-libmpx
-export PJ_TOOLCHAIN_PATH="/opt/lanka-i386-gcc720"
 ```
 
-## 1.2. Generate step by step
+## 1.2. Generate toolchain
 
->binutils-2.29.1.tar.xz
->
->gcc-7.2.0.tar.xz
->
->linux-4.14.336.tar.xz
->
->glibc-2.26.tar.xz
+### 1.2.0. Download
 
 ```bash
-export PJ_TOOLCHAIN_SDK=/work/codebase/toolchainSDK/toolchain_123
-export PJ_GCC_VERSION=gcc-7.2.0
-export PJ_GLIBC_VERSION=glibc-2.26
-export PJ_BINUTILS_VERSION=binutils-2.29.1
-export PJ_LINUX_KERNEL_VERSION=linux-4.14.14
-
-export PATH=$PJ_TOOLCHAIN_PATH/bin/:$PATH
-
-mkdir -p $PJ_TOOLCHAIN_SDK/pkgs
-mkdir -p $PJ_TOOLCHAIN_SDK/sources
-mkdir -p $PJ_TOOLCHAIN_SDK/objs
-mkdir -p $PJ_TOOLCHAIN_PATH
+export PJ_TOOLCHAIN_SDK=`pwd`
 
 #** download *.tar.xz **
-cd $PJ_TOOLCHAIN_SDK/pkgs
-curl https://ftp.gnu.org/gnu/binutils/binutils-2.29.1.tar.xz -o binutils-2.29.1.tar.xz
-curl https://ftp.gnu.org/gnu/gcc/gcc-7.2.0/gcc-7.2.0.tar.xz -o gcc-7.2.0.tar.xz
-curl https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.14.336.tar.xz -o linux-4.14.336.tar.xz
-curl https://ftp.gnu.org/gnu/glibc/glibc-2.26.tar.xz -o glibc-2.26.tar.xz
+mkdir -p $PJ_TOOLCHAIN_SDK/pkgs; cd $PJ_TOOLCHAIN_SDK/pkgs
+curl https://ftp.gnu.org/gnu/binutils/$PJ_BINUTILS_VERSION.tar.xz -o $PJ_BINUTILS_VERSION.tar.xz
+curl https://ftp.gnu.org/gnu/gcc/$PJ_GCC_VERSION/$PJ_GCC_VERSION.tar.xz -o $PJ_GCC_VERSION.tar.xz
+curl https://cdn.kernel.org/pub/linux/kernel/v$PJ_LINUX_KERNEL_VERSION_FOLDER/$PJ_LINUX_KERNEL_VERSION.tar.xz -o $PJ_LINUX_KERNEL_VERSION.tar.xz
+curl https://ftp.gnu.org/gnu/glibc/$PJ_GLIBC_VERSION.tar.xz -o $PJ_GLIBC_VERSION.tar.xz
 
 #** unpack *.tar.xz **
-for f in *.tar*; do tar xf $f -C ../sources/; done
+cd $PJ_TOOLCHAIN_SDK/pkgs
+rm -rf $PJ_TOOLCHAIN_SDK/sources; mkdir -p $PJ_TOOLCHAIN_SDK/sources
+for f in *.tar*; do tar xvf $f -C $PJ_TOOLCHAIN_SDK/sources/; done
+```
 
-cd $PJ_TOOLCHAIN_SDK/sources/$PJ_GCC_VERSION; ./contrib/download_prerequisites
+### 1.2.1. Step by Step
 
-cd $PJ_TOOLCHAIN_SDK/objs; mkdir $PJ_BINUTILS_VERSION  $PJ_GCC_VERSION  $PJ_GLIBC_VERSION
+#### A. gcc-7.2.0, glibc-2.26, linux-4.14.14
+
+```bash
+export PJ_GCC_VERSION_FULL=7.2.0
+export PJ_GCC_VERSION=gcc-$PJ_GCC_VERSION_FULL
+export PJ_GLIBC_VERSION_FULL=2.26
+export PJ_GLIBC_VERSION=glibc-$PJ_GLIBC_VERSION_FULL
+export PJ_BINUTILS_VERSION=binutils-2.29.1
+export PJ_LINUX_KERNEL_VERSION_MAJOR=4.x
+export PJ_LINUX_KERNEL_VERSION_FULL=4.14.14
+export PJ_LINUX_KERNEL_VERSION=linux-$PJ_LINUX_KERNEL_VERSION_FULL
+
+export PJ_TOOLCHAIN_PREFIX="$PJ_TOOLCHAIN_SDK/$PJ_HOST-$PJ_LINUX_KERNEL_VERSION_FULL-$PJ_GCC_VERSION_FULL-$PJ_GLIBC_VERSION_FULL"
+
+```
+
+#### B. Build
+
+```bash
+export PJ_TOOLCHAIN_SDK=`pwd`
+export PJ_TOOLCHAIN_PATH=$PJ_TOOLCHAIN_PREFIX/bin
+export PATH=$PJ_TOOLCHAIN_PATH:$PATH
+mkdir -p $PJ_TOOLCHAIN_PREFIX
+
+NPROC=`nproc`
 
 #** binutils **
-cd $PJ_TOOLCHAIN_SDK/objs/$PJ_BINUTILS_VERSION
-../../sources/$PJ_BINUTILS_VERSION/configure --prefix=$PJ_TOOLCHAIN_PATH --target=$PJ_HOST
-colormake `-j$(nproc)`
+mkdir -p $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_BINUTILS_VERSION
+cd $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_BINUTILS_VERSION
+$PJ_TOOLCHAIN_SDK/libs/$PJ_BINUTILS_VERSION/configure --prefix=$PJ_TOOLCHAIN_PREFIX --target=$PJ_HOST
+colormake -j$NPROC
 colormake install
 
 #** gcc (1st) **
-cd $PJ_TOOLCHAIN_SDK/objs/$PJ_GCC_VERSION
-../../sources/$PJ_GCC_VERSION/configure --prefix=$PJ_TOOLCHAIN_PATH --target=$PJ_HOST --enable-languages=c,c++ $PJ_GCC_CONFIGURE_FLAGS
-colormake `-j$(nproc)` all-gcc
+cd $PJ_TOOLCHAIN_SDK/libs/$PJ_GCC_VERSION; ./contrib/download_prerequisites
+
+mkdir -p $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_GCC_VERSION
+cd $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_GCC_VERSION
+$PJ_TOOLCHAIN_SDK/libs/$PJ_GCC_VERSION/configure --prefix=$PJ_TOOLCHAIN_PREFIX --target=$PJ_HOST --enable-languages=c,c++ $PJ_GCC_CONFIGURE_FLAGS
+colormake -j$NPROC all-gcc
 colormake install-gcc
 
 #** linux header **
-cd $PJ_TOOLCHAIN_SDK/sources/$PJ_LINUX_KERNEL_VERSION
-make ARCH=$PJ_ARCH INSTALL_HDR_PATH=$PJ_TOOLCHAIN_PATH/$PJ_HOST headers_install
+cd $PJ_TOOLCHAIN_SDK/libs/$PJ_LINUX_KERNEL_VERSION
+make ARCH=$PJ_ARCH INSTALL_HDR_PATH=$PJ_TOOLCHAIN_PREFIX/$PJ_HOST headers_install
 
 #** glibc (1st) **
-cd $PJ_TOOLCHAIN_SDK/objs/$PJ_GLIBC_VERSION
-../../sources/$PJ_GLIBC_VERSION/configure --prefix=$PJ_TOOLCHAIN_PATH/$PJ_HOST --build=$MACHTYPE --host=$PJ_HOST --target=$PJ_HOST --with-headers=$PJ_TOOLCHAIN_PATH/$PJ_HOST/include
+mkdir -p $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_GLIBC_VERSION
+cd $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_GLIBC_VERSION
+$PJ_TOOLCHAIN_SDK/libs/$PJ_GLIBC_VERSION/configure --prefix=$PJ_TOOLCHAIN_PREFIX/$PJ_HOST --build=$MACHTYPE --host=$PJ_HOST --target=$PJ_HOST --with-headers=$PJ_TOOLCHAIN_PREFIX/$PJ_HOST/include
 colormake install-headers
 
-colormake `-j$(nproc)` csu/subdir_lib
-install csu/crt*.o $PJ_TOOLCHAIN_PATH/$PJ_HOST/lib/
+colormake -j$NPROC csu/subdir_lib
+install csu/crt*.o $PJ_TOOLCHAIN_PREFIX/$PJ_HOST/lib/
 
 # put NULL files
-touch $PJ_TOOLCHAIN_PATH/$PJ_HOST/include/gnu/stubs.h
-$PJ_HOST-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o $PJ_TOOLCHAIN_PATH/$PJ_HOST/lib/libc.so
+touch $PJ_TOOLCHAIN_PREFIX/$PJ_HOST/include/gnu/stubs.h
+$PJ_HOST-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o $PJ_TOOLCHAIN_PREFIX/$PJ_HOST/lib/libc.so
 
 #** gcc (2nd) **
-cd $PJ_TOOLCHAIN_SDK/objs/$PJ_GCC_VERSION
-colormake `-j$(nproc)` all-target-libgcc
+cd $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_GCC_VERSION
+colormake -j$NPROC all-target-libgcc
 colormake install-target-libgcc
 
 #** glibc (2nd) **
-cd $PJ_TOOLCHAIN_SDK/objs/$PJ_GLIBC_VERSION
-colormake `-j$(nproc)`
+cd $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_GLIBC_VERSION
+colormake -j$NPROC
 colormake install
 
 #** gcc (3rd) **
-cd $PJ_TOOLCHAIN_SDK/objs/$PJ_GCC_VERSION
-colormake `-j$(nproc)`
+cd $PJ_TOOLCHAIN_SDK/build_xxx/$PJ_GCC_VERSION
+colormake -j$NPROC
 colormake install
 
 #** finish **
@@ -131,7 +144,7 @@ find
 #### A. aarch64-linux
 
 ```bash
-$ ll $PJ_TOOLCHAIN_PATH/bin
+$ ll $PJ_TOOLCHAIN_PATH
 total 151592
 drwxrwxr-x 2 lanka lanka     4096  一  16 10:58 ./
 drwxrwxr-x 8 lanka lanka     4096  一  16 10:28 ../
@@ -167,7 +180,7 @@ drwxrwxr-x 8 lanka lanka     4096  一  16 10:28 ../
 ##### A.1. ld-linux-aarch64.so.1
 
 ```bash
-$ cd $PJ_TOOLCHAIN_PATH
+$ cd $PJ_TOOLCHAIN_PREFIX
 $ find-name ld-*.so*
 aarch64-linux/lib/ld-linux-aarch64.so.1
 aarch64-linux/lib/ld-2.26.so
@@ -178,7 +191,7 @@ lrwxrwxrwx 1 lanka lanka 10  一  16 10:54 aarch64-linux/lib/ld-linux-aarch64.so
 #### B. i386-linux
 
 ```bash
-$ ll $PJ_TOOLCHAIN_PATH/bin
+$ ll $PJ_TOOLCHAIN_PATH
 total 158724
 drwxrwxr-x 2 lanka lanka     4096  一  16 14:18 ./
 drwxrwxr-x 8 lanka lanka     4096  一  16 13:52 ../
@@ -214,7 +227,7 @@ drwxrwxr-x 8 lanka lanka     4096  一  16 13:52 ../
 ##### B.1. ld-linux.so.2
 
 ```bash
-$ cd $PJ_TOOLCHAIN_PATH
+$ cd $PJ_TOOLCHAIN_PREFIX
 $ find-name ld-*.so*
 aarch64-linux/lib/ld-linux-aarch64.so.1
 aarch64-linux/lib/ld-2.26.so
@@ -247,43 +260,15 @@ helloworld: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamicall
 
 # run with qemu
 $ sudo apt install qemu-user
-$ sudo ln -sf $PJ_TOOLCHAIN_PATH/$PJ_HOST/lib/ld-2.26.so /lib/ld-linux-aarch64.so.1
+$ sudo ln -sf $PJ_TOOLCHAIN_PREFIX/$PJ_HOST/lib/ld-2.26.so /lib/ld-linux-aarch64.so.1
 $ qemu-aarch64 helloworld
 Hello world !!!
+```
 
+```bash
 $ $PJ_HOST-readelf -hl helloworld
 
-$ $PJ_HOST-readelf -d $PJ_TOOLCHAIN_PATH/$PJ_HOST/lib64/libgcc_s.so
-
-Dynamic section at offset 0x11dc8 contains 27 entries:
-  Tag        Type                         Name/Value
- 0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]
- 0x000000000000000e (SONAME)             Library soname: [libgcc_s.so.1]
- 0x000000000000000c (INIT)               0x2520
- 0x000000000000000d (FINI)               0x103b0
- 0x0000000000000019 (INIT_ARRAY)         0x21db8
- 0x000000000000001b (INIT_ARRAYSZ)       8 (bytes)
- 0x000000000000001a (FINI_ARRAY)         0x21dc0
- 0x000000000000001c (FINI_ARRAYSZ)       8 (bytes)
- 0x0000000000000004 (HASH)               0x190
- 0x0000000000000005 (STRTAB)             0x14d0
- 0x0000000000000006 (SYMTAB)             0x618
- 0x000000000000000a (STRSZ)              2066 (bytes)
- 0x000000000000000b (SYMENT)             24 (bytes)
- 0x0000000000000003 (PLTGOT)             0x21fe8
- 0x0000000000000002 (PLTRELSZ)           1080 (bytes)
- 0x0000000000000014 (PLTREL)             RELA
- 0x0000000000000017 (JMPREL)             0x20e8
- 0x0000000000000007 (RELA)               0x2028
- 0x0000000000000008 (RELASZ)             192 (bytes)
- 0x0000000000000009 (RELAENT)            24 (bytes)
- 0x000000006ffffffc (VERDEF)             0x1e20
- 0x000000006ffffffd (VERDEFNUM)          14
- 0x000000006ffffffe (VERNEED)            0x2008
- 0x000000006fffffff (VERNEEDNUM)         1
- 0x000000006ffffff0 (VERSYM)             0x1ce2
- 0x000000006ffffff9 (RELACOUNT)          3
- 0x0000000000000000 (NULL)               0x0
+$ $PJ_HOST-readelf -d $PJ_TOOLCHAIN_PREFIX/$PJ_HOST/lib64/libgcc_s.so
 ```
 
 #### B. i386-linux
@@ -299,6 +284,34 @@ $ ./helloworld
 Hello world !!!
 ```
 
+# 2. crosstoolX
+
+> 這邊簡化成使用 makefile，如有不同選擇，請參考 confs/aarch64-linux-4.14.14.sh 進行修改
+
+#### A. aarch64-linux
+
+>gcc-7.2.0, glibc-2.26, linux-4.14.14
+
+```bash
+$ cd crosstoolX
+$ . confs/aarch64-linux-4.14.14.sh
+$ make
+$ ll $PJ_TOOLCHAIN_PREFIX
+$ ll $PJ_TOOLCHAIN_PATH
+```
+
+#### B. i386-linux
+
+> gcc-7.2.0, glibc-2.26, linux-4.14.14
+
+```bash
+$ cd crosstoolX
+$ . confs/i486-linux-4.14.14.sh
+$ make
+$ ll $PJ_TOOLCHAIN_PREFIX
+$ ll $PJ_TOOLCHAIN_PATH
+```
+
 # Appendix
 
 # I. Study
@@ -306,6 +319,25 @@ Hello world !!!
 ## I.1. [建立 gnu tool chain](http://yi-jyun.blogspot.com/2018/01/tool-chain.html)
 
 # II. Debug
+
+## II.1. gcc-7.2.0/libmpx/mpxrt/mpxrt-utils.c:72:23: error: ‘PATH_MAX’ undeclared here (not in a func8_MAX’?
+
+```bash
+export PJ_GCC_CONFIGURE_FLAGS=--disable-libmpx
+```
+
+## II.2. scripts/unifdef.c:209:25: error: conflicting types for ‘getline’
+
+```bash
+$ vi scripts/unifdef.c
+// change getline -> get_line
+```
+
+## II.3. glibc-2.31, *** These critical programs are missing or too old: compiler
+
+> glibc: glibc-2.31
+>
+> gcc: gcc-5.5.0
 
 # III. Glossary
 
