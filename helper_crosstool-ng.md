@@ -84,6 +84,32 @@ $ ./configure --prefix=/work/codebase/toolchainSDK/crosstool-ng
 $ make; make install
 
 ```
+##### B.1. Add Linux kernel
+
+> 以下是示範增加一個 Linux kernel
+>
+> add 2.6.38.8
+
+```bash
+$ cp -avr packages/linux/2.6.32.71 packages/linux/2.6.38.8
+
+$ cat packages/linux/2.6.38.8/version.desc
+# Not obsolete: used by CentOS6.x, EOL 11/2020
+archive_formats='.tar.xz .tar.gz'
+
+$ vi packages/linux/2.6.38.8/chksum
+md5 linux-2.6.38.8.tar.xz a63222398ee4051fde722ba711d3233b
+sha1 linux-2.6.38.8.tar.xz af1237ced36321158ff20d0e8a9f30ae03fcc4f4
+sha256 linux-2.6.38.8.tar.xz c300486b30d28ae34c587a4f1aa8e98916a0616dad91a394b0e1352a9c7a8256
+sha512 linux-2.6.38.8.tar.xz d3c25b89f34852d56cda07a34d8cb2af61aec7674bbf935d9e63e1d4d15fc9707b54f2904576c3fdd475358ea1b22
+md5 linux-2.6.38.8.tar.gz f779b3991fcf0e4573a5d5167a60a26b
+sha1 linux-2.6.38.8.tar.gz 1c292a3797360f4631be8e8228493afa54f1beb4
+sha256 linux-2.6.38.8.tar.gz d6fe007d8afb87fa198f7c037d4d376e8e7936ba6c57f73bc5a8f4ee04f80456
+sha512 linux-2.6.38.8.tar.gz e78c5e2443676eaa8349ccacf9b7bda1ff6aac7bf8858f435809eb2f8dc2ed813878431ddb87c16fc5cf43777e429
+
+$ vi crosstool-ng-crosstool-ng-1.25.0/config/version/linux.in
+```
+
 #### C. Select x86_64-unknown-linux-gnu
 
 ```bash
@@ -92,7 +118,6 @@ $ export PATH=/work/codebase/toolchainSDK/crosstool-ng/bin:$PATH
 
 $ ct-ng list-samples
 $ ct-ng show-x86_64-unknown-linux-gnu
-
 ```
 #### D. Working Folder
 
@@ -103,6 +128,7 @@ $ ct-ng x86_64-unknown-linux-gnu
 # 如何選擇 glibc 版本，請見 II.3
 $ ct-ng menuconfig
 Paths and misc options  --->
+	[*] Use obsolete features
 	[*] Debug crosstool-NG
 	[*]   Save intermediate steps
 	[*]     gzip saved states (NEW)
@@ -110,11 +136,19 @@ Paths and misc options  --->
 	    *** Paths ***
 	(${CT_PREFIX:-${HOME}/x-tools}/${CT_HOST:+HOST-${CT_HOST}/}${CT_TARGET}) Prefix directory
 	(0) Number of parallel jobs
-Target options  --->
+Target options  ---> 
+	Target Architecture (x86)  --->
+	Bitness: (64-bit)  --->
 Toolchain options  --->
 	(unknown) Tuple's vendor string
+Operating System  --->
+	Version of linux (5.16.9)  --->
+Binary utilities  --->
+	Version of binutils (2.38)  --->
 C-library  --->
 	Version of glibc (2.31)  --->
+C compiler  --->
+	Version of gcc (11.2.0)  --->
 ```
 
 ```bash
@@ -141,326 +175,15 @@ CT_TARGET_VENDOR="lanka"
 $ ct-ng build
 ```
 
-##### E.1. Building log
+##### E.1. Building log 
 
-##### - PI3
-
->Host: PI3
+>Host: PI3 / PI4 
 >
 >Target: x86_64
 
-```bash
-[INFO ]  Performing some trivial sanity checks
-[WARN ]  Number of open files 1024 may not be sufficient to build the toolchain; increasing to 2048
-[INFO ]  Build started 20220826.204623
-[INFO ]  Building environment variables
-[WARN ]  Directory '/home/pi/src' does not exist.
-[WARN ]  Will not save downloaded tarballs to local storage.
-[EXTRA]  Preparing working directories
-[EXTRA]  Installing user-supplied crosstool-NG configuration
-[EXTRA]  =================================================================
-[EXTRA]  Dumping internal crosstool-NG configuration
-[EXTRA]    Building a toolchain for:
-[EXTRA]      build  = armv7l-unknown-linux-gnueabihf
-[EXTRA]      host   = armv7l-unknown-linux-gnueabihf
-[EXTRA]      target = x86_64-unknown-linux-gnu
-[EXTRA]  Dumping internal crosstool-NG configuration: done in 8.79s (at 11:40)
-[INFO ]  =================================================================
-[INFO ]  Retrieving needed toolchain components' tarballs
-[INFO ]  Retrieving needed toolchain components' tarballs: done in 7.51s (at 11:48)
-[INFO ]  =================================================================
-[INFO ]  Extracting and patching toolchain components
-[INFO ]  Extracting and patching toolchain components: done in 8.43s (at 11:56)
-[INFO ]  Saving state to restart at step 'companion_tools_for_build'...
-[INFO ]  Saving state to restart at step 'companion_libs_for_build'...
-[INFO ]  =================================================================
-[INFO ]  Installing ncurses for build
-[EXTRA]    Configuring ncurses
-[EXTRA]    Building ncurses
-[EXTRA]    Installing ncurses
-[INFO ]  Installing ncurses for build: done in 225.90s (at 15:45)
-[INFO ]  Saving state to restart at step 'binutils_for_build'...
-[INFO ]  Saving state to restart at step 'companion_tools_for_host'...
-[INFO ]  Saving state to restart at step 'companion_libs_for_host'...
-[INFO ]  =================================================================
-[INFO ]  Installing zlib for host
-[EXTRA]    Configuring zlib
-[EXTRA]    Building zlib
-[EXTRA]    Installing zlib
-[INFO ]  Installing zlib for host: done in 21.87s (at 16:12)
-[INFO ]  =================================================================
-[INFO ]  Installing GMP for host
-[EXTRA]    Configuring GMP
-[EXTRA]    Building GMP
-[EXTRA]    Installing GMP
-[INFO ]  Installing GMP for host: done in 659.19s (at 27:12)
-[INFO ]  =================================================================
-[INFO ]  Installing MPFR for host
-[EXTRA]    Configuring MPFR
-[EXTRA]    Building MPFR
-[EXTRA]    Installing MPFR
-[INFO ]  Installing MPFR for host: done in 349.29s (at 33:01)
-[INFO ]  =================================================================
-[INFO ]  Installing ISL for host
-[EXTRA]    Configuring ISL
-[EXTRA]    Building ISL
-[EXTRA]    Installing ISL
-[INFO ]  Installing ISL for host: done in 348.67s (at 38:50)
-[INFO ]  =================================================================
-[INFO ]  Installing MPC for host
-[EXTRA]    Configuring MPC
-[EXTRA]    Building MPC
-[EXTRA]    Installing MPC
-[INFO ]  Installing MPC for host: done in 137.69s (at 41:08)
-[INFO ]  =================================================================
-[INFO ]  Installing expat for host
-[EXTRA]    Configuring expat
-[EXTRA]    Building expat
-[EXTRA]    Installing expat
-[INFO ]  Installing expat for host: done in 221.18s (at 44:49)
-[INFO ]  =================================================================
-[INFO ]  Installing ncurses for host
-[EXTRA]    Configuring ncurses
-[EXTRA]    Building ncurses
-[EXTRA]    Installing ncurses
-[INFO ]  Installing ncurses for host: done in 304.56s (at 49:53)
-[INFO ]  =================================================================
-[INFO ]  Installing libiconv for host
-[EXTRA]    Skipping (included in GNU C library)
-[INFO ]  Installing libiconv for host: done in 0.21s (at 49:54)
-[INFO ]  =================================================================
-[INFO ]  Installing gettext for host
-[EXTRA]    Skipping (included in GNU C library)
-[INFO ]  Installing gettext for host: done in 0.19s (at 49:54)
-[INFO ]  Saving state to restart at step 'binutils_for_host'...
-[INFO ]  =================================================================
-[INFO ]  Installing binutils for host
-[EXTRA]    Configuring binutils
-[EXTRA]    Building binutils
-[EXTRA]    Installing binutils
-[EXTRA]    Installing ld wrapper
-[INFO ]  Installing binutils for host: done in 4913.90s (at 132:04)
-[INFO ]  Saving state to restart at step 'libc_headers'...
-[INFO ]  Saving state to restart at step 'kernel_headers'...
-[INFO ]  =================================================================
-[INFO ]  Installing kernel headers
-[EXTRA]    Installing kernel headers
-[EXTRA]    Checking installed headers
-[INFO ]  Installing kernel headers: done in 369.97s (at 140:22)
-[INFO ]  Saving state to restart at step 'cc_core'...
-[INFO ]  =================================================================
-[INFO ]  Installing core C gcc compiler
-[EXTRA]    Configuring core C gcc compiler
-[EXTRA]    Building gcc
-[EXTRA]    Installing gcc
-[EXTRA]    Housekeeping for core gcc compiler
-[EXTRA]       '' --> lib (gcc)   lib64 (os)
-[INFO ]  Installing core C gcc compiler: done in 16565.30s (at 417:46)
-[INFO ]  Saving state to restart at step 'libc_main'...
-[INFO ]  =================================================================
-[INFO ]  Installing C library
-[INFO ]    =================================================================
-[INFO ]    Building for multilib 1/1: ''
-[EXTRA]      Configuring C library
-[EXTRA]      Building C library
-[EXTRA]      Installing C library
-[INFO ]    Building for multilib 1/1: '': done in 6735.80s (at 535:00)
-[INFO ]  Installing C library: done in 6737.20s (at 535:00)
-[INFO ]  Saving state to restart at step 'cc_for_build'...
-[INFO ]  Saving state to restart at step 'cc_for_host'...
-[INFO ]  =================================================================
-[INFO ]  Installing final gcc compiler
-[EXTRA]    Configuring final gcc compiler
-[EXTRA]    Building final gcc compiler
-[EXTRA]    Installing final gcc compiler
-[EXTRA]    Housekeeping for final gcc compiler
-[EXTRA]       '' --> lib (gcc)   lib64 (os)
-[INFO ]  Installing final gcc compiler: done in 20695.56s (at 362:01)
-[INFO ]  Saving state to restart at step 'libc_post_cc'...
-[INFO ]  Saving state to restart at step 'companion_libs_for_target'...
-[INFO ]  Saving state to restart at step 'binutils_for_target'...
-[INFO ]  Saving state to restart at step 'debug'...
-[INFO ]  =================================================================
-[INFO ]  Installing cross-gdb
-[EXTRA]    Configuring cross gdb
-[EXTRA]    Building cross gdb
-[EXTRA]    Installing cross gdb
-[EXTRA]    Installing '.gdbinit' template
-[INFO ]  Installing cross-gdb: done in 3311.65s (at 449:59)
-[INFO ]  =================================================================
-[INFO ]  Installing gdb server
-[EXTRA]    Configuring native gdb
-[EXTRA]    Building native gdb
-[EXTRA]    Installing native gdb
-[INFO ]  Installing gdb server: done in 839.45s (at 463:58)
-[INFO ]  Saving state to restart at step 'test_suite'...
-[INFO ]  Saving state to restart at step 'finish'...
-[INFO ]  =================================================================
-[INFO ]  Finalizing the toolchain's directory
-[INFO ]    Stripping all toolchain executables
-[EXTRA]    Installing the populate helper
-[EXTRA]    Installing a cross-ldd helper
-[EXTRA]    Creating toolchain aliases
-[EXTRA]    Removing installed documentation
-[EXTRA]    Collect license information from: /tmp/sdk/x86_64/.build/x86_64-unknown-linux-gnu/src
-[EXTRA]    Put the license information to: /home/pi/x-tools/x86_64-unknown-linux-gnu/share/licenses
-[INFO ]  Finalizing the toolchain's directory: done in 573.96s (at 491:11)
-[INFO ]  Build completed at 20220827.161713
-[INFO ]  (elapsed: 1170:50.55)
-[INFO ]  Finishing installation (may take a few seconds)...
-
-```
-
-##### - PI4
-
-> Host: PI4
+> [PI3.log](https://github.com/lankahsu520/CrossCompilationX/blob/master/crosstool-ng/PI3.log)
 >
-> Target: x86_64
-
-```bash
-[INFO ]  Performing some trivial sanity checks
-[WARN ]  Number of open files 1024 may not be sufficient to build the toolchain; increasing to 2048
-[INFO ]  Build started 20220823.144114
-[INFO ]  Building environment variables
-[WARN ]  Directory '/home/pi/src' does not exist.
-[WARN ]  Will not save downloaded tarballs to local storage.
-[EXTRA]  Preparing working directories
-[EXTRA]  Installing user-supplied crosstool-NG configuration
-[EXTRA]  =================================================================
-[EXTRA]  Dumping internal crosstool-NG configuration
-[EXTRA]    Building a toolchain for:
-[EXTRA]      build  = aarch64-unknown-linux-gnu
-[EXTRA]      host   = aarch64-unknown-linux-gnu
-[EXTRA]      target = x86_64-unknown-linux-gnu
-[EXTRA]  Dumping internal crosstool-NG configuration: done in 0.24s (at 00:05)
-[INFO ]  =================================================================
-[INFO ]  Retrieving needed toolchain components' tarballs
-[INFO ]  Retrieving needed toolchain components' tarballs: done in 1.61s (at 00:07)
-[INFO ]  =================================================================
-[INFO ]  Extracting and patching toolchain components
-[INFO ]  Extracting and patching toolchain components: done in 1.77s (at 00:09)
-[INFO ]  =================================================================
-[INFO ]  Installing ncurses for build
-[EXTRA]    Configuring ncurses
-[EXTRA]    Building ncurses
-[EXTRA]    Installing ncurses
-[INFO ]  Installing ncurses for build: done in 61.80s (at 01:11)
-[INFO ]  =================================================================
-[INFO ]  Installing zlib for host
-[EXTRA]    Configuring zlib
-[EXTRA]    Building zlib
-[EXTRA]    Installing zlib
-[INFO ]  Installing zlib for host: done in 6.06s (at 01:17)
-[INFO ]  =================================================================
-[INFO ]  Installing GMP for host
-[EXTRA]    Configuring GMP
-[EXTRA]    Building GMP
-[EXTRA]    Installing GMP
-[INFO ]  Installing GMP for host: done in 105.77s (at 03:02)
-[INFO ]  =================================================================
-[INFO ]  Installing MPFR for host
-[EXTRA]    Configuring MPFR
-[EXTRA]    Building MPFR
-[EXTRA]    Installing MPFR
-[INFO ]  Installing MPFR for host: done in 63.25s (at 04:06)
-[INFO ]  =================================================================
-[INFO ]  Installing ISL for host
-[EXTRA]    Configuring ISL
-[EXTRA]    Building ISL
-[EXTRA]    Installing ISL
-[INFO ]  Installing ISL for host: done in 103.09s (at 05:49)
-[INFO ]  =================================================================
-[INFO ]  Installing MPC for host
-[EXTRA]    Configuring MPC
-[EXTRA]    Building MPC
-[EXTRA]    Installing MPC
-[INFO ]  Installing MPC for host: done in 21.25s (at 06:10)
-[INFO ]  =================================================================
-[INFO ]  Installing expat for host
-[EXTRA]    Configuring expat
-[EXTRA]    Building expat
-[EXTRA]    Installing expat
-[INFO ]  Installing expat for host: done in 26.54s (at 06:37)
-[INFO ]  =================================================================
-[INFO ]  Installing ncurses for host
-[EXTRA]    Configuring ncurses
-[EXTRA]    Building ncurses
-[EXTRA]    Installing ncurses
-[INFO ]  Installing ncurses for host: done in 58.99s (at 07:36)
-[INFO ]  =================================================================
-[INFO ]  Installing libiconv for host
-[EXTRA]    Skipping (included in GNU C library)
-[INFO ]  Installing libiconv for host: done in 0.03s (at 07:36)
-[INFO ]  =================================================================
-[INFO ]  Installing gettext for host
-[EXTRA]    Skipping (included in GNU C library)
-[INFO ]  Installing gettext for host: done in 0.03s (at 07:36)
-[INFO ]  =================================================================
-[INFO ]  Installing binutils for host
-[EXTRA]    Configuring binutils
-[EXTRA]    Building binutils
-[EXTRA]    Installing binutils
-[EXTRA]    Installing ld wrapper
-[INFO ]  Installing binutils for host: done in 1636.02s (at 34:52)
-[INFO ]  =================================================================
-[INFO ]  Installing kernel headers
-[EXTRA]    Installing kernel headers
-[EXTRA]    Checking installed headers
-[INFO ]  Installing kernel headers: done in 36.70s (at 35:29)
-[INFO ]  =================================================================
-[INFO ]  Installing core C gcc compiler
-[EXTRA]    Configuring core C gcc compiler
-[EXTRA]    Building gcc
-[EXTRA]    Installing gcc
-[EXTRA]    Housekeeping for core gcc compiler
-[EXTRA]       '' --> lib (gcc)   lib64 (os)
-[INFO ]  Installing core C gcc compiler: done in 2842.99s (at 82:52)
-[INFO ]  =================================================================
-[INFO ]  Installing C library
-[INFO ]    =================================================================
-[INFO ]    Building for multilib 1/1: ''
-[EXTRA]      Configuring C library
-[EXTRA]      Building C library
-[EXTRA]      Installing C library
-[INFO ]    Building for multilib 1/1: '': done in 963.85s (at 98:56)
-[INFO ]  Installing C library: done in 964.07s (at 98:56)
-[INFO ]  =================================================================
-[INFO ]  Installing final gcc compiler
-[EXTRA]    Configuring final gcc compiler
-[EXTRA]    Building final gcc compiler
-[EXTRA]    Installing final gcc compiler
-[EXTRA]    Housekeeping for final gcc compiler
-[EXTRA]       '' --> lib (gcc)   lib64 (os)
-[INFO ]  Installing final gcc compiler: done in 3781.51s (at 161:58)
-[INFO ]  =================================================================
-[INFO ]  Installing cross-gdb
-[EXTRA]    Configuring cross gdb
-[EXTRA]    Building cross gdb
-[EXTRA]    Installing cross gdb
-[EXTRA]    Installing '.gdbinit' template
-[INFO ]  Installing cross-gdb: done in 1127.05s (at 180:45)
-[INFO ]  =================================================================
-[INFO ]  Installing gdb server
-[EXTRA]    Configuring native gdb
-[EXTRA]    Building native gdb
-[EXTRA]    Installing native gdb
-[INFO ]  Installing gdb server: done in 177.82s (at 183:43)
-[INFO ]  =================================================================
-[INFO ]  Finalizing the toolchain's directory
-[INFO ]    Stripping all toolchain executables
-[EXTRA]    Installing the populate helper
-[EXTRA]    Installing a cross-ldd helper
-[EXTRA]    Creating toolchain aliases
-[EXTRA]    Removing installed documentation
-[EXTRA]    Collect license information from: /work/codebase/x86_64-unknown-linux-gnu/.build/x86_64-unknown-linux-gnu/src
-[EXTRA]    Put the license information to: /home/pi/x-tools/x86_64-unknown-linux-gnu/share/licenses
-[INFO ]  Finalizing the toolchain's directory: done in 27.44s (at 184:10)
-[INFO ]  Build completed at 20220823.174522
-[INFO ]  (elapsed: 184:08.63)
-[INFO ]  Finishing installation (may take a few seconds)...
-[184:10] / 
-
-```
+> [PI4.log](https://github.com/lankahsu520/CrossCompilationX/blob/master/crosstool-ng/PI4.log)
 
 ##### E.2. Continue
 

@@ -1,0 +1,141 @@
+[INFO ]  Performing some trivial sanity checks
+[WARN ]  Number of open files 1024 may not be sufficient to build the toolchain; increasing to 2048
+[INFO ]  Build started 20220823.144114
+[INFO ]  Building environment variables
+[WARN ]  Directory '/home/pi/src' does not exist.
+[WARN ]  Will not save downloaded tarballs to local storage.
+[EXTRA]  Preparing working directories
+[EXTRA]  Installing user-supplied crosstool-NG configuration
+[EXTRA]  =================================================================
+[EXTRA]  Dumping internal crosstool-NG configuration
+[EXTRA]    Building a toolchain for:
+[EXTRA]      build  = aarch64-unknown-linux-gnu
+[EXTRA]      host   = aarch64-unknown-linux-gnu
+[EXTRA]      target = x86_64-unknown-linux-gnu
+[EXTRA]  Dumping internal crosstool-NG configuration: done in 0.24s (at 00:05)
+[INFO ]  =================================================================
+[INFO ]  Retrieving needed toolchain components' tarballs
+[INFO ]  Retrieving needed toolchain components' tarballs: done in 1.61s (at 00:07)
+[INFO ]  =================================================================
+[INFO ]  Extracting and patching toolchain components
+[INFO ]  Extracting and patching toolchain components: done in 1.77s (at 00:09)
+[INFO ]  =================================================================
+[INFO ]  Installing ncurses for build
+[EXTRA]    Configuring ncurses
+[EXTRA]    Building ncurses
+[EXTRA]    Installing ncurses
+[INFO ]  Installing ncurses for build: done in 61.80s (at 01:11)
+[INFO ]  =================================================================
+[INFO ]  Installing zlib for host
+[EXTRA]    Configuring zlib
+[EXTRA]    Building zlib
+[EXTRA]    Installing zlib
+[INFO ]  Installing zlib for host: done in 6.06s (at 01:17)
+[INFO ]  =================================================================
+[INFO ]  Installing GMP for host
+[EXTRA]    Configuring GMP
+[EXTRA]    Building GMP
+[EXTRA]    Installing GMP
+[INFO ]  Installing GMP for host: done in 105.77s (at 03:02)
+[INFO ]  =================================================================
+[INFO ]  Installing MPFR for host
+[EXTRA]    Configuring MPFR
+[EXTRA]    Building MPFR
+[EXTRA]    Installing MPFR
+[INFO ]  Installing MPFR for host: done in 63.25s (at 04:06)
+[INFO ]  =================================================================
+[INFO ]  Installing ISL for host
+[EXTRA]    Configuring ISL
+[EXTRA]    Building ISL
+[EXTRA]    Installing ISL
+[INFO ]  Installing ISL for host: done in 103.09s (at 05:49)
+[INFO ]  =================================================================
+[INFO ]  Installing MPC for host
+[EXTRA]    Configuring MPC
+[EXTRA]    Building MPC
+[EXTRA]    Installing MPC
+[INFO ]  Installing MPC for host: done in 21.25s (at 06:10)
+[INFO ]  =================================================================
+[INFO ]  Installing expat for host
+[EXTRA]    Configuring expat
+[EXTRA]    Building expat
+[EXTRA]    Installing expat
+[INFO ]  Installing expat for host: done in 26.54s (at 06:37)
+[INFO ]  =================================================================
+[INFO ]  Installing ncurses for host
+[EXTRA]    Configuring ncurses
+[EXTRA]    Building ncurses
+[EXTRA]    Installing ncurses
+[INFO ]  Installing ncurses for host: done in 58.99s (at 07:36)
+[INFO ]  =================================================================
+[INFO ]  Installing libiconv for host
+[EXTRA]    Skipping (included in GNU C library)
+[INFO ]  Installing libiconv for host: done in 0.03s (at 07:36)
+[INFO ]  =================================================================
+[INFO ]  Installing gettext for host
+[EXTRA]    Skipping (included in GNU C library)
+[INFO ]  Installing gettext for host: done in 0.03s (at 07:36)
+[INFO ]  =================================================================
+[INFO ]  Installing binutils for host
+[EXTRA]    Configuring binutils
+[EXTRA]    Building binutils
+[EXTRA]    Installing binutils
+[EXTRA]    Installing ld wrapper
+[INFO ]  Installing binutils for host: done in 1636.02s (at 34:52)
+[INFO ]  =================================================================
+[INFO ]  Installing kernel headers
+[EXTRA]    Installing kernel headers
+[EXTRA]    Checking installed headers
+[INFO ]  Installing kernel headers: done in 36.70s (at 35:29)
+[INFO ]  =================================================================
+[INFO ]  Installing core C gcc compiler
+[EXTRA]    Configuring core C gcc compiler
+[EXTRA]    Building gcc
+[EXTRA]    Installing gcc
+[EXTRA]    Housekeeping for core gcc compiler
+[EXTRA]       '' --> lib (gcc)   lib64 (os)
+[INFO ]  Installing core C gcc compiler: done in 2842.99s (at 82:52)
+[INFO ]  =================================================================
+[INFO ]  Installing C library
+[INFO ]    =================================================================
+[INFO ]    Building for multilib 1/1: ''
+[EXTRA]      Configuring C library
+[EXTRA]      Building C library
+[EXTRA]      Installing C library
+[INFO ]    Building for multilib 1/1: '': done in 963.85s (at 98:56)
+[INFO ]  Installing C library: done in 964.07s (at 98:56)
+[INFO ]  =================================================================
+[INFO ]  Installing final gcc compiler
+[EXTRA]    Configuring final gcc compiler
+[EXTRA]    Building final gcc compiler
+[EXTRA]    Installing final gcc compiler
+[EXTRA]    Housekeeping for final gcc compiler
+[EXTRA]       '' --> lib (gcc)   lib64 (os)
+[INFO ]  Installing final gcc compiler: done in 3781.51s (at 161:58)
+[INFO ]  =================================================================
+[INFO ]  Installing cross-gdb
+[EXTRA]    Configuring cross gdb
+[EXTRA]    Building cross gdb
+[EXTRA]    Installing cross gdb
+[EXTRA]    Installing '.gdbinit' template
+[INFO ]  Installing cross-gdb: done in 1127.05s (at 180:45)
+[INFO ]  =================================================================
+[INFO ]  Installing gdb server
+[EXTRA]    Configuring native gdb
+[EXTRA]    Building native gdb
+[EXTRA]    Installing native gdb
+[INFO ]  Installing gdb server: done in 177.82s (at 183:43)
+[INFO ]  =================================================================
+[INFO ]  Finalizing the toolchain's directory
+[INFO ]    Stripping all toolchain executables
+[EXTRA]    Installing the populate helper
+[EXTRA]    Installing a cross-ldd helper
+[EXTRA]    Creating toolchain aliases
+[EXTRA]    Removing installed documentation
+[EXTRA]    Collect license information from: /work/codebase/x86_64-unknown-linux-gnu/.build/x86_64-unknown-linux-gnu/src
+[EXTRA]    Put the license information to: /home/pi/x-tools/x86_64-unknown-linux-gnu/share/licenses
+[INFO ]  Finalizing the toolchain's directory: done in 27.44s (at 184:10)
+[INFO ]  Build completed at 20220823.174522
+[INFO ]  (elapsed: 184:08.63)
+[INFO ]  Finishing installation (may take a few seconds)...
+[184:10] / 

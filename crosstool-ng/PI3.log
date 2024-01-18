@@ -1,0 +1,158 @@
+[INFO ]  Performing some trivial sanity checks
+[WARN ]  Number of open files 1024 may not be sufficient to build the toolchain; increasing to 2048
+[INFO ]  Build started 20220826.204623
+[INFO ]  Building environment variables
+[WARN ]  Directory '/home/pi/src' does not exist.
+[WARN ]  Will not save downloaded tarballs to local storage.
+[EXTRA]  Preparing working directories
+[EXTRA]  Installing user-supplied crosstool-NG configuration
+[EXTRA]  =================================================================
+[EXTRA]  Dumping internal crosstool-NG configuration
+[EXTRA]    Building a toolchain for:
+[EXTRA]      build  = armv7l-unknown-linux-gnueabihf
+[EXTRA]      host   = armv7l-unknown-linux-gnueabihf
+[EXTRA]      target = x86_64-unknown-linux-gnu
+[EXTRA]  Dumping internal crosstool-NG configuration: done in 8.79s (at 11:40)
+[INFO ]  =================================================================
+[INFO ]  Retrieving needed toolchain components' tarballs
+[INFO ]  Retrieving needed toolchain components' tarballs: done in 7.51s (at 11:48)
+[INFO ]  =================================================================
+[INFO ]  Extracting and patching toolchain components
+[INFO ]  Extracting and patching toolchain components: done in 8.43s (at 11:56)
+[INFO ]  Saving state to restart at step 'companion_tools_for_build'...
+[INFO ]  Saving state to restart at step 'companion_libs_for_build'...
+[INFO ]  =================================================================
+[INFO ]  Installing ncurses for build
+[EXTRA]    Configuring ncurses
+[EXTRA]    Building ncurses
+[EXTRA]    Installing ncurses
+[INFO ]  Installing ncurses for build: done in 225.90s (at 15:45)
+[INFO ]  Saving state to restart at step 'binutils_for_build'...
+[INFO ]  Saving state to restart at step 'companion_tools_for_host'...
+[INFO ]  Saving state to restart at step 'companion_libs_for_host'...
+[INFO ]  =================================================================
+[INFO ]  Installing zlib for host
+[EXTRA]    Configuring zlib
+[EXTRA]    Building zlib
+[EXTRA]    Installing zlib
+[INFO ]  Installing zlib for host: done in 21.87s (at 16:12)
+[INFO ]  =================================================================
+[INFO ]  Installing GMP for host
+[EXTRA]    Configuring GMP
+[EXTRA]    Building GMP
+[EXTRA]    Installing GMP
+[INFO ]  Installing GMP for host: done in 659.19s (at 27:12)
+[INFO ]  =================================================================
+[INFO ]  Installing MPFR for host
+[EXTRA]    Configuring MPFR
+[EXTRA]    Building MPFR
+[EXTRA]    Installing MPFR
+[INFO ]  Installing MPFR for host: done in 349.29s (at 33:01)
+[INFO ]  =================================================================
+[INFO ]  Installing ISL for host
+[EXTRA]    Configuring ISL
+[EXTRA]    Building ISL
+[EXTRA]    Installing ISL
+[INFO ]  Installing ISL for host: done in 348.67s (at 38:50)
+[INFO ]  =================================================================
+[INFO ]  Installing MPC for host
+[EXTRA]    Configuring MPC
+[EXTRA]    Building MPC
+[EXTRA]    Installing MPC
+[INFO ]  Installing MPC for host: done in 137.69s (at 41:08)
+[INFO ]  =================================================================
+[INFO ]  Installing expat for host
+[EXTRA]    Configuring expat
+[EXTRA]    Building expat
+[EXTRA]    Installing expat
+[INFO ]  Installing expat for host: done in 221.18s (at 44:49)
+[INFO ]  =================================================================
+[INFO ]  Installing ncurses for host
+[EXTRA]    Configuring ncurses
+[EXTRA]    Building ncurses
+[EXTRA]    Installing ncurses
+[INFO ]  Installing ncurses for host: done in 304.56s (at 49:53)
+[INFO ]  =================================================================
+[INFO ]  Installing libiconv for host
+[EXTRA]    Skipping (included in GNU C library)
+[INFO ]  Installing libiconv for host: done in 0.21s (at 49:54)
+[INFO ]  =================================================================
+[INFO ]  Installing gettext for host
+[EXTRA]    Skipping (included in GNU C library)
+[INFO ]  Installing gettext for host: done in 0.19s (at 49:54)
+[INFO ]  Saving state to restart at step 'binutils_for_host'...
+[INFO ]  =================================================================
+[INFO ]  Installing binutils for host
+[EXTRA]    Configuring binutils
+[EXTRA]    Building binutils
+[EXTRA]    Installing binutils
+[EXTRA]    Installing ld wrapper
+[INFO ]  Installing binutils for host: done in 4913.90s (at 132:04)
+[INFO ]  Saving state to restart at step 'libc_headers'...
+[INFO ]  Saving state to restart at step 'kernel_headers'...
+[INFO ]  =================================================================
+[INFO ]  Installing kernel headers
+[EXTRA]    Installing kernel headers
+[EXTRA]    Checking installed headers
+[INFO ]  Installing kernel headers: done in 369.97s (at 140:22)
+[INFO ]  Saving state to restart at step 'cc_core'...
+[INFO ]  =================================================================
+[INFO ]  Installing core C gcc compiler
+[EXTRA]    Configuring core C gcc compiler
+[EXTRA]    Building gcc
+[EXTRA]    Installing gcc
+[EXTRA]    Housekeeping for core gcc compiler
+[EXTRA]       '' --> lib (gcc)   lib64 (os)
+[INFO ]  Installing core C gcc compiler: done in 16565.30s (at 417:46)
+[INFO ]  Saving state to restart at step 'libc_main'...
+[INFO ]  =================================================================
+[INFO ]  Installing C library
+[INFO ]    =================================================================
+[INFO ]    Building for multilib 1/1: ''
+[EXTRA]      Configuring C library
+[EXTRA]      Building C library
+[EXTRA]      Installing C library
+[INFO ]    Building for multilib 1/1: '': done in 6735.80s (at 535:00)
+[INFO ]  Installing C library: done in 6737.20s (at 535:00)
+[INFO ]  Saving state to restart at step 'cc_for_build'...
+[INFO ]  Saving state to restart at step 'cc_for_host'...
+[INFO ]  =================================================================
+[INFO ]  Installing final gcc compiler
+[EXTRA]    Configuring final gcc compiler
+[EXTRA]    Building final gcc compiler
+[EXTRA]    Installing final gcc compiler
+[EXTRA]    Housekeeping for final gcc compiler
+[EXTRA]       '' --> lib (gcc)   lib64 (os)
+[INFO ]  Installing final gcc compiler: done in 20695.56s (at 362:01)
+[INFO ]  Saving state to restart at step 'libc_post_cc'...
+[INFO ]  Saving state to restart at step 'companion_libs_for_target'...
+[INFO ]  Saving state to restart at step 'binutils_for_target'...
+[INFO ]  Saving state to restart at step 'debug'...
+[INFO ]  =================================================================
+[INFO ]  Installing cross-gdb
+[EXTRA]    Configuring cross gdb
+[EXTRA]    Building cross gdb
+[EXTRA]    Installing cross gdb
+[EXTRA]    Installing '.gdbinit' template
+[INFO ]  Installing cross-gdb: done in 3311.65s (at 449:59)
+[INFO ]  =================================================================
+[INFO ]  Installing gdb server
+[EXTRA]    Configuring native gdb
+[EXTRA]    Building native gdb
+[EXTRA]    Installing native gdb
+[INFO ]  Installing gdb server: done in 839.45s (at 463:58)
+[INFO ]  Saving state to restart at step 'test_suite'...
+[INFO ]  Saving state to restart at step 'finish'...
+[INFO ]  =================================================================
+[INFO ]  Finalizing the toolchain's directory
+[INFO ]    Stripping all toolchain executables
+[EXTRA]    Installing the populate helper
+[EXTRA]    Installing a cross-ldd helper
+[EXTRA]    Creating toolchain aliases
+[EXTRA]    Removing installed documentation
+[EXTRA]    Collect license information from: /tmp/sdk/x86_64/.build/x86_64-unknown-linux-gnu/src
+[EXTRA]    Put the license information to: /home/pi/x-tools/x86_64-unknown-linux-gnu/share/licenses
+[INFO ]  Finalizing the toolchain's directory: done in 573.96s (at 491:11)
+[INFO ]  Build completed at 20220827.161713
+[INFO ]  (elapsed: 1170:50.55)
+[INFO ]  Finishing installation (may take a few seconds)...
