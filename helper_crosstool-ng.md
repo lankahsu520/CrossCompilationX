@@ -14,17 +14,22 @@
 [issues-image]: https://img.shields.io/github/issues/lankahsu520/CrossCompilationX.svg
 [issues-url]: https://github.com/lankahsu520/CrossCompilationX/issues
 
-# 1. [crosstool-NG](https://crosstool-ng.github.io/)
+# 1. Overview
 
->Crosstool-NG is a versatile (cross) toolchain generator. It supports many architectures and components and has a simple yet powerful menuconfig-style interface. Please read the [introduction](https://crosstool-ng.github.io/docs/introduction/) and refer to the [documentation](https://crosstool-ng.github.io/docs/) for more information.
+>[Crosstool-NG](https://crosstool-ng.github.io/) is a versatile (cross) toolchain generator. It supports many architectures and components and has a simple yet powerful menuconfig-style interface. Please read the [introduction](https://crosstool-ng.github.io/docs/introduction/) and refer to the [documentation](https://crosstool-ng.github.io/docs/) for more information.
 
 > 簡單來說就是產出 toolchain，幫助軟體工程師開發軟體，並利於執行在不同平台上。
 
-# 2. Want
+# 2. x86_64-unknown-linux-gnu on PI
 
->本篇主要的希望 Raspberry Pi上，利用 toolchain 產出 Helloworld (x86_64)，然後將 Helloworld  放至 Ubuntu 20.04.4 LTS x86_64上執行。因此透過 Crosstool-NG 建立 toolchain。
+>本篇主要希望在 Raspberry Pi上，利用 toolchain 產出 Helloworld (x86_64)，然後將 Helloworld  放至 Ubuntu 20.04.4 LTS x86_64上執行。因此透過 Crosstool-NG 建立 toolchain。
 >
 >不過由於 Raspberry Pi 的執行效能較差，將會很浪費時間。
+
+>Host: Raspberry Pi3
+>
+>Target: Ubuntu 20.04 x86_64
+
 ```mermaid
 flowchart LR
 	subgraph Host[Host - Raspberry Pi arm64]
@@ -46,11 +51,7 @@ flowchart LR
 	
 ```
 
-# 3. To Generate Toolchain by [Crosstool-NG](https://github.com/crosstool-ng/crosstool-ng.git) # 
-
-> Host: Raspberry Pi3
->
-> Target: Ubuntu 20.04 x86_64
+## 2.1. Generate toolchain
 
 #### A. Update Pi
 
@@ -79,40 +80,74 @@ $ tar -zxvf crosstool-ng-1.25.0.tar.gz
 
 $ cd crosstool-ng-crosstool-ng-1.25.0
 $ ./bootstrap
-$ ./configure --prefix=/work/codebase/crosstool-ng
+$ ./configure --prefix=/work/codebase/toolchainSDK/crosstool-ng
 $ make; make install
-$ export PATH=/work/codebase/crosstool-ng/bin:$PATH
+
 ```
 #### C. Select x86_64-unknown-linux-gnu
 
 ```bash
+$ unset LD_LIBRARY_PATH
+$ export PATH=/work/codebase/toolchainSDK/crosstool-ng/bin:$PATH
+
 $ ct-ng list-samples
 $ ct-ng show-x86_64-unknown-linux-gnu
+
+```
+#### D. Working Folder
+
+```bash
 $ mkdir -p /work/codebase/x86_64; cd /work/codebase/x86_64
 $ ct-ng x86_64-unknown-linux-gnu
+
 # 如何選擇 glibc 版本，請見 II.3
 $ ct-ng menuconfig
-Paths and misc options
-	Number of parallel jobs
-Paths and misc options
-	Debug crosstool-NG
-		Save intermediate steps
-C-library
+Paths and misc options  --->
+	[*] Debug crosstool-NG
+	[*]   Save intermediate steps
+	[*]     gzip saved states (NEW)
+	(${CT_TOP_DIR}/.build) Working directory
+	    *** Paths ***
+	(${CT_PREFIX:-${HOME}/x-tools}/${CT_HOST:+HOST-${CT_HOST}/}${CT_TARGET}) Prefix directory
+	(0) Number of parallel jobs
+Target options  --->
+Toolchain options  --->
+	(unknown) Tuple's vendor string
+C-library  --->
 	Version of glibc (2.31)  --->
 ```
+
 ```bash
 # if change .config
 $ vi .config
 $ ct-ng oldconfig
 ```
 
-#### D. Build
+##### .config
+
+> 這邊可以修改，保留相關 tarballs
+
+```bash
+CT_LOCAL_TARBALLS_DIR="/work/codebase/toolchainSDK/tarballs"
+
+(${CT_PREFIX:-${CT_TOP_DIR}/}/${CT_HOST:+HOST-${CT_HOST}/}${CT_TARGET}) Prefix directory
+
+CT_TARGET_VENDOR="lanka"
+```
+
+#### E. Build
 
 ```bash
 $ ct-ng build
 ```
 
+##### E.1. Building log
+
 ##### - PI3
+
+>Host: PI3
+>
+>Target: x86_64
 
 ```bash
 [INFO ]  Performing some trivial sanity checks
@@ -278,6 +313,10 @@ $ ct-ng build
 
 ##### - PI4
 
+> Host: PI4
+>
+> Target: x86_64
+
 ```bash
 [INFO ]  Performing some trivial sanity checks
 [WARN ]  Number of open files 1024 may not be sufficient to build the toolchain; increasing to 2048
@@ -423,7 +462,7 @@ $ ct-ng build
 
 ```
 
-#### E. Continue
+##### E.2. Continue
 
 > 因為編譯有時會中斷，延續其結果繼續執行
 
@@ -456,25 +495,32 @@ $ ct-ng libc_main+
 $ ct-ng build RESTART=cc_core
 ```
 
-#### F. To Set Environment
+## 2.2. Build Helloworld on Pi
 
-> 如果沒有時另行設定，基本都會放在 ~/x-tools/x86_64-unknown-linux-gnu
+> 如果沒有另行設定，基本都會放在 ~/x-tools/x86_64-unknown-linux-gnu
 
 ```bash
 $ export PATH=~/x-tools/x86_64-unknown-linux-gnu/bin:$PATH
+$ cd /tmp
+$ vi helloworld.c 
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+
+	printf("Hello World !!!\n");
+	return 0;
+}
+
+$ x86_64-unknown-linux-gnu-gcc helloworld.c -o helloworld
 ```
 
-# 4. Build Helloworld on Pi
+# 3. Run Helloworld on Ubuntu x86_64
 
 ```bash
-$ x86_64-unknown-linux-gnu-gcc Helloworld.c -o Helloworld
-```
-
-# 5. Run Helloworld on Ubuntu x86_64
-
-```bash
-# Please scp Helloworld from Pi -> Ubuntu 
-$ Helloworld
+# Please scp helloworld from Pi -> Ubuntu 
+$ helloworld
+Hello world !!!
 ```
 
 # Appendix
@@ -488,6 +534,8 @@ $ Helloworld
 ## I.3. [crosstool-ng的配置参数详解](https://www.crifan.com/files/doc/docbook/crosstool_ng/release/htmls/crosstool_ng_config_para.html)
 
 ## I.4. [Using the toolchain](https://crosstool-ng.github.io/docs/toolchain-usage/)
+
+## I.5. [Crosstool-NG for Raspberry Pi 3 with Ubuntu 18.04 初新者的筆記](https://i-am-neet.github.io/embedded/Crosstool-NG-for-Raspi3/)
 
 # II. Debug
 

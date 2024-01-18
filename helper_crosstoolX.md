@@ -82,6 +82,9 @@ $ make --version
 
 $ cmake --version
 
+# check binutils version
+$ ld -v
+
 $ meson --version
 $ ninja --version
 
