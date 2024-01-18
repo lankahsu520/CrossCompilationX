@@ -108,6 +108,16 @@ sha256 linux-2.6.38.8.tar.gz d6fe007d8afb87fa198f7c037d4d376e8e7936ba6c57f73bc5a
 sha512 linux-2.6.38.8.tar.gz e78c5e2443676eaa8349ccacf9b7bda1ff6aac7bf8858f435809eb2f8dc2ed813878431ddb87c16fc5cf43777e429
 
 $ vi crosstool-ng-crosstool-ng-1.25.0/config/version/linux.in
+# add
+config LINUX_V_2_6_38
+...
+config LINUX_NO_VERSIONS
+...
+    default n if LINUX_V_2_6_38
+...
+config LINUX_VERSION
+...
+    default "2.6.38.8" if LINUX_V_2_6_38
 ```
 
 #### C. Select x86_64-unknown-linux-gnu
@@ -122,7 +132,8 @@ $ ct-ng show-x86_64-unknown-linux-gnu
 #### D. Working Folder
 
 ```bash
-$ mkdir -p /work/codebase/x86_64; cd /work/codebase/x86_64
+$ mkdir -p /work/codebase/toolchainSDK/crosstool-ng-x86_64-linux
+$ cd /work/codebase/toolchainSDK/crosstool-ng-x86_64-linux
 $ ct-ng x86_64-unknown-linux-gnu
 
 # 如何選擇 glibc 版本，請見 II.3
@@ -326,6 +337,14 @@ $ vi .config
 
 ```
 
+## II.6. stubs.h:7:11: fatal error: gnu/stubs-32.h: No such file or directory
+
+```bash
+$ ct-ng menuconfig
+Target options  ---> 
+	Target Architecture (x86)  --->
+	[*] Build a multilib toolchain (READ HELP!!!) 
+```
 
 # Author
 
