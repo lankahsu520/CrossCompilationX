@@ -14,13 +14,89 @@
 [issues-image]: https://img.shields.io/github/issues/lankahsu520/CrossCompilationX.svg
 [issues-url]: https://github.com/lankahsu520/CrossCompilationX/issues
 
-# 1. Generate toolchain by ourselves
+# 1. Overview
+
+> 本篇存在的目的是當無良的主管拿台“未知的電腦”給開發人員，沒有附上任何開發工具和文件，而要求在上面加工，雖然有提供帳號和密碼登入其裝置。
+
+> 這時可憐的開發人員也只能登入系統，查看這水有多深。
+
+## 1.1. Check the system
+
+#### A. Release
+
+```bash
+$ uname -a
+
+$ cat /proc/version
+
+$ cat /etc/os-release
+
+$ cat /etc/issue
+
+$ cat /etc/debian_version
+
+$ ls -al /bin/sh
+```
+
+#### B. Libraries
+
+```bash
+$ ldd --version
+
+$ ls -al /lib
+$ ls -al /usr/lib
+
+$ ll /lib/ld-*
+
+$ file /bin/bash
+
+$ cd /; find * -name *.h
+```
+
+#### C. CPU
+
+```bash
+$ cat /proc/cpuinfo
+```
+
+#### D. Memory
+
+```bash
+$ grep MemTotal /proc/meminfo
+```
+
+#### E. Disk
+
+```bash
+$ df -h
+
+$ mount
+```
+
+#### F. Compiler
+
+```bash
+$ gcc --version
+
+$ make --version
+
+$ cmake --version
+
+$ meson --version
+$ ninja --version
+
+$ python --version
+```
+
+# 2. Generate toolchain by ourselves
 
 > 以下資料來源 [建立 gnu tool chain](http://yi-jyun.blogspot.com/2018/01/tool-chain.html)
 
-## 1.1. which xxx-linux
+> 建議可以先使用 crosstool-ng，除非無法解決問題，才執行下面的程序。
 
-#### A. aarch64-linux
+## 2.1. ARCH
+
+#### A. aarch64-linux-XXX
 
 ```bash
 export PJ_HOST=aarch64-linux
@@ -28,7 +104,7 @@ export PJ_ARCH=arm64
 export PJ_GCC_CONFIGURE_FLAGS=
 ```
 
-#### B. i386-linux
+#### B. i486-linux-4.14.14-XXX
 
 ```bash
 export PJ_HOST=i486-linux
@@ -36,9 +112,25 @@ export PJ_ARCH=i386
 export PJ_GCC_CONFIGURE_FLAGS=--disable-libmpx
 ```
 
-## 1.2. Generate toolchain
+## 2.2. Compiling Packages
 
-### 1.2.0. Download
+#### A. linux-4.14.14, gcc-7.2.0, glibc-2.26
+
+```bash
+export PJ_GCC_VERSION_FULL=7.2.0
+export PJ_GCC_VERSION=gcc-$PJ_GCC_VERSION_FULL
+export PJ_GLIBC_VERSION_FULL=2.26
+export PJ_GLIBC_VERSION=glibc-$PJ_GLIBC_VERSION_FULL
+export PJ_BINUTILS_VERSION=binutils-2.29.1
+export PJ_LINUX_KERNEL_VERSION_MAJOR=4.x
+export PJ_LINUX_KERNEL_VERSION_FULL=4.14.14
+export PJ_LINUX_KERNEL_VERSION=linux-$PJ_LINUX_KERNEL_VERSION_FULL
+
+export PJ_TOOLCHAIN_PREFIX="$PJ_TOOLCHAIN_SDK/$PJ_HOST-$PJ_LINUX_KERNEL_VERSION_FULL-$PJ_GCC_VERSION_FULL-$PJ_GLIBC_VERSION_FULL"
+
+```
+
+#### B. Download packages
 
 ```bash
 export PJ_TOOLCHAIN_SDK=`pwd`
@@ -56,25 +148,7 @@ rm -rf $PJ_TOOLCHAIN_SDK/sources; mkdir -p $PJ_TOOLCHAIN_SDK/sources
 for f in *.tar*; do tar xvf $f -C $PJ_TOOLCHAIN_SDK/sources/; done
 ```
 
-### 1.2.1. Step by Step
-
-#### A. gcc-7.2.0, glibc-2.26, linux-4.14.14
-
-```bash
-export PJ_GCC_VERSION_FULL=7.2.0
-export PJ_GCC_VERSION=gcc-$PJ_GCC_VERSION_FULL
-export PJ_GLIBC_VERSION_FULL=2.26
-export PJ_GLIBC_VERSION=glibc-$PJ_GLIBC_VERSION_FULL
-export PJ_BINUTILS_VERSION=binutils-2.29.1
-export PJ_LINUX_KERNEL_VERSION_MAJOR=4.x
-export PJ_LINUX_KERNEL_VERSION_FULL=4.14.14
-export PJ_LINUX_KERNEL_VERSION=linux-$PJ_LINUX_KERNEL_VERSION_FULL
-
-export PJ_TOOLCHAIN_PREFIX="$PJ_TOOLCHAIN_SDK/$PJ_HOST-$PJ_LINUX_KERNEL_VERSION_FULL-$PJ_GCC_VERSION_FULL-$PJ_GLIBC_VERSION_FULL"
-
-```
-
-#### B. Build
+#### B. Building a toolchain step by step
 
 ```bash
 export PJ_TOOLCHAIN_SDK=`pwd`
@@ -139,103 +213,109 @@ colormake install
 find
 ```
 
-## 1.3. xxx-linux-xxx
+## 2.3. Check xxx-linux-xxx
 
-#### A. aarch64-linux
+#### A. aarch64-linux-4.14.14-7.2.0-2.26
 
-```bash
-$ ll $PJ_TOOLCHAIN_PATH
-total 151592
-drwxrwxr-x 2 lanka lanka     4096  一  16 10:58 ./
-drwxrwxr-x 8 lanka lanka     4096  一  16 10:28 ../
--rwxr-xr-x 1 lanka lanka  6797144  一  16 10:09 aarch64-linux-addr2line*
--rwxr-xr-x 2 lanka lanka  7052544  一  16 10:09 aarch64-linux-ar*
--rwxr-xr-x 2 lanka lanka 10477104  一  16 10:09 aarch64-linux-as*
--rwxr-xr-x 2 lanka lanka  5488488  一  16 10:58 aarch64-linux-c++*
--rwxr-xr-x 1 lanka lanka  6742824  一  16 10:09 aarch64-linux-c++filt*
--rwxr-xr-x 1 lanka lanka  5485984  一  16 10:58 aarch64-linux-cpp*
--rwxr-xr-x 1 lanka lanka   270568  一  16 10:09 aarch64-linux-elfedit*
--rwxr-xr-x 2 lanka lanka  5488488  一  16 10:58 aarch64-linux-g++*
--rwxr-xr-x 2 lanka lanka  5482184  一  16 10:58 aarch64-linux-gcc*
--rwxr-xr-x 2 lanka lanka  5482184  一  16 10:58 aarch64-linux-gcc-7.2.0*
--rwxr-xr-x 1 lanka lanka   188400  一  16 10:58 aarch64-linux-gcc-ar*
--rwxr-xr-x 1 lanka lanka   188320  一  16 10:58 aarch64-linux-gcc-nm*
--rwxr-xr-x 1 lanka lanka   188336  一  16 10:58 aarch64-linux-gcc-ranlib*
--rwxr-xr-x 1 lanka lanka  4048624  一  16 10:58 aarch64-linux-gcov*
--rwxr-xr-x 1 lanka lanka  3393552  一  16 10:58 aarch64-linux-gcov-dump*
--rwxr-xr-x 1 lanka lanka  3641176  一  16 10:58 aarch64-linux-gcov-tool*
--rwxr-xr-x 1 lanka lanka  7565104  一  16 10:09 aarch64-linux-gprof*
--rwxr-xr-x 4 lanka lanka 10332216  一  16 10:09 aarch64-linux-ld*
--rwxr-xr-x 4 lanka lanka 10332216  一  16 10:09 aarch64-linux-ld.bfd*
--rwxr-xr-x 2 lanka lanka  6849600  一  16 10:09 aarch64-linux-nm*
--rwxr-xr-x 2 lanka lanka  8102632  一  16 10:09 aarch64-linux-objcopy*
--rwxr-xr-x 2 lanka lanka 10502224  一  16 10:09 aarch64-linux-objdump*
--rwxr-xr-x 2 lanka lanka  7052576  一  16 10:09 aarch64-linux-ranlib*
--rwxr-xr-x 2 lanka lanka  2348800  一  16 10:09 aarch64-linux-readelf*
--rwxr-xr-x 1 lanka lanka  6785040  一  16 10:09 aarch64-linux-size*
--rwxr-xr-x 1 lanka lanka  6786016  一  16 10:09 aarch64-linux-strings*
--rwxr-xr-x 2 lanka lanka  8102632  一  16 10:09 aarch64-linux-strip*
-```
-
-##### A.1. ld-linux-aarch64.so.1
-
-```bash
-$ cd $PJ_TOOLCHAIN_PREFIX
-$ find-name ld-*.so*
-aarch64-linux/lib/ld-linux-aarch64.so.1
-aarch64-linux/lib/ld-2.26.so
-$ ll aarch64-linux/lib/ld-linux-aarch64.so.1
-lrwxrwxrwx 1 lanka lanka 10  一  16 10:54 aarch64-linux/lib/ld-linux-aarch64.so.1 -> ld-2.26.so*
-```
-
-#### B. i386-linux
+##### A.1. aarch64-linux-4.14.14-7.2.0-2.26/bin
 
 ```bash
 $ ll $PJ_TOOLCHAIN_PATH
-total 158724
-drwxrwxr-x 2 lanka lanka     4096  一  16 14:18 ./
-drwxrwxr-x 8 lanka lanka     4096  一  16 13:52 ../
--rwxr-xr-x 1 lanka lanka  7508736  一  16 13:39 i486-linux-addr2line*
--rwxr-xr-x 2 lanka lanka  7760064  一  16 13:39 i486-linux-ar*
--rwxr-xr-x 2 lanka lanka 10885000  一  16 13:39 i486-linux-as*
--rwxr-xr-x 2 lanka lanka  5406944  一  16 14:18 i486-linux-c++*
--rwxr-xr-x 1 lanka lanka  7458528  一  16 13:39 i486-linux-c++filt*
--rwxr-xr-x 1 lanka lanka  5404432  一  16 14:18 i486-linux-cpp*
--rwxr-xr-x 1 lanka lanka   270568  一  16 13:39 i486-linux-elfedit*
--rwxr-xr-x 2 lanka lanka  5406944  一  16 14:18 i486-linux-g++*
--rwxr-xr-x 2 lanka lanka  5400640  一  16 14:18 i486-linux-gcc*
--rwxr-xr-x 2 lanka lanka  5400640  一  16 14:18 i486-linux-gcc-7.2.0*
--rwxr-xr-x 1 lanka lanka   188400  一  16 14:18 i486-linux-gcc-ar*
--rwxr-xr-x 1 lanka lanka   188320  一  16 14:18 i486-linux-gcc-nm*
--rwxr-xr-x 1 lanka lanka   188336  一  16 14:18 i486-linux-gcc-ranlib*
--rwxr-xr-x 1 lanka lanka  4058792  一  16 14:18 i486-linux-gcov*
--rwxr-xr-x 1 lanka lanka  3403736  一  16 14:18 i486-linux-gcov-dump*
--rwxr-xr-x 1 lanka lanka  3659104  一  16 14:18 i486-linux-gcov-tool*
--rwxr-xr-x 1 lanka lanka  8272528  一  16 13:39 i486-linux-gprof*
--rwxr-xr-x 4 lanka lanka 10226048  一  16 13:39 i486-linux-ld*
--rwxr-xr-x 4 lanka lanka 10226048  一  16 13:39 i486-linux-ld.bfd*
--rwxr-xr-x 2 lanka lanka  7565288  一  16 13:39 i486-linux-nm*
--rwxr-xr-x 2 lanka lanka  8775280  一  16 13:39 i486-linux-objcopy*
--rwxr-xr-x 2 lanka lanka 10945736  一  16 13:39 i486-linux-objdump*
--rwxr-xr-x 2 lanka lanka  7760096  一  16 13:39 i486-linux-ranlib*
--rwxr-xr-x 2 lanka lanka  2348800  一  16 13:39 i486-linux-readelf*
--rwxr-xr-x 1 lanka lanka  7496648  一  16 13:39 i486-linux-size*
--rwxr-xr-x 1 lanka lanka  7493528  一  16 13:39 i486-linux-strings*
--rwxr-xr-x 2 lanka lanka  8775280  一  16 13:39 i486-linux-strip*
+$ ll aarch64-linux-4.14.14-7.2.0-2.26/bin
+total 151852
+drwxrwxr-x 2 lanka lanka     4096  一  17 12:52 ./
+drwxrwxr-x 8 lanka lanka     4096  一  17 11:30 ../
+-rwxr-xr-x 1 lanka lanka  6810152  一  17 12:43 aarch64-linux-addr2line*
+-rwxr-xr-x 2 lanka lanka  7062048  一  17 12:43 aarch64-linux-ar*
+-rwxr-xr-x 2 lanka lanka 10493584  一  17 12:43 aarch64-linux-as*
+-rwxr-xr-x 2 lanka lanka  5497472  一  17 12:52 aarch64-linux-c++*
+-rwxr-xr-x 1 lanka lanka  6755664  一  17 12:43 aarch64-linux-c++filt*
+-rwxr-xr-x 1 lanka lanka  5494968  一  17 12:52 aarch64-linux-cpp*
+-rwxr-xr-x 1 lanka lanka   271544  一  17 12:43 aarch64-linux-elfedit*
+-rwxr-xr-x 2 lanka lanka  5497472  一  17 12:52 aarch64-linux-g++*
+-rwxr-xr-x 2 lanka lanka  5491168  一  17 12:52 aarch64-linux-gcc*
+-rwxr-xr-x 2 lanka lanka  5491168  一  17 12:52 aarch64-linux-gcc-7.2.0*
+-rwxr-xr-x 1 lanka lanka   189912  一  17 12:52 aarch64-linux-gcc-ar*
+-rwxr-xr-x 1 lanka lanka   189800  一  17 12:52 aarch64-linux-gcc-nm*
+-rwxr-xr-x 1 lanka lanka   189816  一  17 12:52 aarch64-linux-gcc-ranlib*
+-rwxr-xr-x 1 lanka lanka  4055144  一  17 12:52 aarch64-linux-gcov*
+-rwxr-xr-x 1 lanka lanka  3399680  一  17 12:52 aarch64-linux-gcov-dump*
+-rwxr-xr-x 1 lanka lanka  3652112  一  17 12:52 aarch64-linux-gcov-tool*
+-rwxr-xr-x 1 lanka lanka  7575792  一  17 12:43 aarch64-linux-gprof*
+-rwxr-xr-x 4 lanka lanka 10352648  一  17 12:43 aarch64-linux-ld*
+-rwxr-xr-x 4 lanka lanka 10352648  一  17 12:43 aarch64-linux-ld.bfd*
+-rwxr-xr-x 2 lanka lanka  6862632  一  17 12:43 aarch64-linux-nm*
+-rwxr-xr-x 2 lanka lanka  8112896  一  17 12:43 aarch64-linux-objcopy*
+-rwxr-xr-x 2 lanka lanka 10517816  一  17 12:43 aarch64-linux-objdump*
+-rwxr-xr-x 2 lanka lanka  7062080  一  17 12:43 aarch64-linux-ranlib*
+-rwxr-xr-x 2 lanka lanka  2350480  一  17 12:43 aarch64-linux-readelf*
+-rwxr-xr-x 1 lanka lanka  6797976  一  17 12:43 aarch64-linux-size*
+-rwxr-xr-x 1 lanka lanka  6794856  一  17 12:43 aarch64-linux-strings*
+-rwxr-xr-x 2 lanka lanka  8112888  一  17 12:43 aarch64-linux-strip*
 ```
 
-##### B.1. ld-linux.so.2
+##### A.2. ld-linux-aarch64.so.1
 
 ```bash
-$ cd $PJ_TOOLCHAIN_PREFIX
 $ find-name ld-*.so*
-aarch64-linux/lib/ld-linux-aarch64.so.1
-aarch64-linux/lib/ld-2.26.so
-$ ll i486-linux/lib/ld-linux.so.2
-lrwxrwxrwx 1 lanka lanka 10  一  16 14:01 i486-linux/lib/ld-linux.so.2 -> ld-2.26.so*
+aarch64-linux-4.14.14-7.2.0-2.26/aarch64-linux/lib/ld-linux-aarch64.so.1
+aarch64-linux-4.14.14-7.2.0-2.26/aarch64-linux/lib/ld-2.26.so
+
+$ ll aarch64-linux-4.14.14-7.2.0-2.26/aarch64-linux/lib/ld-linux-aarch64.so.1
+lrwxrwxrwx 1 lanka lanka 10  一  17 12:51 aarch64-linux-4.14.14-7.2.0-2.26/aarch64-linux/lib/ld-linux-aarch64.so.1 -> ld-2.26.so*
 ```
 
-## 1.4. Hello World
+#### B. i486-linux-4.14.14-7.2.0-2.26
+
+##### B.1. i486-linux-4.14.14-7.2.0-2.26/bin
+
+```bash
+$ ll $PJ_TOOLCHAIN_PATH
+$ ll i486-linux-4.14.14-7.2.0-2.26/bin
+total 158992
+drwxrwxr-x 2 lanka lanka     4096  一  17 13:23 ./
+drwxrwxr-x 8 lanka lanka     4096  一  17 13:20 ../
+-rwxr-xr-x 1 lanka lanka  7518760  一  17 13:17 i486-linux-addr2line*
+-rwxr-xr-x 2 lanka lanka  7774784  一  17 13:17 i486-linux-ar*
+-rwxr-xr-x 2 lanka lanka 10906336  一  17 13:17 i486-linux-as*
+-rwxr-xr-x 2 lanka lanka  5415848  一  17 13:23 i486-linux-c++*
+-rwxr-xr-x 1 lanka lanka  7468392  一  17 13:17 i486-linux-c++filt*
+-rwxr-xr-x 1 lanka lanka  5413344  一  17 13:23 i486-linux-cpp*
+-rwxr-xr-x 1 lanka lanka   271544  一  17 13:17 i486-linux-elfedit*
+-rwxr-xr-x 2 lanka lanka  5415848  一  17 13:23 i486-linux-g++*
+-rwxr-xr-x 2 lanka lanka  5409552  一  17 13:23 i486-linux-gcc*
+-rwxr-xr-x 2 lanka lanka  5409552  一  17 13:23 i486-linux-gcc-7.2.0*
+-rwxr-xr-x 1 lanka lanka   189912  一  17 13:23 i486-linux-gcc-ar*
+-rwxr-xr-x 1 lanka lanka   189800  一  17 13:23 i486-linux-gcc-nm*
+-rwxr-xr-x 1 lanka lanka   189816  一  17 13:23 i486-linux-gcc-ranlib*
+-rwxr-xr-x 1 lanka lanka  4065304  一  17 13:23 i486-linux-gcov*
+-rwxr-xr-x 1 lanka lanka  3409856  一  17 13:23 i486-linux-gcov-dump*
+-rwxr-xr-x 1 lanka lanka  3670040  一  17 13:23 i486-linux-gcov-tool*
+-rwxr-xr-x 1 lanka lanka  8284336  一  17 13:17 i486-linux-gprof*
+-rwxr-xr-x 4 lanka lanka 10246880  一  17 13:17 i486-linux-ld*
+-rwxr-xr-x 4 lanka lanka 10246880  一  17 13:17 i486-linux-ld.bfd*
+-rwxr-xr-x 2 lanka lanka  7575352  一  17 13:17 i486-linux-nm*
+-rwxr-xr-x 2 lanka lanka  8786528  一  17 13:17 i486-linux-objcopy*
+-rwxr-xr-x 2 lanka lanka 10957424  一  17 13:17 i486-linux-objdump*
+-rwxr-xr-x 2 lanka lanka  7774816  一  17 13:17 i486-linux-ranlib*
+-rwxr-xr-x 2 lanka lanka  2350480  一  17 13:17 i486-linux-readelf*
+-rwxr-xr-x 1 lanka lanka  7506608  一  17 13:17 i486-linux-size*
+-rwxr-xr-x 1 lanka lanka  7503496  一  17 13:17 i486-linux-strings*
+-rwxr-xr-x 2 lanka lanka  8786528  一  17 13:17 i486-linux-strip*
+```
+
+##### B.2. ld-linux.so.2
+
+```bash
+$ find-name ld-*.so*
+i486-linux-4.14.14-7.2.0-2.26/i486-linux/lib/ld-2.26.so
+i486-linux-4.14.14-7.2.0-2.26/i486-linux/lib/ld-linux.so.2
+
+$ ll i486-linux-4.14.14-7.2.0-2.26/i486-linux/lib/ld-2.26.so
+-rwxr-xr-x 1 lanka lanka 1192912  一  17 13:22 i486-linux-4.14.14-7.2.0-2.26/i486-linux/lib/ld-2.26.so*
+```
+
+## 2.4. Hello World
 
 ```bash
 $ cd /tmp
@@ -252,7 +332,7 @@ int main(int argc, char *argv[])
 $ $PJ_HOST-gcc helloworld.c -o helloworld
 ```
 
-#### A. aarch64-linux
+#### A. aarch64-linux-4.14.14-7.2.0-2.26
 
 ```bash
 $ file helloworld
@@ -271,7 +351,7 @@ $ $PJ_HOST-readelf -hl helloworld
 $ $PJ_HOST-readelf -d $PJ_TOOLCHAIN_PREFIX/$PJ_HOST/lib64/libgcc_s.so
 ```
 
-#### B. i386-linux
+#### B. i486-linux-4.14.14-7.2.0-2.26
 
 ```bash
 $ file helloworld
@@ -284,13 +364,13 @@ $ ./helloworld
 Hello world !!!
 ```
 
-# 2. crosstoolX
+# 3. crosstoolX
 
-> 這邊簡化成使用 makefile，如有不同選擇，請參考 confs/aarch64-linux-4.14.14.sh 進行修改
+> 這邊簡化成使用 makefile。如有不同設定，請參考 confs/aarch64-linux-4.14.14.sh 進行修改
 
-#### A. aarch64-linux
+#### A. aarch64-linux-4.14.14-7.2.0-2.26
 
->gcc-7.2.0, glibc-2.26, linux-4.14.14
+>linux-4.14.14, gcc-7.2.0, glibc-2.26
 
 ```bash
 $ cd crosstoolX
@@ -300,9 +380,9 @@ $ ll $PJ_TOOLCHAIN_PREFIX
 $ ll $PJ_TOOLCHAIN_PATH
 ```
 
-#### B. i386-linux
+#### B. i486-linux-4.14.14-7.2.0-2.26
 
-> gcc-7.2.0, glibc-2.26, linux-4.14.14
+> linux-4.14.14, gcc-7.2.0, glibc-2.26
 
 ```bash
 $ cd crosstoolX
@@ -311,6 +391,26 @@ $ make
 $ ll $PJ_TOOLCHAIN_PREFIX
 $ ll $PJ_TOOLCHAIN_PATH
 ```
+
+#### C. i486-linux-2.6.38.8-7.2.0-2.26
+
+>linux-2.6.38.8, gcc-7.2.0, glibc-2.26
+>
+>glibc-2.26 最低要求 linux-3.2，這邊需要打 patch 才能編譯完成。沒有實際在專案中使用，所以效果未知。
+
+```bash
+$ cd crosstoolX
+$ . confs/i486-linux-2.6.38.8.sh
+$ make
+$ ll $PJ_TOOLCHAIN_PREFIX
+$ ll $PJ_TOOLCHAIN_PATH
+```
+
+#### ~~D. i486-linux-2.6.24-7.2.0-2.26~~
+
+> linux-2.6.24, gcc-7.2.0, glibc-2.26
+>
+> 此組合是失敗的。請先試試 2.6.30 以上的版本。
 
 # Appendix
 
@@ -322,22 +422,49 @@ $ ll $PJ_TOOLCHAIN_PATH
 
 ## II.1. gcc-7.2.0/libmpx/mpxrt/mpxrt-utils.c:72:23: error: ‘PATH_MAX’ undeclared here (not in a func8_MAX’?
 
+> linux-4.14.14, gcc-7.2.0, glibc-2.26
+
 ```bash
 export PJ_GCC_CONFIGURE_FLAGS=--disable-libmpx
 ```
 
-## II.2. scripts/unifdef.c:209:25: error: conflicting types for ‘getline’
+## II.2. glibc-2.26, checking installed Linux kernel header files... missing or too old!
+
+>linux-2.6.38.8, gcc-7.2.0, glibc-2.26
 
 ```bash
-$ vi scripts/unifdef.c
+$ vi glibc-2.26/sysdeps/unix/sysv/linux/configure
+...
+#if !defined LINUX_VERSION_CODE || LINUX_VERSION_CODE <  (2 *65536+ 6 *256+ 0) /* 3.2.0 */
+...
+test -n "$arch_minimum_kernel" || arch_minimum_kernel=2.6.0
+```
+
+## II.3. linux-2.6.24, scripts/unifdef.c:209:25: error: conflicting types for ‘getline’
+
+> linux-2.6.24, gcc-7.2.0, glibc-2.26
+
+```bash
+$ vi linux-2.6.24/scripts/unifdef.c
 // change getline -> get_line
 ```
 
-## II.3. glibc-2.31, *** These critical programs are missing or too old: compiler
+## II.4. glibc-2.26, error: ‘__NR_sendmmsg’ undeclared (first use in this function); did you mean ‘__sendmmsg’?
 
-> glibc: glibc-2.31
->
-> gcc: gcc-5.5.0
+> linux-2.6.38.8, gcc-7.2.0, glibc-2.26
+
+```bash
+$ vi glibc-2.26/sysdeps/unix/sysv/linux/kernel-features.h
+//#define __ASSUME_SENDMMSG 1
+
+# or
+
+$ vi linux-2.6.38.8/arch/x86/include/asm/unistd_32.h
+#add
+#define __NR_sendmmsg 345
+
+#define NR_syscalls 346
+```
 
 # III. Glossary
 

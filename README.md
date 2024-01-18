@@ -440,7 +440,7 @@ crossbuild-essential-s390x
 
 ##### C.1. [helper_crosstoolX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstoolX) - crosstoolX helper
 
-> 簡化後的 SDK
+> 簡化後的 toolchain 產生工具
 
 ## 4.3. Get from XXX
 
