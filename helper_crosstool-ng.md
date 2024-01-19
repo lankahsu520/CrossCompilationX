@@ -192,9 +192,9 @@ $ ct-ng build
 >
 >Target: x86_64
 
-> [PI3.log](https://github.com/lankahsu520/CrossCompilationX/blob/master/crosstool-ng/PI3.log)
+> [PI3-x86_64-unknown-linux-gnu.log](https://github.com/lankahsu520/CrossCompilationX/blob/master/crosstool-ng/PI3-x86_64-unknown-linux-gnu.log)
 >
-> [PI4.log](https://github.com/lankahsu520/CrossCompilationX/blob/master/crosstool-ng/PI4.log)
+> [PI4-x86_64-unknown-linux-gnu.log](https://github.com/lankahsu520/CrossCompilationX/blob/master/crosstool-ng/PI4-x86_64-unknown-linux-gnu.log)
 
 ##### E.2. Continue
 
