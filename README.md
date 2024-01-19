@@ -272,7 +272,7 @@ flowchart LR
 	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerUbuntuPI[Docker - Raspberry Pi]
-			helloworld_run_ubuntu_pi_docker[??? 因為測試時，還沒有 Pi 的 Docker]
+			helloworld_run_ubuntu_pi_docker["??? 因為測試時，還沒有 Pi 的 Docker"]
 		end
 	end
 
@@ -479,7 +479,7 @@ ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, inte
 ```mermaid
 flowchart TB
 	subgraph Toolchain[Toolchain]
-		compiler[??? compiler]
+		compiler[XXX compiler]
 		sysroot
 	end
 ```
@@ -521,7 +521,7 @@ flowchart LR
 
 # 6. file - determine file type
 
-> [ChatGPT]
+> [ChatGPT] 如果針對執行檔，得到的結果是 ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 3.14.0, BuildID[xxHash]=ebddec09ace4f611, with debug_info, not stripped 又是什麼意思
 >
 > 這個輸出表明你有一個 ELF 格式的二進制文件，這是一種在類 Unix 操作系統中常見的可執行文件格式。下面是輸出中的一些信息的解釋：
 >
