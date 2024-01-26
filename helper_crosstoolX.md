@@ -479,14 +479,15 @@ $ vi linux-2.6.38.8/arch/x86/include/asm/unistd_32.h
 #define NR_syscalls 346
 ```
 
-## II.5.
+## II.5. error: #error "Assumed value of MB_LEN_MAX wrong"
+
+> 當編譯其它 opensource 時
 
 ```bash
-crosstoolX/libs/gcc-7.2.0$ cat gcc/limitx.h gcc/glimits.h gcc/limity.h > /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/lib/gcc/i486-linux-gnu/7.2.0/include-fixed/limits.h
+$ mv /work/codebase/toolchainSDK/crosstoolX_123/i486-linux-gnu-2.6.38.8-7.2.0-2.26/lib/gcc/i486-linux-gnu/7.2.0/include-fixed/limits.h /work/codebase/toolchainSDK/crosstoolX_123/i486-linux-gnu-2.6.38.8-7.2.0-2.26/lib/gcc/i486-linux-gnu/7.2.0/include-fixed/limits-bak.h
 
+/work/codebase/toolchainSDK/crosstoolX_123/libs/gcc-7.2.0$ cat gcc/limitx.h gcc/glimits.h gcc/limity.h > /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/lib/gcc/i486-linux-gnu/7.2.0/include-fixed/limits.h
 ```
-
-
 
 # III. Glossary
 
