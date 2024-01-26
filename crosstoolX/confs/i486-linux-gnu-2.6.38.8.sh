@@ -14,10 +14,10 @@ fi
 export PJ_SH_SED="sed $PJ_SH_SED_OPTION"
 
 #******************************************************************************
-#** i486-linux-2.6.24 **
+#** i486-linux-gnu-2.6.24 **
 #******************************************************************************
 export PJ_TARGET=i386
-export PJ_HOST=i486-linux
+export PJ_HOST=i486-linux-gnu
 export PJ_CROSS=${PJ_HOST}-
 export PJ_ARCH=$PJ_TARGET
 export PJ_GCC_CONFIGURE_FLAGS=--disable-libmpx

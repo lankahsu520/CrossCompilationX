@@ -12,8 +12,11 @@ clean:
 distclean: clean
 	@rm -rf $(PJ_CROSSTOOLX_SDK)/build_xxx $(PJ_CROSSTOOLX_SDK)/libs
 
-.all: .010-gcc-3rd
+.all: .010-gcc-4rd
 
+.010-gcc-4rd: .010-gcc-3rd
+	cat $(PJ_CROSSTOOLX_SDK)/libs/$(PJ_GCC_VERSION)/gcc/limitx.h $(PJ_CROSSTOOLX_SDK)/libs/$(PJ_GCC_VERSION)/gcc/glimits.h $(PJ_CROSSTOOLX_SDK)/libs/$(PJ_GCC_VERSION)/gcc/limity.h > $(PJ_TOOLCHAIN_PREFIX)/lib/gcc/$(PJ_HOST)/$(PJ_GCC_VERSION_FULL)/include-fixed/limits.h
+	touch $@
 
 .010-gcc-3rd: .009-glibc-2nd
 	@echo '=>> $@'

@@ -407,6 +407,16 @@ $ . confs/i486-linux-2.6.38.8.sh
 $ make
 $ ll $PJ_TOOLCHAIN_PREFIX
 $ ll $PJ_TOOLCHAIN_PATH
+$ tree -L 1 /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/
+/opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/
+├── bin
+├── i486-linux-gnu
+├── include
+├── lib
+├── libexec
+└── share
+
+6 directories, 0 files
 ```
 
 #### ~~D. i486-linux-2.6.24-7.2.0-2.26~~
@@ -468,6 +478,15 @@ $ vi linux-2.6.38.8/arch/x86/include/asm/unistd_32.h
 
 #define NR_syscalls 346
 ```
+
+## II.5.
+
+```bash
+crosstoolX/libs/gcc-7.2.0$ cat gcc/limitx.h gcc/glimits.h gcc/limity.h > /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/lib/gcc/i486-linux-gnu/7.2.0/include-fixed/limits.h
+
+```
+
+
 
 # III. Glossary
 
