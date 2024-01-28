@@ -431,6 +431,8 @@ $ tree -L 1 /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/
 
 ## I.1. [建立 gnu tool chain](http://yi-jyun.blogspot.com/2018/01/tool-chain.html)
 
+## I.2. [How to Build a GCC Cross-Compiler](https://preshing.com/20141119/how-to-build-a-gcc-cross-compiler/)
+
 # II. Debug
 
 ## II.1. gcc-7.2.0/libmpx/mpxrt/mpxrt-utils.c:72:23: error: ‘PATH_MAX’ undeclared here (not in a func8_MAX’?
@@ -488,6 +490,16 @@ $ mv /work/codebase/toolchainSDK/crosstoolX_123/i486-linux-gnu-2.6.38.8-7.2.0-2.
 
 /work/codebase/toolchainSDK/crosstoolX_123/libs/gcc-7.2.0$ cat gcc/limitx.h gcc/glimits.h gcc/limity.h > /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/lib/gcc/i486-linux-gnu/7.2.0/include-fixed/limits.h
 ```
+
+## II.6. eglibc-2.9, *** These critical programs are missing or too old: make
+
+```bash
+$ vi configure
+#    3.79* | 3.[89]*)
+    3.79* | 3.[89]* | 4.[1-9]*)
+```
+
+
 
 # III. Glossary
 
