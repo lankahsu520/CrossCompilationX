@@ -30,13 +30,13 @@ $ sudo apt install -y sed make binutils gcc g++ bash patch gzip bzip2 perl tar c
 
 ```
 
-# 2. Build with OpenWrt
+# 3. Build with OpenWrt
 
 > Host: Ubuntu 20.04 x86_64
 >
 > Target: Raspberry Pi3
 
-## 2.1. To build Image
+## 3.1. To build Image
 
 #### A. Git clone [openwrt](https://github.com/openwrt/openwrt.git)
 
@@ -115,7 +115,7 @@ $ make menuconfig
 $ make
 ```
 
-## 2.2. To Generate Toolchain
+## 3.2. To Generate Toolchain
 
 > make 後，可在 staging_dir/ 得到 Toolchain
 
@@ -138,10 +138,9 @@ lrwxrwxrwx 1 lanka lanka      30  一  29 23:01 aarch64-openwrt-linux-gcc -> aar
 
 ```
 
-# 3. Burn Your Image into SD CARD
+# 4. Burn Your Image into SD CARD
 
 >注意！網路上的教學中，都沒有提到要燒那個檔案；這些文章可能都是抄來的，沒有實際燒過！
->
 >
 
 ```mermaid
@@ -156,7 +155,7 @@ flowchart LR
 
 #### B. use [balenaEtcher-Portable-1.5.49](https://www.balena.io/etcher/)
 
-> 個人比較喜觀用 Etcher，執行時得使用系統管理者
+> 個人比較喜歡用 Etcher，執行時請使用系統管理者啟動
 >
 > 選擇 openwrt-bcm27xx-bcm2710-rpi-3-ext4-sysupgrade.img.gz
 
@@ -187,9 +186,7 @@ openwrt-bcm27xx-bcm2710-rpi-3-ext4-sysupgrade.img.gz  openwrt-bcm27xx-bcm2710-rp
 
 ```
 
-# 4. Raspberry PI
-
-## 4.1. Boot from SD Card
+# 5. Boot from SD Card
 
 ```bash
 $ udhcpc -i br-lan
@@ -232,7 +229,7 @@ lrwxrwxrwx    1 root     root             7 Jan 29 09:28 /bin/sh -> busybox
 
 ```
 
-# 5. Build helloworld on Host
+# 6. Build helloworld on Host
 
 ```bash
 $ cd openwrtX_pi3
@@ -261,11 +258,12 @@ $ LD_LIBRARY_PATH=$STAGING_DIR/lib qemu-aarch64 $STAGING_DIR/lib/ld-musl-aarch64
 Hello world !!!
 ```
 
-# 6. Run helloworld on Pi
+# 7. Run helloworld on Pi
 
 ```bash
 # Please scp helloworld from Ubuntu -> Pi 
 $ helloworld
+Hello world !!!
 ```
 
 # Appendix

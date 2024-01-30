@@ -69,7 +69,7 @@ $ cd /work/YoctoPI3
 $ cooker cook ./cooker-menu/pi3-sample-menu.json
 ```
 
-# 4. Customize
+## 3.3. Customize
 
 > yocto 版本相容性很低，或許目前的版本可以進行客製化；但是其它版本的語法可能就不同了，這個要小心！
 
@@ -80,13 +80,13 @@ $ cd /work/YoctoPI3
 $ cooker shell pi3
 ```
 
-## 4.1. rootfs
+### 3.3.1. rootfs
 
 ```bash
 $ ls -al ./builds/build-pi3/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-base/1.0-r0/rootfs/
 ```
 
-## 4.2. Set root's password
+### 3.3.2. Set root's password
 
 ```bash
 $ vi ./cooker-menu/pi3-sample-menu.json
@@ -111,7 +111,7 @@ $ cat ./builds/build-pi3/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-bas
 $ cat ./builds/build-pi3/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-base/1.0-r0/rootfs/etc/shadow
 ```
 
-## 4.3. ssh
+### 3.3.4. ssh
 
 ```bash
 $ vi ./cooker-menu/pi3-sample-menu.json
@@ -130,7 +130,7 @@ $ vi ./layers/poky/meta/recipes-core/dropbear/dropbear/dropbear.default
 # DROPBEAR_EXTRA_ARGS="-w"
 ```
 
-## 4.4. [create a layer](https://blog.csdn.net/CSDN1013/article/details/111088399)
+### 3.3.5. [create a layer](https://blog.csdn.net/CSDN1013/article/details/111088399)
 
 ```bash
 $ cd /work/YoctoPI3/layers
@@ -150,7 +150,7 @@ $ yocto-check-layer meta-lanka
 $ rm -rf build
 ```
 
-### 4.4.1. [meta-lanka](https://github.com/lankahsu520/HelperX/tree/master/Yocto/meta-lanka)
+#### A. [meta-lanka](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/meta-lanka)
 
 ```bash
 # check example exist
@@ -171,11 +171,11 @@ example                                               :0.1-r0
 # Then update meta-lanka/recipes-example/example/example_0.1.bb and add meta-lanka/recipes-example/example/files/* 
 ```
 
-### 4.4.2. Update [example_0.1.bb](https://github.com/lankahsu520/HelperX/tree/master/Yocto/meta-lanka/recipes-example/example/example_0.1.bb)
+#### B. Update [example_0.1.bb](https://github.com/lankahsu520/CrossCompilationX/blob/master/Yocto/meta-lanka/recipes-example/example/example_0.1.bb)
 
-### 4.4.3. Add files - [helloworld-123.c and Makefile](https://github.com/lankahsu520/HelperX/tree/master/Yocto/meta-lanka/recipes-example/example/files)
+#### C. Add files - [helloworld-123.c and Makefile](https://github.com/lankahsu520/HelperX/tree/master/Yocto/meta-lanka/recipes-example/example/files)
 
-### 4.4.4. Install into Image
+#### D. Install into Image
 
 ```bash
 $ vi ./cooker-menu/pi3-sample-menu.json
@@ -183,37 +183,11 @@ $ vi ./cooker-menu/pi3-sample-menu.json
 # ,"IMAGE_INSTALL:append = ' example'"
 ```
 
-# 5. Run on Raspberry PI
-
-## 5.1. Burn Image Tools
-
-#### A. [balenaEtcher](https://www.balena.io/etcher/)
-
-#### B. [win32diskimager](https://sourceforge.net/projects/win32diskimager/)
-
-#### C. [rpi-imager](https://github.com/raspberrypi/rpi-imager)
-
-## 5.2. Get Image at
-
-- 1
-  - 2
-  - 
-
-```bash
-$ ls -al ./builds/build-pi3/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3.rpi-sdimg
-```
-
-# 6. QEMU
-
-> 不建議使用 QEMU。因為在編譯時也是使用不同的軟體包，真實硬體也模擬不出來。
->
-> 如果只是要驗證自己寫的程式，直接使用 ubuntu 的 native compiler 產出執行檔，然後執行即可。
->
-> 你可以看看 [helper_Docker.md](https://github.com/lankahsu520/HelperX/blob/master/helper_Docker.md)也是有相同情況。
-
-# 7. [cookerX](https://github.com/lankahsu520/HelperX/tree/master/Yocto/cookerX)
+## 3.4. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/cookerX)
 
 > [cookerX](https://github.com/lankahsu520/HelperX/tree/master/Yocto/cookerX) is based on [Yocto Cooker](https://github.com/cpb-/yocto-cooker).  pi3-sample-menu.json 使用的版本過舊。
+>
+> 這個是將 cooker 再包裝一層。 
 >
 > | meta              | branch | rev        |
 > | ----------------- | ------ | ---------- |
@@ -269,6 +243,43 @@ $ ls -al builds/build-qemux86-64/tmp/deploy/images/qemux86-64/bzImage
 
 $ ls -al builds/build-qemux86-64/tmp/deploy/images/qemux86-64/core-image-base-qemux86-64-*.rootfs.ext4
 ```
+
+# 4. Burn Your Image into SD CARD
+
+#### A. [balenaEtcher](https://www.balena.io/etcher/)
+
+```bash
+$ ls -al ./builds/build-pi3/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3.rpi-sdimg
+```
+
+#### B. [win32diskimager](https://sourceforge.net/projects/win32diskimager/)
+
+#### C. [rpi-imager](https://github.com/raspberrypi/rpi-imager)
+
+# 5. Boot from SD Card
+
+```bash
+```
+
+# 6. Build helloworld on Host
+
+```bash
+
+```
+
+# 7. Run helloworld on Pi
+
+```bash
+
+```
+
+# 8. QEMU
+
+> 不建議使用 QEMU。因為在編譯時也是使用不同的軟體包，真實硬體也模擬不出來。
+>
+> 如果只是要驗證自己寫的程式，直接使用 ubuntu 的 native compiler 產出執行檔，然後執行即可。
+>
+> 你可以看看 [helper_Docker.md](https://github.com/lankahsu520/HelperX/blob/master/helper_Docker.md)也是有相同情況。
 
 
 # Appendix
@@ -347,8 +358,8 @@ Ok:
 
 # Author
 
-Created and designed by [Lanka Hsu](lankahsu@gmail.com).
+> Created and designed by [Lanka Hsu](lankahsu@gmail.com).
 
 # License
 
-[HelperX](https://github.com/lankahsu520/HelperX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
+> [HelperX](https://github.com/lankahsu520/HelperX) is available under the BSD-3-Clause license. See the LICENSE file for more info.

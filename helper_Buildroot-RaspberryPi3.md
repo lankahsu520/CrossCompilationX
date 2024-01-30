@@ -30,13 +30,13 @@ $ sudo apt install -y sed make binutils gcc g++ bash patch gzip bzip2 perl tar c
 
 ```
 
-# 2. Build with Buildroot
+# 3. Build with Buildroot
 
 > Host: Ubuntu 20.04 x86_64
 >
 > Target: Raspberry Pi3
 
-## 2.1. To build Image
+## 3.1. To build Image
 
 #### A. Download [buildroot-2022.02.tar.gz](https://buildroot.org/downloads/buildroot-2022.02.tar.gz)
 
@@ -95,7 +95,7 @@ $ make menuconfig
 $ make all
 ```
 
-## 2.2. To Generate Toolchain
+## 3.2. To Generate Toolchain
 
 ```bash
 $ make sdk
@@ -134,7 +134,7 @@ $ /opt/aarch64-buildroot-linux-gnu_sdk-buildroot/bin/aarch64-buildroot-linux-gnu
 $ export PJ_SYSROOT=/opt/aarch64-buildroot-linux-gnu_sdk-buildroot/aarch64-buildroot-linux-gnu/sysroot
 ```
 
-# 3. Burn Your Image into SD CARD
+# 4. Burn Your Image into SD CARD
 
 ```mermaid
 flowchart LR
@@ -160,9 +160,9 @@ $ sudo dd if=output/images/sdcard.img of=/dev/sdb bs=1M
 
 #### B. use [balenaEtcher-Portable-1.5.49](https://www.balena.io/etcher/)
 
-# 4. Raspberry PI
+>個人比較喜歡用 Etcher，執行時請使用系統管理者啟動
 
-## 4.1. Boot from SD Card
+# 5. Boot from SD Card
 
 ```bash
 $ uname -a
@@ -185,7 +185,7 @@ $ ls -al /bin/sh
 lrwxrwxrwx    1 root     root             7 Apr  6  2022 /bin/sh -> busybox
 ```
 
-# 5. Build hellowForld on Host
+# 6. Build hellowForld on Host
 
 ```bash
 $ export PATH=/opt/aarch64-buildroot-linux-gnu_sdk-buildroot/bin:$PATH
@@ -221,11 +221,12 @@ $ LD_LIBRARY_PATH=$PJ_SYSROOT/lib qemu-aarch64 $PJ_SYSROOT/lib/ld-linux-aarch64.
 Hello world !!!
 ```
 
-# 6. Run helloworld on Pi
+# 7. Run helloworld on Pi
 
 ```bash
 # Please scp helloworld from Ubuntu -> Pi 
 $ helloworld
+Hello world !!!
 ```
 
 # Appendix

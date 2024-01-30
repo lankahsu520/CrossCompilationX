@@ -34,18 +34,17 @@
 
 ## 1.4. Source Tree
 
-#### [meta-freescale](https://git.yoctoproject.org/meta-freescale/)
-
-#### [meta-freescale-distro](https://github.com/Freescale/meta-freescale-distro)
-
-
-#### [meta-imx](https://source.codeaurora.org/external/imx/meta-imx/)
-
-#### [meta-openembedded](http://cgit.openembedded.org/meta-openembedded/tree/meta-oe?h=master)
-
-#### [meta-rauc](https://github.com/rauc/meta-rauc)
-
-#### [poky](https://git.yoctoproject.org/poky/)
+> [meta-freescale](https://git.yoctoproject.org/meta-freescale/)
+>
+> [meta-freescale-distro](https://github.com/Freescale/meta-freescale-distro)
+>
+> [meta-imx](https://source.codeaurora.org/external/imx/meta-imx/)
+>
+> [meta-openembedded](http://cgit.openembedded.org/meta-openembedded/tree/meta-oe?h=master)
+>
+> [meta-rauc](https://github.com/rauc/meta-rauc)
+>
+> [poky](https://git.yoctoproject.org/poky/)
 
 ### 1.4.1. [Yocto計劃](https://zh.m.wikipedia.org/zh-tw/Yocto計劃)
 
@@ -95,7 +94,7 @@ SDK_VERSION = "${@d.getVar('DISTRO_VERSION').replace('snapshot-${METADATA_REVISI
 
 # 3. Yocto Recipes
 
-#### core-image-base
+## 3.1. core-image-base
 
 
 ```bash
@@ -115,7 +114,7 @@ $ bitbake -c cleanall core-image-base
 $ bitbake -c build core-image-base
 ```
 
-#### Linux Kernel (linux-)
+## 3.2. Linux Kernel (linux-)
 
 ```bash
 $ bitbake -s | grep linux-
@@ -123,7 +122,7 @@ $ bitbake -s | grep linux-
 # make menuconfig
 $ bitbake -c menuconfig virtual/kernel
 ```
-#### ?apache2
+## 3.3. ?apache2
 
 ```json
 "layers": [ "meta-openembedded/meta-webserver" ]
@@ -133,37 +132,37 @@ $ bitbake -c menuconfig virtual/kernel
 $ bitbake -s | grep apache2
 ```
 
-#### avahi (mDNS)
+## 3.4. avahi (mDNS)
 
 ```bash
 $ bitbake -s | grep avahi
 ```
 
-#### bluez5
+## 3.5. bluez5
 
 ```bash
 $ bitbake -s | grep bluez5
 ```
 
-#### Busybox - [yocto项目修改busybox](https://community.nxp.com/t5/i-MX-Processors/yocto项目修改busybox/m-p/1076952)
+## 3.6. Busybox - [yocto项目修改busybox](https://community.nxp.com/t5/i-MX-Processors/yocto项目修改busybox/m-p/1076952)
 
 ```bash
 $ bitbake -s | grep busybox
 ```
 
-#### dbus
+## 3.7. dbus
 
 ```bash
 $ bitbake -s | grep dbus
 ```
 
-#### dropbear (SSH)
+## 3.8. dropbear (SSH)
 
 ```bash
 $ bitbake -s | grep dropbear
 ```
 
-#### libwebsockets
+## 3.9. libwebsockets
 
 ```json
 "layers": [ "meta-openembedded/meta-networking" ]
@@ -173,7 +172,7 @@ $ bitbake -s | grep dropbear
 $ bitbake -s | grep libwebsockets
 ```
 
-#### ?mosquitto
+## 3.10. ?mosquitto
 
 ```json
 "layers": [ "meta-openembedded/meta-networking" ]
@@ -183,13 +182,13 @@ $ bitbake -s | grep libwebsockets
 $ bitbake -s | grep mosquitto
 ```
 
-#### glib-2.0
+## 3.11. glib-2.0
 
 ```bash
 $ bitbake -s | grep glib-2.0
 ```
 
-#### systemd
+## 3.12. systemd
 
 ```bash
 $ bitbake -s | grep systemd
@@ -199,7 +198,7 @@ $ bitbake -s | grep systemd
 
 ## 4.1. utils - [layers/poky/bitbake/lib/bb/utils.py](layers/poky/bitbake/lib/bb/utils.py)
 
-#### def contains(variable, checkvalues, truevalue, falsevalue, d):
+#### A. def contains(variable, checkvalues, truevalue, falsevalue, d):
 
 ```bb
 """Check if a variable contains all the values specified.
@@ -215,7 +214,7 @@ CFLAGS += "${@bb.utils.contains('SELECTED_OPTIMIZATION', '-Og', '-DXXH_NO_INLINE
 
 ```
 
-#### def filter(variable, checkvalues, d):
+#### B. def filter(variable, checkvalues, d):
 
 ```bb
 """Return all words in the variable that are present in the checkvalues.
@@ -331,9 +330,9 @@ $ rm builds/*/bitbake.lock
 
 # Author
 
-Created and designed by [Lanka Hsu](lankahsu@gmail.com).
+> Created and designed by [Lanka Hsu](lankahsu@gmail.com).
 
 # License
 
-[HelperX](https://github.com/lankahsu520/HelperX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
+> [HelperX](https://github.com/lankahsu520/HelperX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
 
