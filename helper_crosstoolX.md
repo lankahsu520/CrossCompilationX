@@ -417,6 +417,9 @@ $ tree -L 1 /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/
 └── share
 
 6 directories, 0 files
+
+$ ll /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/bin/*-gcc
+-rwxr-xr-x 2 lanka lanka 5408936  一  26 09:46 /opt/i486-linux-gnu-2.6.38.8-7.2.0-2.26/bin/i486-linux-gnu-gcc*
 ```
 
 #### ~~D. i486-linux-2.6.24-7.2.0-2.26~~

@@ -401,9 +401,17 @@ flowchart LR
 
 #### A. [Buildroot](https://buildroot.org)
 
+##### A.1. [helper_Buildroot-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Buildroot-RaspberryPi3.md) - Buildroot-RaspberryPi3 helper
+
 #### B. [OpenWrt](https://openwrt.org)
 
+##### A.1. [helper_OpenWrt-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_OpenWrt-RaspberryPi3.md) - helper_OpenWrt-RaspberryPi3 helper
+
 #### C. [Yocto](https://www.yoctoproject.org)
+
+##### A.1. [helper_Yocto.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto.md) - helper_Yocto helper
+
+##### A.2. [helper_Yocto-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RaspberryPi3.md) - helper_Yocto-RaspberryPi3 helper
 
 ## 4.2. Toolchain generator
 
