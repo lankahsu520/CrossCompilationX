@@ -444,7 +444,7 @@ crossbuild-essential-s390x
 
 #### C. Generate toolchain by ourselves
 
-> 請參考 I.2.  [建立 gnu tool chain](http://yi-jyun.blogspot.com/2018/01/tool-chain.html)
+>
 
 ##### C.1. [helper_crosstoolX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstoolX) - crosstoolX helper
 
