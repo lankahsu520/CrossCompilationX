@@ -1,7 +1,8 @@
 
 NPROC=$(shell nproc)
-PKGS=$(wildcard pkgs/*.tar*)
 GLIBC_PATCH_KERNEL26=linux-2.6.24 linux-2.6.38.8
+#PKGS=$(wildcard pkgs/*.tar*)
+PKGS=$(PJ_BINUTILS_VERSION) $(PJ_LINUX_KERNEL_VERSION) $(PJ_GCC_VERSION) $(PJ_GLIBC_VERSION)
 
 .PHONY: all clean distclean compile install romfs
 all: .all
@@ -45,14 +46,22 @@ distclean: clean
 	$(PJ_HOST)-gcc -nostdlib -nostartfiles -shared -x c /dev/null -o $(PJ_TOOLCHAIN_PREFIX)/$(PJ_HOST)/lib/libc.so
 	touch $@
 
-.006a-csu: .006-glibc-1st
+.006a-csu: .006-glibc-1st-make
 	@echo '=>> $@'
 	cd $(PJ_CROSSTOOLX_SDK)/build_xxx/$(PJ_GLIBC_VERSION) \
 	&& colormake -j$(NPROC) csu/subdir_lib \
 	&& install csu/crt*.o $(PJ_TOOLCHAIN_PREFIX)/$(PJ_HOST)/lib
 	touch $@
 
-.006-glibc-1st: .005-linux-header
+.006-glibc-1st-make: .006-glibc-1st-configure
+	@echo '=>> $@'
+	cd $(PJ_CROSSTOOLX_SDK)/build_xxx/$(PJ_GLIBC_VERSION) \
+	&& colormake install-headers
+	#	install_root=$(PJ_TOOLCHAIN_PREFIX)/$(PJ_HOST) \
+	#	install-bootstrap-headers=yes
+	touch $@
+
+.006-glibc-1st-configure: .005-linux-header
 	@echo '=>> $@'
 	mkdir -p $(PJ_CROSSTOOLX_SDK)/build_xxx/$(PJ_GLIBC_VERSION) \
 	&& cd $(PJ_CROSSTOOLX_SDK)/build_xxx/$(PJ_GLIBC_VERSION) \
@@ -60,8 +69,7 @@ distclean: clean
 		--prefix=$(PJ_TOOLCHAIN_PREFIX)/$(PJ_HOST) \
 		--build=$(MACHTYPE) --host=$(PJ_HOST) \
 		--target=$(PJ_HOST) \
-		--with-headers=$(PJ_TOOLCHAIN_PREFIX)/$(PJ_HOST)/include \
-	&& colormake install-headers
+		--with-headers=$(PJ_TOOLCHAIN_PREFIX)/$(PJ_HOST)/include
 	touch $@
 
 .005-linux-header: .004-gcc-1st
@@ -98,7 +106,7 @@ endif
 	if [ ! -d "$(PJ_CROSSTOOLX_SDK)/libs/$(PJ_LINUX_KERNEL_VERSION)" ]; then \
 		cd $(PJ_CROSSTOOLX_SDK) \
 		&& mkdir -p $(PJ_CROSSTOOLX_SDK)/libs \
-		&& for f in $(PKGS); do tar xvf $$f -C $(PJ_CROSSTOOLX_SDK)/libs/; done \
+		&& for f in $(PKGS); do (echo "==> ls pkgs/$$f.tar* | xargs tar -C $(PJ_CROSSTOOLX_SDK)/libs/ -xvf"; ls pkgs/$$f.tar* | xargs tar -C $(PJ_CROSSTOOLX_SDK)/libs/ -xvf;) done \
 	fi
 
 	[ -d patches/$(PJ_LINUX_KERNEL_VERSION) ] && cp -avr patches/$(PJ_LINUX_KERNEL_VERSION)/* libs/$(PJ_LINUX_KERNEL_VERSION) || echo -n ""
@@ -110,8 +118,19 @@ endif
 .001-folder:
 	@echo '=>> $@'
 	mkdir -p $(PJ_CROSSTOOLX_SDK)/pkgs
-	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_BINUTILS_VERSION).tar.xz" ] && curl -C - https://ftp.gnu.org/gnu/binutils/$(PJ_BINUTILS_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_BINUTILS_VERSION).tar.xz || echo -n ""
-	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GCC_VERSION).tar.xz" ] && curl -C - https://ftp.gnu.org/gnu/gcc/$(PJ_GCC_VERSION)/$(PJ_GCC_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GCC_VERSION).tar.xz || echo -n ""
-	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_LINUX_KERNEL_VERSION).tar.xz" ] && curl -C - https://cdn.kernel.org/pub/linux/kernel/v$(PJ_LINUX_KERNEL_VERSION_FOLDER)/$(PJ_LINUX_KERNEL_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_LINUX_KERNEL_VERSION).tar.xz || echo -n ""
-	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GLIBC_VERSION).tar.xz" ] && curl -C - https://ftp.gnu.org/gnu/glibc/$(PJ_GLIBC_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GLIBC_VERSION).tar.xz || echo -n ""
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_BINUTILS_VERSION).tar.xz" ] \
+	&& [ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_BINUTILS_VERSION).tar.gz" ] \
+	&& curl -C - https://ftp.gnu.org/gnu/binutils/$(PJ_BINUTILS_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_BINUTILS_VERSION).tar.xz || echo -n ""
+
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GCC_VERSION).tar.xz" ] \
+	&& [ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GCC_VERSION).tar.gz" ] \
+	&& curl -C - https://ftp.gnu.org/gnu/gcc/$(PJ_GCC_VERSION)/$(PJ_GCC_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GCC_VERSION).tar.xz || echo -n ""
+
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_LINUX_KERNEL_VERSION).tar.xz" ] \
+	&& [ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_LINUX_KERNEL_VERSION).tar.gz" ] \
+	&& curl -C - https://cdn.kernel.org/pub/linux/kernel/v$(PJ_LINUX_KERNEL_VERSION_FOLDER)/$(PJ_LINUX_KERNEL_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_LINUX_KERNEL_VERSION).tar.xz || echo -n ""
+
+	[ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GLIBC_VERSION).tar.xz" ] \
+	&& [ ! -f "$(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GLIBC_VERSION).tar.gz" ] \
+	&& curl -C - https://ftp.gnu.org/gnu/glibc/$(PJ_GLIBC_VERSION).tar.xz -o $(PJ_CROSSTOOLX_SDK)/pkgs/$(PJ_GLIBC_VERSION).tar.xz || echo -n ""
 	touch $@
