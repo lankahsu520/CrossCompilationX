@@ -185,7 +185,7 @@ $ ls -al /bin/sh
 lrwxrwxrwx    1 root     root             7 Apr  6  2022 /bin/sh -> busybox
 ```
 
-# 6. Build hellowForld on Host
+# 6. Build helloworld on Host
 
 ```bash
 $ export PATH=/opt/aarch64-buildroot-linux-gnu_sdk-buildroot/bin:$PATH
