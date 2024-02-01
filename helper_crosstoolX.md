@@ -502,8 +502,6 @@ $ vi configure
     3.79* | 3.[89]* | 4.[1-9]*)
 ```
 
-
-
 # III. Glossary
 
 # IV. Tool Usage
