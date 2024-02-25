@@ -151,7 +151,7 @@ rm -rf $PJ_TOOLCHAIN_SDK/sources; mkdir -p $PJ_TOOLCHAIN_SDK/sources
 for f in *.tar*; do tar xvf $f -C $PJ_TOOLCHAIN_SDK/sources/; done
 ```
 
-#### B. Building a toolchain step by step
+#### C. Building a toolchain step by step
 
 ```bash
 export PJ_TOOLCHAIN_SDK=`pwd`
