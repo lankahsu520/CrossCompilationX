@@ -120,20 +120,20 @@ mindmap
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
+	subgraph Host[Ubuntu 20.04.4 LTS x86_64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Raspberry Pi]
+	subgraph Target[Raspberry Pi]
 		helloworld_run_pi[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerPIU[Docker - Ubuntu 20.04]
 			helloworld_run_pi_u_docker[bash: ./helloworld: cannot execute binary file: Exec format error]
 		end
 	end
 
-	subgraph HostA[Host - Ubuntu 20.04.4 LTS x86_64]
+	subgraph HostA[Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_host[Hello world !!!]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[Hello world !!!]
@@ -143,7 +143,7 @@ flowchart LR
 		end
   end
 
-	subgraph Host-arm64[Host - Ubuntu 20.04.4 LTS arm64]
+	subgraph Host-arm64[Ubuntu 20.04.4 LTS arm64]
 		helloworld_run_host-arm64[bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerAU2004-arm64[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker-arm64[bash: ./helloworld: cannot execute binary file: Exec format error]
@@ -176,20 +176,20 @@ helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically 
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
+	subgraph Host[Ubuntu 20.04.4 LTS x86_64]
 		subgraph Cross[Cross compiler]
 			gcc[arm-linux-gnueabihf-gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Raspberry Pi]
+	subgraph Target[Raspberry Pi]
 		helloworld_run_pi[Hello world !!!]
 		subgraph DockerPIU[Docker - Ubuntu 20.04]
 			helloworld_run_pi_u_docker[Hello world !!!]
 		end
 	end
 
-	subgraph HostA[Host - Ubuntu 20.04.4 LTS x86_64]
+	subgraph HostA[Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_host[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[bash: ./helloworld: cannot execute binary file: Exec format error]
@@ -199,7 +199,7 @@ flowchart LR
 		end
   end
 
-	subgraph Host-arm64[Host - Ubuntu 20.04.4 LTS arm64]
+	subgraph Host-arm64[Ubuntu 20.04.4 LTS arm64]
 		helloworld_run_host-arm64[???]
 		subgraph DockerAU2004-arm64[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker-arm64[???]
@@ -263,13 +263,13 @@ helloworld: ELF 32-bit LSB shared object, ARM, EABI5 version 1 (SYSV), dynamical
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Raspberry Pi arm64]
+	subgraph Host[Raspberry Pi arm64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
+	subgraph Target[Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerUbuntuPI[Docker - Raspberry Pi]
 			helloworld_run_ubuntu_pi_docker["??? 因為測試時，還沒有 Pi 的 Docker"]
@@ -277,7 +277,7 @@ flowchart LR
 	end
 
 
-	subgraph HostA[Host - Raspberry Pi arm64]
+	subgraph HostA[Raspberry Pi arm64]
 		helloworld_run_host[Hello world !!!]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[Hello world !!!]
@@ -295,13 +295,13 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Raspberry Pi arm64]
+	subgraph Host[Raspberry Pi arm64]
 		subgraph Cross[Cross compiler]
 			gcc[x86_64-unknown-linux-gnu-gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
+	subgraph Target[Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu[Hello world !!!]
 		subgraph DockerUbuntuPI[Docker - Raspberry Pi]
 			helloworld_run_ubuntu_pi_docker[Hello world !!!]
@@ -309,7 +309,7 @@ flowchart LR
 	end
 
 
-	subgraph HostA[Host - Raspberry Pi arm64]
+	subgraph HostA[Raspberry Pi arm64]
 		helloworld_run_host[-bash: ./helloworld: cannot execute binary file: Exec format error]
 		subgraph DockerAU2004[Docker - Ubuntu 20.04]
 			helloworld_run_AU2004_docker[bash: ./helloworld: cannot execute binary file: Exec format error]
@@ -337,13 +337,13 @@ flowchart LR
 ## 3.1. Host (Ubuntu 20.04.4 LTS) and Target (Ubuntu 22.04.2 LTS)
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 20.04.4 LTS x86_64]
+	subgraph Host[Ubuntu 20.04.4 LTS x86_64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 22.04.2 LTS x86_64]
+	subgraph Target[Ubuntu 22.04.2 LTS x86_64]
 		helloworld_run_ubuntu2204["-bash: ./helloworld: /lib64/libc.so.6: version GLIBC_2.29 not found (required by ./helloworld)"]
 	end
 	
@@ -354,13 +354,13 @@ flowchart LR
 ## 3.2. Host (Ubuntu 22.04.2 LTS) and Target (Ubuntu 20.04.4 LTS)
 ```mermaid
 flowchart LR
-	subgraph Host[Host - Ubuntu 22.04.2 LTS  x86_64]
+	subgraph Host[Ubuntu 22.04.2 LTS  x86_64]
 		subgraph Native[Native compiler]
 			gcc[gcc helloworld.c]
 		end
 	end
 
-	subgraph Target[Target - Ubuntu 20.04.4 LTS x86_64]
+	subgraph Target[Ubuntu 20.04.4 LTS x86_64]
 		helloworld_run_ubuntu2004["-bash: ./helloworld: /lib64/libc.so.6: version GLIBC_2.34 not found (required by ./helloworld)"]
 	end
 	
@@ -374,7 +374,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-	subgraph Target[Target - $PJ_ARCH]
+	subgraph Target[$PJ_ARCH]
 		helloworld_run_$PJ_ARCH
 	end
 
@@ -503,7 +503,7 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-	subgraph Target[Target - $PJ_ARCH]
+	subgraph Target[$PJ_ARCH]
 		subgraph Native[Native compiler]
 			helloworld[gcc helloworld.c]
 		end
@@ -516,11 +516,11 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-	subgraph Target[Target - $PJ_ARCH]
+	subgraph Target[$PJ_ARCH]
 		helloworld-arm64[helloworld.c]
 	end
 
-	subgraph Host[Host - Ubuntu x86_64]
+	subgraph Host[Ubuntu x86_64]
 		helloworld[gcc helloworld.c]
 	end
 
