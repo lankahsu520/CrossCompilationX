@@ -37,7 +37,7 @@ $ sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib bu
 ```bash
 $ python3 -m pip install --upgrade git+https://github.com/cpb-/yocto-cooker.git
 $ cooker --version
-# 1.3.0
+# 1.4.0
 ```
 
 ## 3.1. Cooker Menu - ([pi3-sample-menu.json](https://github.com/cpb-/yocto-cooker/blob/master/sample-menus/pi3-sample-menu.json))
@@ -50,6 +50,8 @@ $ curl https://raw.githubusercontent.com/cpb-/yocto-cooker/master/sample-menus/p
 $ cd /work/YoctoPI3
 ```
 ## 3.2. Building
+
+### 3.2.1. Official steps
 
 #### A. Step by Step
 
@@ -67,6 +69,75 @@ $ cooker build
 ```bash
 $ cd /work/YoctoPI3
 $ cooker cook ./cooker-menu/pi3-sample-menu.json
+```
+
+### 3.2.2.  [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/cookerX)
+
+> [cookerX](https://github.com/lankahsu520/HelperX/tree/master/Yocto/cookerX) is based on [Yocto Cooker](https://github.com/cpb-/yocto-cooker).  pi3-sample-menu.json 使用的版本過舊。
+>
+> 這個是將 cooker 再包裝一層。
+>
+> | meta              | branch | rev        |
+> | ----------------- | ------ | ---------- |
+> | poky              | master | 7ec846be8b |
+> | meta-openembedded | master | 7f15e7975  |
+> | meta-raspberrypi  | master | 2b733d5    |
+
+> 當時使用 Yocto 和 Cooker 是使用 python 3.8。請記得對應此版本。
+
+#### A. pi3-master
+
+```bash
+$ python -V
+Python 3.8.10
+
+$ cd cookerX
+$ . confs/pi3-master-2b733d5.conf
+$ make
+
+$ ./cooker_123.sh lnk
+
+# check files
+$ ls -al builds_lnk/rootfs/
+$ ls -al builds_lnk/rpm/
+
+# pi3-master_core-image-base-raspberrypi3.wic.bz2
+$ ls -al images_pi3/
+$ ls -al images_pi3/pi3-master_core-image-base-raspberrypi3.wic.bz2
+```
+
+##### A.1. Build BB
+
+```bash
+$ make build
+BB_TASK=[build], BB=[]
+Example:
+  make listtasks BB=avahi
+  make configure BB=avahi
+  make clean BB=avahi
+  make cleanall BB=avahi
+  make fetch BB=avahi
+  make compile BB=avahi
+  make build BB=avahi
+  make install BB=avahi
+  make package_qa BB=avahi
+
+```
+
+#### B. qemux86-64
+
+```bash
+$ cd cookerX
+$ . conf/qemux86_64.conf
+$ make
+
+# check rootfs
+$ ls -al builds_lnk/qemux86_64-rootfs/
+
+# bzImage and rootfs
+$ ls -al builds/build-qemux86-64/tmp/deploy/images/qemux86-64/bzImage
+
+$ ls -al builds/build-qemux86-64/tmp/deploy/images/qemux86-64/core-image-base-qemux86-64-*.rootfs.ext4
 ```
 
 ## 3.3. Customize
@@ -181,67 +252,6 @@ example                                               :0.1-r0
 $ vi ./cooker-menu/pi3-sample-menu.json
 # add "example" into "local.conf"
 # ,"IMAGE_INSTALL:append = ' example'"
-```
-
-## 3.4. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/cookerX)
-
-> [cookerX](https://github.com/lankahsu520/HelperX/tree/master/Yocto/cookerX) is based on [Yocto Cooker](https://github.com/cpb-/yocto-cooker).  pi3-sample-menu.json 使用的版本過舊。
->
-> 這個是將 cooker 再包裝一層。 
->
-> | meta              | branch | rev        |
-> | ----------------- | ------ | ---------- |
-> | poky              | master | 7ec846be8b |
-> | meta-openembedded | master | 7f15e7975  |
-> | meta-raspberrypi  | master | 2b733d5    |
-
-#### A. pi3-master
-
-```bash
-$ cd cookerX
-$ . conf/pi3-master.conf
-$ make
-
-# check rootfs
-$ ls -al builds_lnk/pi3-master_rootfs/
-
-# pi3-master_core-image-base-raspberrypi3.wic.bz2
-$ ls -al images_pi3/pi3-master_core-image-base-raspberrypi3.wic.bz2
-
-```
-
-##### A.1. Build BB
-
-```bash
-$ make build
-BB_TASK=[build], BB=[]
-Example:
-  make listtasks BB=avahi
-  make configure BB=avahi
-  make clean BB=avahi
-  make cleanall BB=avahi
-  make fetch BB=avahi
-  make compile BB=avahi
-  make build BB=avahi
-  make install BB=avahi
-  make package_qa BB=avahi
-
-```
-
-#### B. qemux86-64
-
-```bash
-$ cd cookerX
-$ . conf/qemux86_64.conf
-$ make
-
-# check rootfs
-$ ls -al builds_lnk/qemux86_64-rootfs/
-
-# bzImage and rootfs
-$ ls -al builds/build-qemux86-64/tmp/deploy/images/qemux86-64/bzImage
-
-$ ls -al builds/build-qemux86-64/tmp/deploy/images/qemux86-64/core-image-base-qemux86-64-*.rootfs.ext4
 ```
 
 # 4. Burn Your Image into SD CARD

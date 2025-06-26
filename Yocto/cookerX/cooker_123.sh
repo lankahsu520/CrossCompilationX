@@ -69,6 +69,13 @@ pull_fn()
 	do_command_fn "(cd $PJ_COOKER_MENU_DIR; git pull;)"
 }
 
+lnk_fn()
+{
+	datetime_fn "${FUNCNAME[0]} ... "
+	do_command_fn "(cd $PJ_YOCTO_ROOT/builds_lnk; rm -f *; ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/core-image-base/1.0-r0/rootfs $PJ_YOCTO_TARGET-rootfs; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/rpm $PJ_YOCTO_TARGET-rpm;)"
+	do_command_fn "(cd $PJ_YOCTO_ROOT/images; rm -f *; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3.wic.bz2;)"
+}
+
 distclean_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "

@@ -19,6 +19,12 @@
 
 # 1.  [Yocto Project](https://www.yoctoproject.org/software-overview/)
 
+> <font color="red">2年（2023~2025）過去了，再次試著編譯以前留下來的版本（包含系統和程式），真的是困難重重。第1個就是 python 版本問題，當初是使用python 3.8，而目前系統是 python 3.10。</font>
+>
+> <font color="red">再來就是編譯過程中，太多使用 git下載對應的 Revision，過程真的是`超級慢`，最慘的還有版本遺失了。</font>
+>
+> 身為軟體工師的職責不應該被這些瑣事煩心，而是要專注於程式開發。
+
 ## 1.1. [Release Activity](https://wiki.yoctoproject.org/wiki/Releases)
 | Codename  | Yocto Project Version | Release Date |   Current Version   |                 Support Level                  | Poky Version | BitBake branch |                     Maintainer                      |
 | :-------: | :-------------------: | :----------: | :-----------------: | :--------------------------------------------: | :----------: | :------------: | :-------------------------------------------------: |

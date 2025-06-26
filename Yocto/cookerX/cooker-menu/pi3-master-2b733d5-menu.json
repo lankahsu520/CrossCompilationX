@@ -35,7 +35,7 @@
 				"MACHINE = 'qemux86-64' "
 			]
 		},
-		"pi3-master": {
+		"pi3-master-2b733d5": {
 			"notes": ["The default `core-image-base` image is used for bitbake."],
 			"target": "core-image-base",
 			"layers": ["meta-raspberrypi"],
