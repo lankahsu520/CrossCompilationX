@@ -19,20 +19,72 @@
 
 # 1.  [Yocto Project](https://www.yoctoproject.org/software-overview/)
 
+## 1.0. Useful ?
+
+> 編譯很花時間，至少2小時（手邊是有intel i9-11980HK）以上 ~ 1天 or 2天都有可能。
+>
+> 很佔空間，至少要留個100G。如果有 Daily Build 的需求，那成本真的很重。
+>
+> 還有你要先決定 Poky要抓那一版本（branch 和 rev），相對應的 meta-openembedded 和硬體相依性比較高的 meta-raspberrypi 你也要決定版本（branch 和 rev）。就算所有需要的軟體都集齊了，最後也編譯完了，最後能不能開機也是問題！
+>
+> 如果你不是晶片供應商（如聯發科），而只是一位 embedded engineer，聯發科領多少錢，而我們領不到他們的一半，甚至連破百萬都沒有；卻要幫他們組一包可以編譯的環境，這情何以堪。
+>
+> BB 的語法太靈活，shellscript 的支援度不高；我們寫程式的時間都不夠了，還要學習這奇怪的語法。
+>
+> 在編譯時一定要上網！就算你已經編譯成功，而且已經下載過，還是會報失敗。
+>
+> yocto 的版本變動很快，或許今年允許的 class 或語法，明年就不能用了。就連 google 大神也救不了，因為新的東西，還要等有心人把踩到的屎寫出來。
+>
+> 最後就是 yocto 編譯的錯誤訊息相當的難理解，這有一部分是繼承了 python的傳統。
+
 > <font color="red">2年（2023~2025）過去了，再次試著編譯以前留下來的版本（包含系統和程式），真的是困難重重。第1個就是 python 版本問題，當初是使用python 3.8，而目前系統是 python 3.10。</font>
 >
 > <font color="red">再來就是編譯過程中，太多使用 git下載對應的 Revision，過程真的是`超級慢`，最慘的還有版本遺失了。</font>
->
+
 > 身為軟體工師的職責不應該被這些瑣事煩心，而是要專注於程式開發。
 
-## 1.1. [Release Activity](https://wiki.yoctoproject.org/wiki/Releases)
-| Codename  | Yocto Project Version | Release Date |   Current Version   |                 Support Level                  | Poky Version | BitBake branch |                     Maintainer                      |
-| :-------: | :-------------------: | :----------: | :-----------------: | :--------------------------------------------: | :----------: | :------------: | :-------------------------------------------------: |
-| Mickledore  |          4.2          | April 2023 |                     | Future - Support for 7 months (until October 2023) |     N/A      |                | Richard Purdie <richard.purdie@linuxfoundation.org> |
-| Langdale  |          4.1          | October 2022 |                     | Future - Support for 7 months (until May 2023) |     N/A      |                | Richard Purdie <richard.purdie@linuxfoundation.org> |
-| Kirkstone |          4.0          |   May 2022   | 4.0.3 (August 2022) |     Long Term Support (minimum Apr. 2024)      |     N/A      |      2.0       |          Steve Sakoman <steve@sakoman.com>          |
-| Honister  |          3.4          | October 2021 |  3.4.4 (May 2022)   |                      EOL                       |     N/A      |      1.52      |         Anuj Mittal <anuj.mittal@intel.com>         |
-| Hardknott |          3.3          |  April 2021  | 3.3.6 (April 2022)  |                      EOL                       |     N/A      |      1.50      |         Anuj Mittal <anuj.mittal@intel.com>         |
+## 1.1. [Release Activity](https://wiki.yoctoproject.org/wiki/Releases) vs Python
+
+|           Codename           | Yocto Project Version | Release Date  |    Current Version    |               Support Level                | Poky Version | BitBake branch | Python |                     Maintainer                      |                            Notes                             |
+| :--------------------------: | :-------------------: | :-----------: | :-------------------: | :----------------------------------------: | :----------: | :------------: | ------ | :-------------------------------------------------: | :----------------------------------------------------------: |
+|           Wrynose            |          6.0          |  April 2026   |                       |                   Future                   |     N/A      |      2.16      |        | Richard Purdie <richard.purdie@linuxfoundation.org> |                                                              |
+|          Whinlatter          |          5.3          | October 2025  |                       |                   Future                   |     N/A      |      2.14      |        | Richard Purdie <richard.purdie@linuxfoundation.org> | [Recipe versions](https://wiki.yoctoproject.org/wiki/Recipe_Versions) |
+|    Walnascar (aka Walna)     |          5.2          |   May 2025    |   5.2.1(June 2025)    | Support for 7 months (until November 2025) |     N/A      |      2.12      |        |          Steve Sakoman <steve@sakoman.com>          | [Recipe versions](https://wiki.yoctoproject.org/wiki/Recipe_Versions) |
+|  Styhead (like 'try head')   |          5.1          | October 2024  |  5.1.4 (April 2025)   |                    EOL                     |     N/A      |      2.10      |        |          Steve Sakoman <steve@sakoman.com>          |                                                              |
+|          Scarthgap           |          5.0          |  April 2024   |  5.0.10 (June 2025)   |    Long Term Support (until April 2028)    |     N/A      |      2.8       |        |          Steve Sakoman <steve@sakoman.com>          | [Recipe versions](https://wiki.yoctoproject.org/wiki/Recipe_Versions) |
+| Nanbield (like 'man field')  |          4.3          | November 2023 |  4.3.4 (April 2024)   |                    EOL                     |     N/A      |      2.6       | 3.12   |          Steve Sakoman <steve@sakoman.com>          |                                                              |
+|          Mickledore          |          4.2          |   May 2023    | 4.2.4 (December 2023) |                    EOL                     |     N/A      |      2.4       | 3.11   |          Steve Sakoman <steve@sakoman.com>          |                                                              |
+|           Langdale           |          4.1          | October 2022  |   4.1.4 (May 2023)    |                    EOL                     |     N/A      |      2.2       |        |          Steve Sakoman <steve@sakoman.com>          |                                                              |
+| Kirkstone (like 'kirk stun') |          4.0          |   May 2022    |  4.0.27 (June 2025)   |       Long Term Support (Apr. 2026¹)       |     N/A      |      2.0       | 3.10   |          Steve Sakoman <steve@sakoman.com>          |                                                              |
+|           Honister           |          3.4          | October 2021  |   3.4.4 (May 2022)    |                    EOL                     |     N/A      |      1.52      |        |         Anuj Mittal <anuj.mittal@intel.com>         |                                                              |
+|          Hardknott           |          3.3          |  April 2021   |  3.3.6 (April 2022)   |                    EOL                     |     N/A      |      1.50      |        |         Anuj Mittal <anuj.mittal@intel.com>         |                                                              |
+|          Gatesgarth          |          3.2          |   Oct 2020    |   3.2.4 (May 2021)    |                    EOL                     |     N/A      |      1.48      |        |         Anuj Mittal <anuj.mittal@intel.com>         |                                                              |
+|           Dunfell            |          3.1          |  April 2020   |   3.1.33 (May 2024)   |                 EOL - LTS¹                 |     23.0     |      1.46      |        |          Steve Sakoman <steve@sakoman.com>          |                                                              |
+|             Zeus             |          3.0          | October 2019  |  3.0.4 (August 2020)  |                    EOL                     |    22.0.3    |      1.44      | 3.8    |                     Anuj/Armin                      |                                                              |
+|           Warrior            |          2.7          |  April 2019   |   2.7.4 (June 2020)   |                    EOL                     |     21.0     |      1.42      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|             Thud             |          2.6          |   Nov 2018    | 2.6.4 (October 2019)  |                    EOL                     |     20.0     |      1.40      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|             Sumo             |          2.5          |  April 2018   |  2.5.3 (April 2019)   |                    EOL                     |     19.0     |      1.38      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|            Rocko             |          2.4          |   Oct 2017    | 2.4.4 (November 2018) |                    EOL                     |     18.0     |      1.36      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|             Pyro             |          2.3          |   May 2017    |   2.3.4 (July 2018)   |                    EOL                     |     17.0     |      1.34      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|            Morty             |          2.2          |   Nov 2016    |   2.2.4 (July 2018)   |                    EOL                     |     16.0     |      1.32      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|           Krogoth            |          2.1          |   Apr 2016    |   2.1.3 (July 2017)   |                    EOL                     |     15.0     |      1.30      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|            Jethro            |          2.0          |   Nov 2015    | 2.0.3 (January 2017)  |                    EOL                     |     14.0     |      1.28      |        |       Robert Yang <liezhi.yang@windriver.com>       |                                                              |
+|             Fido             |          1.8          |   Apr 2015    |         1.8.2         |                    EOL                     |     13.0     |      1.26      |        |        Joshua Lock <joshua.g.lock@intel.com>        |                                                              |
+|            Dizzy             |          1.7          |   Oct 2014    |         1.7.3         |                    EOL                     |     12.0     |      1.24      |        |         Armin Kuster <akuster808@gmail.com>         |                                                              |
+|            Daisy             |          1.6          |   Apr 2014    |         1.6.3         |                    EOL                     |     11.0     |      1.22      |        |           Saul Wold <sgw@linux.intel.com>           |                                                              |
+|             Dora             |          1.5          |   Oct 2013    |         1.5.4         |                    EOL                     |     10.0     |      1.20      |        |       Robert Yang <liezhi.yang@windriver.com>       |                                                              |
+|            Dylan             |          1.4          |   Apr 2013    |         1.4.3         |                    EOL                     |     9.0      |      1.18      |        |    Paul Eggleton <paul.eggleton@linux.intel.com>    |                                                              |
+|            Danny             |          1.3          |   Oct 2012    |         1.3.2         |                    EOL                     |     8.0      |      1.16      |        |         Ross Burton <ross.burton@intel.com>         |                                                              |
+|            Denzil            |          1.2          |   Apr 2012    |         1.2.2         |                    EOL                     |     7.0      |      1.15      |        |                                                     |                                                              |
+|            Edison            |          1.1          |   Oct 2011    |         1.1.2         |                    EOL                     |     6.0      |      1.13      |        |                                                     |                                                              |
+|           Bernard            |          1.0          |   Apr 2011    |         1.0.2         |                    EOL                     |     5.0      |      1.11      |        |                                                     |                                                              |
+|           Laverne            |          0.9          |   Oct 2010    |                       |                                            |     4.0      |      1.11      |        |                                                     |                                                              |
+|            Green             |          N/A          | 11 June 2010  |                       |                                            |     3.3      |                |        |                                                     |                                                              |
+|            Purple            |          N/A          |  15 Dec 2009  |                       |                                            |     3.2      |                |        |                                                     |                                                              |
+|            Pinky             |          N/A          |  12 Nov 2009  |                       |                                            |     3.1      |                |        |                                                     |                                                              |
+|            Blinky            |          N/A          |  1 Aug 2007   |                       |                                            |     3.0      |                |        |                                                     |                                                              |
+|            Clyde             |          N/A          |  19 Jan 2007  |                       |                                            |     2.0      |                |        |                                                     |                                                              |
+|             Inky             |          N/A          |  10 Feb 2006  |                       |                                            |     1.0      |                |        |                                                     |                                                              |
 
 ## 1.2. [Release Information](https://docs.yoctoproject.org/migration-guides/index.html)
 
@@ -61,24 +113,6 @@
 > OpenEmbedded-Core：由基礎layers所組成，並為處方檔（recipes)，layers與classes的集合：這些要素都是在OpenEmbedded系統中共享使用的。
 >
 > Poky：是一個參考系統。是許多案子與工具的集合，用來讓使用者延伸出新的發行版（Distribution)
-
-## 1.5. Read Me First
-
->編譯很花時間，至少2小時（手邊是有intel i9-11980HK）以上 ~ 1天 or 2天都有可能。
->
->很佔空間，至少要留個100G。
->
->還有你要先決定 Poky要抓那一版本（branch 和 rev），相對應的 meta-openembedded 和硬體相依性比較高的 meta-raspberrypi 你也要決定版本（branch 和 rev）。就算所有需要的軟體都集齊了，最後也編譯完了，最後能不能開機也是問題！
->
->如果你不是晶片供應商（如聯發科），而只是一位 embedded engineer，聯發科領多少錢，而我們領不到他們的一半，甚至連破百萬都沒有；卻要幫他們組一包可以編譯的環境，這情何以堪。
->
->BB 的語法太靈活，shellscript 的支援度不高；我們寫程式的時間都不夠了，還要學習這奇怪的語法。
->
->在編譯時一定要上網！就算你已經編譯成功，而且已經下載過，還是會報失敗。
->
->yocto 的版本變動很快，或許今年允許的 class 或語法，明年就不能用了。就連google 大神也救不了，因為新的東西，還要等有心人把踩到的屎寫出來。
->
->最後就是 yocto 編譯的錯誤訊息相當的難理解，這有一部分是繼承了 python的傳統。
 
 # 2. Poky
 

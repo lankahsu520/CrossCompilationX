@@ -1,0 +1,470 @@
+# [Yocto](https://www.yoctoproject.org) [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/cookerX)
+
+[![](https://img.shields.io/badge/Powered%20by-lankahsu%20-brightgreen.svg)](https://github.com/lankahsu520/CrossCompilationX)
+[![GitHub license][license-image]][license-url]
+[![GitHub stars][stars-image]][stars-url]
+[![GitHub forks][forks-image]][forks-url]
+[![GitHub issues][issues-image]][issues-image]
+
+
+[license-image]: https://img.shields.io/github/license/lankahsu520/CrossCompilationX.svg
+[license-url]: https://github.com/lankahsu520/CrossCompilationX/blob/master/LICENSE
+[stars-image]: https://img.shields.io/github/stars/lankahsu520/CrossCompilationX.svg
+[stars-url]: https://github.com/lankahsu520/CrossCompilationX/stargazers
+[forks-image]: https://img.shields.io/github/forks/lankahsu520/CrossCompilationX.svg
+[forks-url]: https://github.com/lankahsu520/CrossCompilationX/network
+[issues-image]: https://img.shields.io/github/issues/lankahsu520/CrossCompilationX.svg
+[issues-url]: https://github.com/lankahsu520/CrossCompilationX/issues
+
+# 1. Overview
+
+> [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/cookerX) is depend on [Yocto Cooker](https://github.com/cpb-/yocto-cooker)。 
+>
+> Yocto Project isn't friendly to programmer. We have to collect Menu-files and create local.conf by myself.
+
+> 為什麼特別再包裝一層，因為用慣了 make，不只是命令好記，還可以使用 tab 鍵來接後續指令。
+
+# 2. Environment
+
+## 2.1. [Yocto Project Quick Build](https://docs.yoctoproject.org/dev/brief-yoctoprojectqs/index.html)
+
+> 參考官網的相關說明
+
+```bash
+$ sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib build-essential chrpath socat cpio python python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm
+```
+
+## 2.2.  [Yocto Cooker](https://github.com/cpb-/yocto-cooker)
+
+```bash
+$ python3 -m pip install --upgrade git+https://github.com/cpb-/yocto-cooker.git
+$ cooker --version
+# 1.4.0
+```
+
+# 3. Building
+
+> 請特別注意 PJ_YOCTO_DOWNLOADS_DIR 和 PJ_YOCTO_SSTATE_DIR，因為編譯真的很漫長，所以特別保留 downloads 和 sstate-cache 放在另一顆硬碟存放。
+>
+> 如完全採用 make ，而沒有呼叫 cooker_123.sh，在編譯過程會失敗。
+
+| meta              | branch             | rev        |
+| ----------------- | ------------------ | ---------- |
+| poky              | master, Zeus (3.0) | 7ec846be8b |
+| meta-openembedded | master             | 7f15e7975  |
+| meta-raspberrypi  | master             | 2b733d5    |
+
+```bash
+$ git clone https://github.com/lankahsu520/CrossCompilationX.git
+
+$ python -V
+Python 3.10.17
+
+$ cd CrossCompilationX/Yocto/cookerX
+# 這邊用 Raspberry Pi 3 當範本
+$ . confs/pi3-master-2b733d5.conf
+...
+
+Please check dl-dir (PJ_YOCTO_DOWNLOADS_DIR=/yocto-cache/downloads) !!!
+Please check sstate-dir (PJ_YOCTO_SSTATE_DIR=/yocto-cache/sstate-cache) !!!
+
+$ make
+# or
+cooker  -v init cooker-menu/pi3-master-2b733d5-menu.json
+cooker update
+cooker generate
+cooker  -v build pi3-master-2b733d5
+# 漫長的等待…但就是這麼簡單！
+```
+
+# 4. Outputs
+
+```bash
+$ make lnk-generate
+# or
+$ ./confs/sh/cooker_123.sh lnk
+$ ./confs/sh/bb_linker.sh
+```
+
+## 4.1. rootfs
+
+```bash
+$ echo builds-lnk/$PJ_YOCTO_BUILD-rootfs
+builds-lnk/pi3-master-2b733d5-rootfs
+
+$ ll builds-lnk/$PJ_YOCTO_BUILD-rootfs/
+total 72
+drwxr-xr-x 17 lanka lanka 4096 Mar  9  2018 ./
+drwxr-xr-x 12 lanka lanka 4096 Jul  9 11:50 ../
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 bin/
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 boot/
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 dev/
+drwxr-xr-x 29 lanka lanka 4096 Mar  9  2018 etc/
+drwxr-xr-x  3 lanka lanka 4096 Mar  9  2018 home/
+drwxr-xr-x  7 lanka lanka 4096 Mar  9  2018 lib/
+-rw-r--r--  1 lanka lanka    7 Mar  9  2018 log_lock.pid
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 media/
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 mnt/
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 proc/
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 run/
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 sbin/
+drwxr-xr-x  2 lanka lanka 4096 Mar  9  2018 sys/
+drwxr-xr-t  2 lanka lanka 4096 Mar  9  2018 tmp/
+drwxr-xr-x 10 lanka lanka 4096 Mar  9  2018 usr/
+drwxr-xr-x  8 lanka lanka 4096 Mar  9  2018 var/
+```
+
+## 4.2. images-lnk
+
+```bash
+$ ll images-lnk/
+total 4036
+drwxrwxr-x  2 lanka lanka    4096 Jul  9 16:06 ./
+drwxrwxr-x 10 lanka lanka    4096 Jul  9 15:30 ../
+lrwxrwxrwx  1 lanka lanka     141 Jul  9 16:06 core-image-base-raspberrypi3.manifest -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3-20250709020740.rootfs.manifest
+lrwxrwxrwx  1 lanka lanka     140 Jul  9 16:06 core-image-base-raspberrypi3.wic.bz2 -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3-20250709020740.rootfs.wic.bz2
+-rw-rw-r--  1 lanka lanka 2373025 Jul  9 16:06 environment.txt
+-rw-rw-r--  1 lanka lanka    4272 Jul  9 16:06 pn-buildlist
+-rw-rw-r--  1 lanka lanka 1732254 Jul  9 16:06 task-depends.dot
+```
+
+### 4.2.1. image
+
+```bash
+$ ll images-lnk/$PJ_YOCTO_IMAGE_WIC
+lrwxrwxrwx 1 lanka lanka 140 Jul  9 16:06 images-lnk/core-image-base-raspberrypi3.wic.bz2 -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3-20250709020740.rootfs.wic.bz2
+```
+
+## 4.3. builds-lnk
+
+```bash
+$ ll builds-lnk
+total 24
+drwxrwxr-x 2 lanka lanka 4096 Jul  9 12:30 ./
+drwxrwxr-x 9 lanka lanka 4096 Jul  9 12:29 ../
+lrwxrwxrwx 1 lanka lanka  121 Jul  9 12:30 pi3-master-2b733d5-rootfs -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-base/1.0-r0/rootfs/
+lrwxrwxrwx 1 lanka lanka   65 Jul  9 12:30 pi3-master-2b733d5-rpm -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/rpm/
+lrwxrwxrwx 1 lanka lanka   81 Jul  9 12:30 raspberrypi3 -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/images/raspberrypi3/
+lrwxrwxrwx 1 lanka lanka   65 Jul  9 12:30 sdk -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/sdk
+```
+
+## 4.4. Recipes
+
+### 4.4.1. dependency
+
+```bash
+$ cat images/pn-buildlist
+$ cat images/task-depends.dot
+$ cat images/environment.txt
+$ cat images/$PJ_YOCTO_IMAGE_MANIFEST
+```
+
+```bash
+# -g, --graphviz        Save dependency tree information for the specified targets in the dot syntax.
+$ bitbake -g $PJ_YOCTO_TARGET
+$ cat pn-buildlist
+$ cat task-depends.dot
+
+# Show the global or per-recipe environment complete with information about where variables were set/changed.
+$ bitbake -e $PJ_YOCTO_TARGET > environment.txt
+$ cat environment.txt
+
+$ cat environment.txt | grep ^IMAGE_INSTALL
+```
+
+### 4.4.1. bb-lnk
+
+```bash
+$ ./confs/sh/bb_linker.sh
+```
+
+```bash
+$ ll bb-lnk/
+total 136
+drwxrwxr-x  2 lanka lanka 4096 Jul  9 11:51 ./
+drwxrwxr-x 10 lanka lanka 4096 Jul  9 11:51 ../
+lrwxrwxrwx  1 lanka lanka   69 Jul  9 11:51 avahi_0.8.bb -> ../layers-scarthgap/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
+lrwxrwxrwx  1 lanka lanka   72 Jul  9 11:51 bluez5_5.72.bb -> ../layers-scarthgap/poky/meta/recipes-connectivity/bluez5/bluez5_5.72.bb
+lrwxrwxrwx  1 lanka lanka   68 Jul  9 11:51 busybox_1.36.1.bb -> ../layers-scarthgap/poky/meta/recipes-core/busybox/busybox_1.36.1.bb
+lrwxrwxrwx  1 lanka lanka   67 Jul  9 11:51 bzip2_1.0.8.bb -> ../layers-scarthgap/poky/meta/recipes-extended/bzip2/bzip2_1.0.8.bb
+lrwxrwxrwx  1 lanka lanka   64 Jul  9 11:51 curl_8.7.1.bb -> ../layers-scarthgap/poky/meta/recipes-support/curl/curl_8.7.1.bb
+lrwxrwxrwx  1 lanka lanka   63 Jul  9 11:51 dbus_1.14.10.bb -> ../layers-scarthgap/poky/meta/recipes-core/dbus/dbus_1.14.10.bb
+lrwxrwxrwx  1 lanka lanka   71 Jul  9 11:51 dropbear_2022.83.bb -> ../layers-scarthgap/poky/meta/recipes-core/dropbear/dropbear_2022.83.bb
+lrwxrwxrwx  1 lanka lanka   70 Jul  9 11:51 glib-2.0_2.78.6.bb -> ../layers-scarthgap/poky/meta/recipes-core/glib-2.0/glib-2.0_2.78.6.bb
+lrwxrwxrwx  1 lanka lanka   62 Jul  9 11:51 glibc_2.39.bb -> ../layers-scarthgap/poky/meta/recipes-core/glibc/glibc_2.39.bb
+lrwxrwxrwx  1 lanka lanka   84 Jul  9 11:51 glib-networking_2.78.1.bb -> ../layers-scarthgap/poky/meta/recipes-core/glib-networking/glib-networking_2.78.1.bb
+lrwxrwxrwx  1 lanka lanka   90 Jul  9 11:51 hostapd_2.10.bb -> ../layers-scarthgap/meta-openembedded/meta-oe/recipes-connectivity/hostapd/hostapd_2.10.bb
+lrwxrwxrwx  1 lanka lanka   86 Jul  9 11:51 jansson_2.14.bb -> ../layers-scarthgap/meta-openembedded/meta-oe/recipes-extended/jansson/jansson_2.14.bb
+lrwxrwxrwx  1 lanka lanka   68 Jul  9 11:51 json-c_0.17.bb -> ../layers-scarthgap/poky/meta/recipes-devtools/json-c/json-c_0.17.bb
+lrwxrwxrwx  1 lanka lanka   73 Jul  9 11:51 libevent_2.1.12.bb -> ../layers-scarthgap/poky/meta/recipes-support/libevent/libevent_2.1.12.bb
+lrwxrwxrwx  1 lanka lanka   71 Jul  9 11:51 libical_3.0.17.bb -> ../layers-scarthgap/poky/meta/recipes-support/libical/libical_3.0.17.bb
+lrwxrwxrwx  1 lanka lanka   69 Jul  9 11:51 libmnl_1.0.5.bb -> ../layers-scarthgap/poky/meta/recipes-extended/libmnl/libmnl_1.0.5.bb
+lrwxrwxrwx  1 lanka lanka   66 Jul  9 11:51 libnl_3.9.0.bb -> ../layers-scarthgap/poky/meta/recipes-support/libnl/libnl_3.9.0.bb
+lrwxrwxrwx  1 lanka lanka   80 Jul  9 11:51 libsndfile1_1.2.2.bb -> ../layers-scarthgap/poky/meta/recipes-multimedia/libsndfile/libsndfile1_1.2.2.bb
+lrwxrwxrwx  1 lanka lanka   78 Jul  9 11:51 libunistring_1.2.bb -> ../layers-scarthgap/poky/meta/recipes-support/libunistring/libunistring_1.2.bb
+lrwxrwxrwx  1 lanka lanka   70 Jul  9 11:51 libusb1_1.0.27.bb -> ../layers-scarthgap/poky/meta/recipes-support/libusb/libusb1_1.0.27.bb
+lrwxrwxrwx  1 lanka lanka   67 Jul  9 11:51 libxml2_2.12.8.bb -> ../layers-scarthgap/poky/meta/recipes-core/libxml/libxml2_2.12.8.bb
+lrwxrwxrwx  1 lanka lanka  104 Jul  9 11:51 mosquitto_2.0.18.bb -> ../layers-scarthgap/meta-openembedded/meta-networking/recipes-connectivity/mosquitto/mosquitto_2.0.18.bb
+lrwxrwxrwx  1 lanka lanka   75 Jul  9 11:51 openssl_3.2.3.bb -> ../layers-scarthgap/poky/meta/recipes-connectivity/openssl/openssl_3.2.3.bb
+lrwxrwxrwx  1 lanka lanka   83 Jul  9 11:51 p7zip_16.02.bb -> ../layers-scarthgap/meta-openembedded/meta-oe/recipes-extended/p7zip/p7zip_16.02.bb
+lrwxrwxrwx  1 lanka lanka   67 Jul  9 11:51 rsync_3.2.7.bb -> ../layers-scarthgap/poky/meta/recipes-devtools/rsync/rsync_3.2.7.bb
+lrwxrwxrwx  1 lanka lanka   61 Jul  9 11:51 sed_4.9.bb -> ../layers-scarthgap/poky/meta/recipes-extended/sed/sed_4.9.bb
+lrwxrwxrwx  1 lanka lanka   62 Jul  9 11:51 tar_1.35.bb -> ../layers-scarthgap/poky/meta/recipes-extended/tar/tar_1.35.bb
+lrwxrwxrwx  1 lanka lanka   65 Jul  9 11:51 unzip_6.0.bb -> ../layers-scarthgap/poky/meta/recipes-extended/unzip/unzip_6.0.bb
+lrwxrwxrwx  1 lanka lanka   66 Jul  9 11:51 which_2.21.bb -> ../layers-scarthgap/poky/meta/recipes-extended/which/which_2.21.bb
+lrwxrwxrwx  1 lanka lanka   68 Jul  9 11:51 xmlto_0.0.28.bb -> ../layers-scarthgap/poky/meta/recipes-devtools/xmlto/xmlto_0.0.28.bb
+lrwxrwxrwx  1 lanka lanka   88 Jul  9 11:51 yaml-cpp_0.8.0.bb -> ../layers-scarthgap/meta-openembedded/meta-oe/recipes-support/yaml-cpp/yaml-cpp_0.8.0.bb
+lrwxrwxrwx  1 lanka lanka   61 Jul  9 11:51 zlib_1.3.1.bb -> ../layers-scarthgap/poky/meta/recipes-core/zlib/zlib_1.3.1.bb
+```
+
+### 4.4.2. *.bb
+
+#### A. $PJ_YOCTO_TARGET
+
+```bash
+$ echo $PJ_YOCTO_TARGET
+core-image-base
+
+$ bb-info $PJ_YOCTO_TARGET
+
+core-image-base                                       :1.0-r0                                 
+
+./layers-master-2b733d5/poky/meta/recipes-core/images/core-image-base.bb
+
+SRC_URI=""
+
+S="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-base/1.0-r0/core-image-base-1.0"
+```
+
+#### B. avahi
+
+```bash
+$ bb-info avahi
+
+avahi                                                 :0.8-r0                                 
+
+./bb-lnk/avahi_0.8.bb
+./layers-scarthgap/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
+
+SRC_URI="https://github.com/avahi/avahi/releases//download/v0.8/avahi-0.8.tar.gz            file://00avahi-autoipd            file://99avahi-autoipd            file://initscript.patch            file://0001-Fix-opening-etc-resolv.conf-error.patch            file://handle-hup.patch            file://local-ping.patch            file://invalid-service.patch            file://CVE-2023-1981.patch            file://CVE-2023-38469-1.patch            file://CVE-2023-38469-2.patch            file://CVE-2023-38470-1.patch            file://CVE-2023-38470-2.patch            file://CVE-2023-38471-1.patch            file://CVE-2023-38471-2.patch            file://CVE-2023-38472.patch            file://CVE-2023-38473.patch            "
+
+S="/yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/work/armv8a-poky-linux/avahi/0.8/avahi-0.8"
+```
+
+# 5. Burn Your Image
+
+## 5.1. Image flasher
+
+#### A. [balenaEtcher](https://www.balena.io/etcher/)
+
+#### B. [win32diskimager](https://sourceforge.net/projects/win32diskimager/)
+
+#### C. [rpi-imager](https://github.com/raspberrypi/rpi-imager)
+
+# 6. Customize
+
+## 6.1. Build Configuration
+
+> 如果要新增/修改相關 Firmware，可以先參考以下檔案
+
+```bash
+$ ls confs/*.conf
+confs/imx8mm-scarthgap-core.conf  confs/pi3-master-2b733d5.conf  confs/pi3-sample.conf  confs/qemux86_64.conf
+
+$ ls cooker-menu/*.json
+cooker-menu/imx8mm-evk-scarthgap-menu.json  cooker-menu/pi3-master-2b733d5-menu.json  cooker-menu/pi3-sample-menu.json
+```
+
+## 6.2. Set root's password
+
+```bash
+$ vi ./cooker-menu/pi3-master-2b733d5-menu.json 
+"IMAGE_CLASSES += 'extrausers'",
+"EXTRA_USERS_PARAMS = 'usermod -P 91005476 root;'",
+
+$ rm .cook-generate
+$ make .cook-generate
+#or
+$ cooker generate
+
+$ cat $PJ_YOCTO_BUILD_DIR/conf/local.conf
+
+$ cat $PJ_YOCTO_LAYERS_DIR/poky/meta/classes/extrausers.bbclass
+```
+
+#### A. [/etc/passwd](https://www.cyberciti.biz/faq/understanding-etcpasswd-file-format/)
+
+```bash
+$ cat builds-lnk/$PJ_YOCTO_BUILD-rootfs/etc/passwd
+```
+
+#### B. [/etc/shadow](https://www.cyberciti.biz/faq/understanding-etcshadow-file/)
+
+```bash
+$ cat builds-lnk/$PJ_YOCTO_BUILD-rootfs/etc/shadow
+```
+
+## 6.3. ssh
+
+```bash
+$ vi ./cooker-menu/$PJ_COOKER_MENU
+add into "local.conf"
+"IMAGE_INSTALL += ' dropbear'",
+
+$ rm .cook-generate
+$ make .cook-generate
+#or
+$ cooker generate
+
+$ cat $PJ_YOCTO_BUILD_DIR/conf/local.conf
+
+$ bitbake -s | grep dropbear
+$ bitbake -c build dropbear
+
+$ cat $PJ_YOCTO_LAYERS_DIR/poky/meta/recipes-core/dropbear/dropbear/init
+$ vi $PJ_YOCTO_LAYERS_DIR/poky/meta/recipes-core/dropbear/dropbear/dropbear.default
+# please mark
+# DROPBEAR_EXTRA_ARGS="-w"
+```
+
+## 6.4. [create a layer](https://blog.csdn.net/CSDN1013/article/details/111088399)
+
+```bash
+$ cd $PJ_YOCTO_LAYERS_DIR
+$ bitbake-layers create-layer meta-lanka
+NOTE: Starting bitbake server...
+Add your new layer with 'bitbake-layers add-layer meta-lanka'
+
+# we don't need to add-layer.
+```
+
+```bash
+# The following steps don't have to be performed.
+$ cd $PJ_YOCTO_LAYERS_DIR
+$ . ./poky/oe-init-build-env
+
+$ cd $PJ_YOCTO_LAYERS_DIR
+$ yocto-check-layer meta-lanka
+$ rm -rf build
+```
+
+#### A. [meta-lanka](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/meta-lanka)
+
+```bash
+# check example exist
+$ bitbake -s | grep example
+# not found
+
+$ vi ./cooker-menu/pi3-master-2b733d5-menu.json 
+# add "meta-lanka" into "layers"
+
+# prepare the build-dir and configuration files (local.conf, bblayers.conf, template.conf) needed by Yocto Project.
+$ cooker generate
+$ vi $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf
+
+# check again
+$ bitbake -s | grep example
+example                                               :0.1-r0
+
+# Then update meta-lanka/recipes-example/example/example_0.1.bb and add meta-lanka/recipes-example/example/files/* 
+```
+
+#### B. Update [example_0.1.bb](https://github.com/lankahsu520/CrossCompilationX/blob/master/Yocto/meta-lanka/recipes-example/example/example_0.1.bb)
+
+#### C. Add files - [helloworld-123.c and Makefile](https://github.com/lankahsu520/HelperX/tree/master/Yocto/meta-lanka/recipes-example/example/files)
+
+#### D. Install into Image
+
+```bash
+$ vi ./cooker-menu/pi3-master-2b733d5-menu.json
+# add "example" into "local.conf"
+# ,"IMAGE_INSTALL:append = ' example'"
+```
+
+# Appendix
+
+# I. Study
+
+# II. Debug
+
+# II. Debug
+
+## II.1. ../qemu-4.1.0/linux-user/syscall.c:7657: undefined reference to `stime'
+
+- [QEMU 3.1.0安装手记](https://segmentfault.com/a/1190000041094251)
+- [qemu: Replace stime() API with clock_settime](https://git.openembedded.org/openembedded-core/commit/?h=dunfell&id=2cca75155baec8358939e2aae822e256bed4cfe0)
+
+```bash
+$ bitbake -s | grep qemu
+$ find -name qemu*.bb
+./layers/poky/meta/recipes-devtools/qemu/qemu-helper-native_1.0.bb
+./layers/poky/meta/recipes-devtools/qemu/qemu-native_4.1.0.bb
+./layers/poky/meta/recipes-devtools/qemu/qemuwrapper-cross_1.0.bb
+./layers/poky/meta/recipes-devtools/qemu/qemu_4.1.0.bb
+./layers/poky/meta/recipes-devtools/qemu/qemu-system-native_4.1.0.bb
+
+```
+
+```
+修改
+./layers/poky/meta/recipes-devtools/qemu/qemu-native.inc
+
+新增檔案
+./layers/poky/meta/recipes-devtools/qemu/qemu/0012-linux-user-remove-host-stime-syscall.patch
+```
+
+## II.2. Fetcher failure for URL: 'git://github.com/RPi-Distro/firmware-nonfree'
+
+- [linux-firmware-rpidistro: add branch in SRC_URI](https://lore.kernel.org/all/a4a248b1-4a28-4c38-981b-76bd7013ec6f@www.fastmail.com/T/)
+
+## II.3. it has a restricted license 'synaptics-killswitch'
+
+> linux-firmware-rpidistro RPROVIDES linux-firmware-rpidistro-bcm43456 but was skipped: because it has a restricted license 'synaptics-killswitch'. Which is not listed in LICENSE_FLAGS_ACCEPTED
+
+#### - local.conf
+
+```bash
+LICENSE_FLAGS_ACCEPTED = 'synaptics-killswitch'
+```
+
+## II.4. sh: no job control in this shell
+
+> [    1.795126] Run /sbin/init as init process
+> [    1.795772] hid-generic 0003:0627:0001.0002: input: USB HID v1.11 Keyboard [QEMU QEMU USB Keyboard] on usb-0000:00:1d.7-2/input0
+> [    1.796985] Run /etc/init as init process
+> [    1.797744] Run /bin/init as init process
+> [    1.798366] Run /bin/sh as init process
+> sh: cannot set terminal process group (-1): Inappropriate ioctl for device
+> sh: no job control in this shell
+> sh-5.2#
+> [    2.108334] IPv6: ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+
+#### - busybox in rootfs ?
+
+```bash
+# check busybox exist
+$ ls -al rootfs/bin/busybox
+```
+
+#### - local.conf
+
+```bash
+Fail:
+,"IMAGE_INSTALL += ' example'"
+
+Ok:
+,"IMAGE_INSTALL:append = ' example'"
+```
+
+# III. Glossary
+
+# IV. Tool Usage
+
+# Author
+
+> Created and designed by [Lanka Hsu](lankahsu@gmail.com).
+
+# License
+
+> [CrossCompilationX](https://github.com/lankahsu520/CrossCompilationX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
+

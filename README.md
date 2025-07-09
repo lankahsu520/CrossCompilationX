@@ -405,13 +405,15 @@ flowchart LR
 
 #### B. [OpenWrt](https://openwrt.org)
 
-##### A.1. [helper_OpenWrt-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_OpenWrt-RaspberryPi3.md) - helper_OpenWrt-RaspberryPi3 helper
+##### A.1. [helper_OpenWrt-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_OpenWrt-RaspberryPi3.md) - OpenWrt-RaspberryPi3 helper
 
 #### C. [Yocto](https://www.yoctoproject.org)
 
-##### A.1. [helper_Yocto.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto.md) - helper_Yocto helper
+##### A.1. [helper_Yocto.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto.md) - Yocto helper
 
-##### A.2. [helper_Yocto-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RaspberryPi3.md) - helper_Yocto-RaspberryPi3 helper
+##### A.2. [helper_Yocto-cookerX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-cookerX.md) - Yocto cookerX & RaspberryPi3 helper
+
+##### A.3. [helper_Yocto-NXP-8MMINILPD4‑EVKB.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-NXP-8MMINILPD4‑EVKB.md) - Yocto NXP-8MMINILPD4‑EVKB helper
 
 ## 4.2. Toolchain generator
 

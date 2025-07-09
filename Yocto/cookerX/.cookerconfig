@@ -1,8 +1,9 @@
 {
-    "menu": "cooker-menu/pi3-master.json",
-    "layer-dir": "layers-master",
+    "menu": "/yocto/cookerX/cooker-menu/imx8mm-evk-scarthgap-menu.json",
+    "layer-dir": "layers-scarthgap",
     "build-dir": "builds",
-    "dl-dir": "downloads",
-    "sstate-dir": "sstate-cache",
-    "cooker-config-version": 1
+    "dl-dir": "/yocto-cache/downloads",
+    "sstate-dir": "/yocto-cache/sstate-cache",
+    "cooker-config-version": 2,
+    "additional_menus": []
 }

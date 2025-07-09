@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HINT="$0 {all|cook|build|dry-run|generate|shell|clean|distclean|update|init|ls|pull}"
+HINT="$0 {all|cook|build|dry-run|generate|shell|clean|distclean|update|init|ls|pull|lnk}"
 HINT+="\nExample:"
 HINT+="\n\t init + update + generate + cook, check: $0 all"
 HINT+="\n\t init + update + generate + cook: $0 cook"
@@ -12,7 +12,7 @@ ACTION=$1
 RUN_SH=`basename $0`
 
 [ "$PJ_YOCTO_MACHINE" != "" ] || export PJ_YOCTO_MACHINE="raspberrypi3"
-[ "$PJ_YOCTO_TARGET" != "" ] || export PJ_YOCTO_TARGET="pi3"
+[ "$PJ_YOCTO_BUILD" != "" ] || export PJ_YOCTO_BUILD="pi3-master-2b733d5"
 
 BUILD_START_STRING=`date +%Y%m%d%H%M%S`
 BUILD_END_STRING=`date +%Y%m%d%H%M%S`
@@ -25,7 +25,7 @@ TEE_ARG=""
 
 INTERACTIVE=""
 
-COOKER_MENU="$PJ_COOKER_MENU_DIR/$PJ_COOKER_MENU"
+COOKER_MENU="$PJ_COOKER_MENU_PATH/$PJ_COOKER_MENU"
 COOKER_VERBOSE="-v"
 #COOKER_DRY="-n"
 
@@ -60,7 +60,7 @@ do_command_fn()
 ls_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
-	do_command_fn "ls -al builds/build-$PJ_YOCTO_TARGET/tmp/deploy/images/$PJ_YOCTO_MACHINE"
+	do_command_fn "ls -al $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE"
 }
 
 pull_fn()
@@ -69,17 +69,36 @@ pull_fn()
 	do_command_fn "(cd $PJ_COOKER_MENU_DIR; git pull;)"
 }
 
+# make cook-lnk
 lnk_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
-	do_command_fn "(cd $PJ_YOCTO_ROOT/builds_lnk; rm -f *; ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/core-image-base/1.0-r0/rootfs $PJ_YOCTO_TARGET-rootfs; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/rpm $PJ_YOCTO_TARGET-rpm;)"
-	do_command_fn "(cd $PJ_YOCTO_ROOT/images; rm -f *; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3.wic.bz2;)"
+	
+	if [ -d $PJ_YOCTO_ROOT/builds-lnk ]; then
+		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; rm -f *;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs $PJ_YOCTO_BUILD-rootfs;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/rpm $PJ_YOCTO_BUILD-rpm;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/sdk;)"
+	else
+		echo "Please mkdir $PJ_YOCTO_ROOT/builds-lnk first !!!"
+	fi
+
+	if [ -d $PJ_YOCTO_ROOT/images-lnk ]; then
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; rm -f *;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_IMAGE_WIC) $PJ_YOCTO_IMAGE_WIC;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_IMAGE_MANIFEST) $PJ_YOCTO_IMAGE_MANIFEST;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; bitbake -g $PJ_YOCTO_TARGET;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; bitbake -e $PJ_YOCTO_TARGET > environment.txt;)"
+	else
+		echo "Please mkdir $PJ_YOCTO_ROOT/images-lnk first !!!"
+	fi
 }
 
 distclean_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
-	do_command_fn "rm -rf builds/build-*"
+	do_command_fn "rm -rf builds/*"
 }
 
 cfg_fn()
@@ -88,22 +107,24 @@ cfg_fn()
 
 	[ -f .cookerconfig_bak ] || (cp .cookerconfig .cookerconfig_bak;)
 
-	export YOCTO_DOWNLOADS=`realpath $PJ_YOCTO_DOWNLOADS`
-	export YOCTO_SSTATE=`realpath $PJ_YOCTO_SSTATE`
-	jq . .cookerconfig_bak | jq ".menu=\"`pwd`/$PJ_COOKER_MENU_DIR/$PJ_COOKER_MENU\"" | jq ".[\"layer-dir\"]=\"$PJ_YOCTO_LAYERS\"" | jq ".[\"build-dir\"]=\"$PJ_YOCTO_BUILDS\"" | jq ".[\"sstate-dir\"]=\"$YOCTO_SSTATE\"" | jq ".[\"dl-dir\"]=\"$YOCTO_DOWNLOADS\"" | jq -c . > .cookerconfig
+	export PJ_YOCTO_DOWNLOADS_DIR=`realpath $PJ_YOCTO_DOWNLOADS_DIR`
+	export PJ_YOCTO_SSTATE_DIR=`realpath $PJ_YOCTO_SSTATE_DIR`
+	jq . .cookerconfig_bak | jq ".menu=\"`pwd`/$PJ_COOKER_MENU_PATH/$PJ_COOKER_MENU\"" | jq ".[\"layer-dir\"]=\"$PJ_YOCTO_LAYERS_PATH\"" | jq ".[\"build-dir\"]=\"$PJ_YOCTO_BUILDS_PATH\"" | jq ".[\"sstate-dir\"]=\"$PJ_YOCTO_SSTATE_DIR\"" | jq ".[\"dl-dir\"]=\"$PJ_YOCTO_DOWNLOADS_DIR\"" | jq -c . > .cookerconfig
 
 	return 0
 }
 
+# make cook-clean
 clean_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
 
-	do_command_fn "cooker clean"
+	do_command_fn "cooker clean $PJ_YOCTO_TARGET"
 
 	return 0
 }
 
+# make .cook-update
 update_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
@@ -113,6 +134,7 @@ update_fn()
 	return 0
 }
 
+# make .cook-init
 init_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
@@ -122,34 +144,38 @@ init_fn()
 	return 0
 }
 
+# make cook
 cook_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
 
-	do_command_fn "cooker $COOKER_DRY $COOKER_VERBOSE cook $COOKER_MENU $PJ_YOCTO_TARGET"
+	do_command_fn "cooker $COOKER_DRY $COOKER_VERBOSE cook $COOKER_MENU $PJ_YOCTO_BUILD"
 
 	return 0
 }
 
+# make cook-build
 build_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
 
-	do_command_fn "cooker $COOKER_DRY $COOKER_VERBOSE build $PJ_YOCTO_TARGET"
+	do_command_fn "cooker $COOKER_DRY $COOKER_VERBOSE build $PJ_YOCTO_BUILD"
 
 	return 0
 }
 
+# make cook-dry-run
 dry_run_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
 
-	do_command_fn "cooker --dry-run cook $COOKER_MENU $PJ_YOCTO_TARGET > $BUILD_SCRIPT; chmod  +x  $BUILD_SCRIPT"
+	do_command_fn "cooker --dry-run cook $COOKER_MENU $PJ_YOCTO_BUILD > $BUILD_SCRIPT; chmod  +x  $BUILD_SCRIPT"
 	sed -i --follow-symlinks "s|env bash -c source|source|g" $BUILD_SCRIPT
 
 	return 0
 }
 
+# make .cook-generate
 generate_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
@@ -163,7 +189,7 @@ shell_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
 
-	do_command_fn "cooker shell $PJ_YOCTO_TARGET"
+	do_command_fn "cooker shell $PJ_YOCTO_BUILD"
 
 	return 0
 }
@@ -233,6 +259,9 @@ main_fn()
 		;;
 		pull)
 			pull_fn
+		;;
+		lnk)
+			lnk_fn
 		;;
 		*)
 			showusage_fn

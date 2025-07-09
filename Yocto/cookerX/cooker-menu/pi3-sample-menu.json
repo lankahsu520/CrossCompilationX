@@ -15,7 +15,7 @@
 	],
 	"layers": ["poky/meta", "poky/meta-poky", "poky/meta-yocto-bsp", "meta-lanka", "meta-openembedded/meta-oe"],
 	"builds": {
-		"pi3": {
+		"pi3-sample": {
 			"notes": ["The default `core-image-base` image is used for bitbake."],
 			"target": "core-image-base",
 			"layers": ["meta-raspberrypi"],
