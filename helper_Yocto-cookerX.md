@@ -22,7 +22,7 @@
 >
 > Yocto Project isn't friendly to programmer. We have to collect Menu-files and create local.conf by myself.
 
-> 為什麼特別再包裝一層，因為用慣了 make，不只是命令好記，還可以使用 tab 鍵來接後續指令。
+> 為什麼特別再包裝一層，因為用慣了 make；工具的命令要好記，而不是讓`使用者`困擾。
 
 # 2. Environment
 
@@ -44,7 +44,9 @@ $ cooker --version
 
 # 3. Building
 
-> 請特別注意 PJ_YOCTO_DOWNLOADS_DIR 和 PJ_YOCTO_SSTATE_DIR，因為編譯真的很漫長，所以特別保留 downloads 和 sstate-cache 放在另一顆硬碟存放。
+## 3.1. Quick Start
+
+> 請特別注意 `PJ_YOCTO_DOWNLOADS_DIR` 和 `PJ_YOCTO_SSTATE_DIR`，因為編譯真的很漫長，所以特別保留 downloads 和 sstate-cache 放在另一顆硬碟存放。
 >
 > 如完全採用 make ，而沒有呼叫 cooker_123.sh，在編譯過程會失敗。
 
@@ -77,7 +79,29 @@ cooker  -v build pi3-master-2b733d5
 # 漫長的等待…但就是這麼簡單！
 ```
 
+## 3.2. List of Images
+
+| IMAGE              | DESC                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| core-image-base    | A console-only image that fully supports the target device hardware.. |
+| core-image-minimal | A small image just capable of allowing a device to boot..    |
+| core-image-sato    | Image with Sato, a mobile environment and visual style for mobile devices. The image supports X11 with a Sato theme, Pimlico applications, and contains terminal, editor, and file manager. |
+| core-image-weston  | A very basic Wayland image with a terminal.                  |
+
+```bash
+$ bitbake -s | grep image
+$ bitbake -e core-image-base | grep ^DESCRIPTION=
+```
+
+## 3.3. List of Layers
+
+```bash
+$ bitbake-layers show-layers
+```
+
 # 4. Outputs
+
+> 本篇都會採用 cookerX 進行解說
 
 ```bash
 $ make lnk-generate
@@ -114,6 +138,20 @@ drwxr-xr-x 10 lanka lanka 4096 Mar  9  2018 usr/
 drwxr-xr-x  8 lanka lanka 4096 Mar  9  2018 var/
 ```
 
+### 4.1.1. rebuild rootfs
+
+> 在roofs 進行刪除後，進行還原
+
+```bash
+# ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs $PJ_YOCTO_BUILD-rootfs
+
+$ echo $PJ_YOCTO_IMAGE
+core-image-base
+
+# 強制執行 do_rootfs
+$ bitbake -f $PJ_YOCTO_IMAGE -c rootfs
+```
+
 ## 4.2. images-lnk
 
 ```bash
@@ -128,11 +166,50 @@ lrwxrwxrwx  1 lanka lanka     140 Jul  9 16:06 core-image-base-raspberrypi3.wic.
 -rw-rw-r--  1 lanka lanka 1732254 Jul  9 16:06 task-depends.dot
 ```
 
-### 4.2.1. image
+### 4.2.1. Info of wic
 
 ```bash
 $ ll images-lnk/$PJ_YOCTO_IMAGE_WIC
 lrwxrwxrwx 1 lanka lanka 140 Jul  9 16:06 images-lnk/core-image-base-raspberrypi3.wic.bz2 -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/images/raspberrypi3/core-image-base-raspberrypi3-20250709020740.rootfs.wic.bz2
+
+$ cp images-lnk/core-image-base-raspberrypi3.wic.bz2 ../
+$ bzip2 -d -f core-image-base-raspberrypi3.wic.bz2
+$ ll core-image-base-raspberrypi3.wic
+-rw-r--r-- 1 lanka lanka 233202688 Jul 11 13:46 core-image-base-raspberrypi3.wic
+
+$ wic ls core-image-base-raspberrypi3.wic
+Num     Start        End          Size      Fstype
+ 1       4194304     57143295     52948992  fat16
+ 2      58720256    233202687    174482432  ext4
+```
+
+### 4.2.2. Build History
+
+```bash
+$ cat images-lnk/pn-buildlist
+$ cat images-lnk/task-depends.dot
+$ cat images-lnk/environment.txt
+$ cat images-lnk/$PJ_YOCTO_IMAGE_MANIFEST
+```
+
+```bash
+$ cd images-lnk
+# -g, --graphviz        Save dependency tree information for the specified targets in the dot syntax.
+$ bitbake -g $PJ_YOCTO_TARGET
+$ cat pn-buildlist
+$ cat task-depends.dot
+
+# Show the global or per-recipe environment complete with information about where variables were set/changed.
+$ bitbake -e $PJ_YOCTO_TARGET > environment.txt
+$ cat environment.txt
+
+$ cat environment.txt | grep ^IMAGE_INSTALL
+```
+
+### 4.2.3. List of Packages
+
+```bash
+$ oe-pkgdata-util list-pkgs
 ```
 
 ## 4.3. builds-lnk
@@ -148,31 +225,9 @@ lrwxrwxrwx 1 lanka lanka   81 Jul  9 12:30 raspberrypi3 -> /yocto/cookerX-pi3/bu
 lrwxrwxrwx 1 lanka lanka   65 Jul  9 12:30 sdk -> /yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/deploy/sdk
 ```
 
-## 4.4. Recipes
+## 4.4. bb-lnk
 
-### 4.4.1. dependency
-
-```bash
-$ cat images/pn-buildlist
-$ cat images/task-depends.dot
-$ cat images/environment.txt
-$ cat images/$PJ_YOCTO_IMAGE_MANIFEST
-```
-
-```bash
-# -g, --graphviz        Save dependency tree information for the specified targets in the dot syntax.
-$ bitbake -g $PJ_YOCTO_TARGET
-$ cat pn-buildlist
-$ cat task-depends.dot
-
-# Show the global or per-recipe environment complete with information about where variables were set/changed.
-$ bitbake -e $PJ_YOCTO_TARGET > environment.txt
-$ cat environment.txt
-
-$ cat environment.txt | grep ^IMAGE_INSTALL
-```
-
-### 4.4.1. bb-lnk
+> 這邊是方便查看相關的 bb ，將它們進行連結
 
 ```bash
 $ ./confs/sh/bb_linker.sh
@@ -217,43 +272,11 @@ lrwxrwxrwx  1 lanka lanka   88 Jul  9 11:51 yaml-cpp_0.8.0.bb -> ../layers-scart
 lrwxrwxrwx  1 lanka lanka   61 Jul  9 11:51 zlib_1.3.1.bb -> ../layers-scarthgap/poky/meta/recipes-core/zlib/zlib_1.3.1.bb
 ```
 
-### 4.4.2. *.bb
-
-#### A. $PJ_YOCTO_TARGET
-
-```bash
-$ echo $PJ_YOCTO_TARGET
-core-image-base
-
-$ bb-info $PJ_YOCTO_TARGET
-
-core-image-base                                       :1.0-r0                                 
-
-./layers-master-2b733d5/poky/meta/recipes-core/images/core-image-base.bb
-
-SRC_URI=""
-
-S="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-base/1.0-r0/core-image-base-1.0"
-```
-
-#### B. avahi
-
-```bash
-$ bb-info avahi
-
-avahi                                                 :0.8-r0                                 
-
-./bb-lnk/avahi_0.8.bb
-./layers-scarthgap/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
-
-SRC_URI="https://github.com/avahi/avahi/releases//download/v0.8/avahi-0.8.tar.gz            file://00avahi-autoipd            file://99avahi-autoipd            file://initscript.patch            file://0001-Fix-opening-etc-resolv.conf-error.patch            file://handle-hup.patch            file://local-ping.patch            file://invalid-service.patch            file://CVE-2023-1981.patch            file://CVE-2023-38469-1.patch            file://CVE-2023-38469-2.patch            file://CVE-2023-38470-1.patch            file://CVE-2023-38470-2.patch            file://CVE-2023-38471-1.patch            file://CVE-2023-38471-2.patch            file://CVE-2023-38472.patch            file://CVE-2023-38473.patch            "
-
-S="/yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/work/armv8a-poky-linux/avahi/0.8/avahi-0.8"
-```
-
 # 5. Burn Your Image
 
 ## 5.1. Image flasher
+
+> 樹莓派是採用 SD-CARD 為儲取媒介，所以可以使用工具進行燒錄
 
 #### A. [balenaEtcher](https://www.balena.io/etcher/)
 
@@ -261,9 +284,95 @@ S="/yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/work/armv8a-poky-li
 
 #### C. [rpi-imager](https://github.com/raspberrypi/rpi-imager)
 
-# 6. Customize
+# 6. Toolchain
 
-## 6.1. Build Configuration
+## 6.1. Generate the Toolchain
+
+### 6.1.1. cross-compile SDK
+
+> 會產生 target rootfs 中的所有頭檔與庫（**針對該 image**）
+
+```bash
+$ make toolchain
+# or
+bitbake core-image-base -c populate_sdk
+
+$ make cook-lnk
+$ ll builds-lnk/sdk/*.sh
+-rwxr-xr-x 2 lanka lanka 302818041 Jul 11 15:00 builds-lnk/sdk/poky-glibc-x86_64-core-image-base-cortexa7t2hf-neon-vfpv4-raspberrypi3-toolchain-4.1.sh*
+
+# install
+$ builds-lnk/sdk/poky-glibc-x86_64-core-image-base-cortexa7t2hf-neon-vfpv4-raspberrypi3-toolchain-4.1.sh
+Poky (Yocto Project Reference Distro) SDK installer version 4.1
+===============================================================
+Enter target directory for SDK (default: /opt/poky/4.1):
+You are about to install the SDK to "/opt/poky/4.1". Proceed [Y/n]? y
+Extracting SDK......................................................................................done
+Setting it up...done
+SDK has been successfully set up and is ready to be used.
+Each time you wish to use the SDK in a new shell session, you need to source the environment setup script e.g.
+ $ . /opt/poky/4.1/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
+```
+
+### 6.1.2. generic SDK
+
+> 很簡單的 cross-compiler 和 基本 C runtime（如 glibc 或 musl）
+
+```bash
+$ make toolchain-pure
+# or
+bitbake meta-toolchain
+```
+
+## 6.2. Helloworld.c
+
+### 6.2.1. Native-Compilation
+
+```bash
+# on Ubuntu 20.04.6 LTS
+$	cat > helloworld.c <<EOF
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+
+	printf("Hello world !!!\n");
+	return 0;
+}
+EOF
+
+$ gcc -o helloworld helloworld.c
+$ ./helloworld
+Hello world !!!
+$ file helloworld
+helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=963bb5841deba5e7bed613604b0c89116249fae8, for GNU/Linux 3.2.0, not stripped
+```
+
+### 6.2.2. Cross-Compilation
+
+```bash
+#Each time you wish to use the SDK in a new shell session, you need to source the env
+$ . /opt/poky/4.1/environment-setup-cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
+
+$ echo $CC
+arm-poky-linux-gnueabi-gcc -mthumb -mfpu=neon-vfpv4 -mfloat-abi=hard -mcpu=cortex-a7 -fstack-protector-strong -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/4.1/sysroots/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi
+
+$ echo $CFLAGS
+-O2 -pipe -g -feliminate-unused-debug-types
+
+$ $CC -o helloworld helloworld.c
+
+# 這邊直接執行當然會失敗
+$ ./helloworld
+-bash: ./helloworld: cannot execute binary file: Exec format error
+
+$ file helloworld
+helloworld: ELF 32-bit LSB pie executable, ARM, EABI5 version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-armhf.so.3, BuildID[sha1]=2889d82d8020d224b6a028a72a86acb72ab02f25, for GNU/Linux 3.2.0, with debug_info, not stripped
+```
+
+# 7. Customize
+
+## 7.1. Build Configuration
 
 > 如果要新增/修改相關 Firmware，可以先參考以下檔案
 
@@ -275,12 +384,15 @@ $ ls cooker-menu/*.json
 cooker-menu/imx8mm-evk-scarthgap-menu.json  cooker-menu/pi3-master-2b733d5-menu.json  cooker-menu/pi3-sample-menu.json
 ```
 
-## 6.2. Set root's password
+## 7.2. Set root's password
 
 ```bash
-$ vi ./cooker-menu/pi3-master-2b733d5-menu.json 
+$ echo $PJ_COOKER_MENU
+pi3-master-2b733d5-menu.json
+
+$ vi ./cooker-menu/$PJ_COOKER_MENU.json 
 "IMAGE_CLASSES += 'extrausers'",
-"EXTRA_USERS_PARAMS = 'usermod -P 91005476 root;'",
+"EXTRA_USERS_PARAMS = 'usermod -P 1234567890 root;'",
 
 $ rm .cook-generate
 $ make .cook-generate
@@ -304,7 +416,7 @@ $ cat builds-lnk/$PJ_YOCTO_BUILD-rootfs/etc/passwd
 $ cat builds-lnk/$PJ_YOCTO_BUILD-rootfs/etc/shadow
 ```
 
-## 6.3. ssh
+## 7.3. ssh server
 
 ```bash
 $ vi ./cooker-menu/$PJ_COOKER_MENU
@@ -327,7 +439,9 @@ $ vi $PJ_YOCTO_LAYERS_DIR/poky/meta/recipes-core/dropbear/dropbear/dropbear.defa
 # DROPBEAR_EXTRA_ARGS="-w"
 ```
 
-## 6.4. [create a layer](https://blog.csdn.net/CSDN1013/article/details/111088399)
+## 7.4. [meta-lanka](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/meta-lanka)
+
+### 7.4.1. create the layer
 
 ```bash
 $ cd $PJ_YOCTO_LAYERS_DIR
@@ -348,7 +462,7 @@ $ yocto-check-layer meta-lanka
 $ rm -rf build
 ```
 
-#### A. [meta-lanka](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/meta-lanka)
+#### A. example
 
 ```bash
 # check example exist
@@ -360,7 +474,7 @@ $ vi ./cooker-menu/pi3-master-2b733d5-menu.json
 
 # prepare the build-dir and configuration files (local.conf, bblayers.conf, template.conf) needed by Yocto Project.
 $ cooker generate
-$ vi $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf
+$ cat $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf | grep meta-lanka
 
 # check again
 $ bitbake -s | grep example
@@ -381,11 +495,159 @@ $ vi ./cooker-menu/pi3-master-2b733d5-menu.json
 # ,"IMAGE_INSTALL:append = ' example'"
 ```
 
+#### E. check IMAGE_INSTALL
+
+```bash
+$ bitbake -e $PJ_YOCTO_TARGET | grep ^IMAGE_INSTALL=
+```
+
+### 7.4.2. example.bb
+
+```bash
+$ bb-info example
+
+directfb-examples                                   :1.7.0-r0
+example                                               :0.1-r0
+gst-examples                                       :1.18.6-r0
+
+./layers-master-2b733d5/meta-lanka/recipes-example/example/example_0.1.bb
+./layers-master-2b733d5/poky/meta/lib/bblayers/templates/example.bb
+
+SRC_URI="file://helloworld-123.c            file://Makefile"
+
+S="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/example/0.1-r0"
+
+WORKDIR="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/example/0.1-r0"
+
+DEPENDS="virtual/arm-poky-linux-gnueabi-gcc virtual/arm-poky-linux-gnueabi-compilerlibs virtual/libc "
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-base=""
+RDEPENDS:example-staticdev="example-dev (= 0.1-r0)"
+```
+
+## 7.5. commercial
+
+> 雖然可以在 local.conf 接受 `commercial`，但發佈 image 時，要注意商業授權套件
+
+```bash
+$ grep -r 'LICENSE_FLAGS' $PJ_YOCTO_LAYERS_DIR/meta-*/recipes-* | grep commercial
+/yocto/cookerX-pi3/layers-master-2b733d5/meta-raspberrypi/recipes-multimedia/gstreamer/gstreamer1.0-plugins-bad_%.bbappend:                   ${@bb.utils.contains('LICENSE_FLAGS_ACCEPTED', 'commercial', 'gpl faad', '', d)}"
+/yocto/cookerX-pi3/layers-master-2b733d5/meta-raspberrypi/recipes-multimedia/rpidistro-ffmpeg/rpidistro-ffmpeg_4.3.4.bb:LICENSE_FLAGS = "commercial"
+```
+
+```conf
+"local.conf": [
+        "LICENSE_FLAGS_ACCEPTED += 'commercial'"
+]
+```
+
+# 8. Query recipes
+
+## 8.1. Target
+
+```bash
+$ echo $PJ_YOCTO_TARGET
+core-image-base
+
+$ bb-info $PJ_YOCTO_TARGET
+
+core-image-base                                       :1.0-r0
+
+./layers-master-2b733d5/poky/meta/recipes-core/images/core-image-base.bb
+
+SRC_URI=""
+
+S="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-base/1.0-r0/core-image-base-1.0"
+
+WORKDIR="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/raspberrypi3-poky-linux-gnueabi/core-image-base/1.0-r0"
+
+DEPENDS="  syslinux-native bmap-tools-native cdrtools-native btrfs-tools-native squashfs-tools-native e2fsprogs-native erofs-utils-native virtual/arm-poky-linux-gnueabi-binutils   qemuwrapper-cross depmodwrapper-cross cross-localedef-native"
+
+RDEPENDS="     packagegroup-core-boot     packagegroup-base-extended               example run-postinsts psplash-raspberrypi packagegroup-core-ssh-dropbear locale-base-en-us locale-base-en-gb "
+RDEPENDS:${KERNEL_PACKAGE_NAME}-base=""
+RDEPENDS:core-image-base-staticdev="core-image-base-dev (= 1.0-r0)"
+```
+
+## 8.2. *.bb
+
+> 以下用 avahi 為範例
+
+### 8.2.1. bb-info
+
+| NAME     | FULL NAME          | TIME     |
+| -------- | ------------------ | -------- |
+| DEPENDS  | Build-time Depends | 編譯階段 |
+| RDEPENDS | Runtime Depends    | 執行階段 |
+
+```bash
+$ bb-info avahi
+
+avahi                                                 :0.8-r0
+
+./bb-lnk/avahi_0.8.bb
+./layers-master-2b733d5/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
+
+SRC_URI="https://github.com/lathiat/avahi/releases//download/v0.8/avahi-0.8.tar.gz            file://00avahi-autoipd            file://99avahi-autoipd            file://initscript.patch            file://0001-Fix-opening-etc-resolv.conf-error.patch            file://handle-hup.patch            file://local-ping.patch            "
+
+S="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/avahi/0.8-r0/avahi-0.8"
+
+WORKDIR="/yocto/cookerX-pi3/builds/build-pi3-master-2b733d5/tmp/work/cortexa7t2hf-neon-vfpv4-poky-linux-gnueabi/avahi/0.8-r0"
+
+DEPENDS="pkgconfig-native autoconf-native automake-native libtool-native libtool-cross  virtual/arm-poky-linux-gnueabi-gcc virtual/arm-poky-linux-gnueabi-compilerlibs virtual/libc gettext-native expat libcap libdaemon glib-2.0 python3-native  gobject-introspection gobject-introspection-native qemu-native update-rc.d initscripts base-files shadow-native shadow-sysroot shadow base-passwd dbus"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-base=""
+RDEPENDS:avahi-dnsconfd="avahi-daemon"
+RDEPENDS:avahi-staticdev="avahi-dev (= 0.8-r0)"
+```
+
+```bash
+bitbake -s | grep avahi
+find -name avahi*.bb
+bitbake -e avahi | grep ^SRC_URI=
+bitbake -e avahi | grep ^S=
+bitbake -e avahi | grep ^WORKDIR=
+bitbake -e avahi | grep ^DEPENDS
+bitbake -e avahi | grep ^RDEPENDS
+```
+
+### 8.2.2. build
+
+```bash
+$ make build
+BB_TASK=[build], BB=[]
+Example:
+  make listtasks BB=avahi
+  make configure BB=avahi
+  make clean BB=avahi
+  make cleanall BB=avahi
+  make fetch BB=avahi
+  make compile BB=avahi
+  make build BB=avahi
+  make install BB=avahi
+  make package_qa BB=avahi
+
+$ make build BB=avahi
+#or
+$ bitbake -c build avahi
+```
+
+### 8.2.3. List the files of bb
+
+```bash
+$ oe-pkgdata-util list-pkg-files avahi
+avahi:
+
+# 如果空空的，請改下面的方式
+$ oe-pkgdata-util list-pkgs | grep avahi
+
+$ oe-pkgdata-util list-pkg-files avahi-daemon
+```
+
 # Appendix
 
 # I. Study
 
-# II. Debug
+## I.1. [create a layer](https://blog.csdn.net/CSDN1013/article/details/111088399)
 
 # II. Debug
 

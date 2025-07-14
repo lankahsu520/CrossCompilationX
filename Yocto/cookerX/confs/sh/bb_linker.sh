@@ -94,6 +94,9 @@ main_fn()
 	create_lnk_fn "yokis"
 
 	create_lnk_fn "zlib_"
+
+	create_lnk_fn "python3-homeassistant"
+	create_lnk_fn "python3-ha-av"
 }
 
 main_fn

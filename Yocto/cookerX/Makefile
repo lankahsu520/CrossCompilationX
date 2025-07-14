@@ -17,7 +17,7 @@ BB_TASKS=listtasks configure clean cleanall fetch compile build install package_
 .DEFAULT_GOAL = all
 
 # .cook-build -> cook-patched -> .cook-update -> .cook-init
-.PHONY: all distclean cook cook-clean cook-target-clean cook-build cook-dry-run cook-lnk
+.PHONY: all distclean cook-clean cook-target-clean cook-lnk cook-dry-run cook-build cook-rebuild cook
 all: cook-build check
 
 distclean: cook-clean
@@ -37,6 +37,8 @@ cook-dry-run:
 
 cook-build: .cook-patched
 	${PJ_ROOT}/confs/sh/cooker_123.sh build
+
+cook-rebuild: cook-clean cook-target-clean cook-build
 
 cook:
 	${PJ_ROOT}/confs/sh/cooker_123.sh cook

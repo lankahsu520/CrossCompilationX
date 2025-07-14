@@ -20,20 +20,42 @@
 # 1. Overview
 
 > The i.MX 8M Mini EVKB provides a platform for comprehensive evaluation of the i.MX 8M Mini and i.MX 8M Mini Lite applications processors. It delivers high performance with power efficiency, multimedia interfaces, and Wi-Fi/Bluetooth for connectivity out-of-the box.
->
+
 > https://www.nxp.com/assets/images/en/dev-board-image/iMX8MMINIEVKLPDR4_TOP-LR-HR1.jpg
 
 ![iMX8MMINIEVKLPDR4_TOP-LR-HR1](./images/iMX8MMINIEVKLPDR4_TOP-LR-HR1.jpg)
 
-# 2. Building
+# 2. Product Details
 
-## 2.1. Official steps
+| HW   | [NXP 8MMINILPD4-EVKB](https://www.nxp.com/design/design-center/development-boards-and-designs/8MMINILPD4-EVK) |
+| ---- | ------------------------------------------------------------ |
+| CPU  | 4× Cortex-A53 @1.8 GHz<br/>1× Cortex‑M4 @400 MHz             |
+| RAM  | 2GB 32-bit LPDDR4                                            |
+| eMMC | 16/32 GB                                                     |
+
+## 2.1. [8MMINILPD4-EVK](https://www.nxp.com/design/design-center/development-boards-and-designs/8MMINILPD4-EVK)
+
+> - ### Processor
+>
+>   - i.MX 8M Mini Quad applications processor
+>   - 4x Cortex-A53 @ 1.8 GHz
+>   - 1x Cortex-M4 @ 400 MHz
+>
+>   ### Memory
+>
+>   - 2GB 32-bit LPDDR4
+>   - 16GB eMMC 5.1
+>   - SD/MMC connector
+
+# 3. Building
+
+## 3.1. Official steps
 
 > [i.MX Repo Manifest README](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-scarthgap/README.md)
 
 > [imx-manifest](https://github.com/nxp-imx/imx-manifest) / [imx-6.6.52-2.2.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-scarthgap/imx-6.6.52-2.2.0.xml)
 
-### 2.1.1. Configuration
+### 3.1.1. Configuration
 
 #### A. MACHINE
 
@@ -63,15 +85,9 @@
 | meta-imx       |      | https://github.com/nxp-imx/meta-imx         | NXP 官方                   |
 | meta-freescale |      | https://github.com/Freescale/meta-freescale | 社群（Freescale/NXP 社群） |
 
-#### D. Image
+### 3.1.3. build imx-image-xxx
 
-| IMAGE                | DESC                                                         |
-| -------------------- | ------------------------------------------------------------ |
-| imx-image-core       | core image with basic graphics and no multimedia             |
-| imx-image-multimedia | This image contains all the packages except QT6/OpenCV/Machine Learning packages |
-| imx-image-full       | This is the big image which includes imx-image-multimedia + OpenCV + QT6 + Machine Learning packages. |
-
-### 2.1.2. build imx-image-xxx
+> 共用 DL_DIR 和 SSTATE_DIR。
 
 ```bash
 # Download the Yocto Project BSP
@@ -81,25 +97,57 @@ $ repo init -u https://github.com/nxp-imx/imx-manifest \
  -m imx-6.6.52-2.2.0.xml
 $ repo sync
 
+$ vi setup-environment
+# 修改
+# DL_DIR = "/yocto-cache/downloads/"
+# 新增
+# SSTATE_DIR = "/yocto-cache/sstate-cache"
+
 # Setup the build folder for a BSP release
 $ MACHINE=imx8mm-lpddr4-evk \
  DISTRO=fsl-imx-wayland \
  source ./imx-setup-release.sh -b build-wayland
+
+$ cat conf/local.conf
+MACHINE ??= 'imx8mm-lpddr4-evk'
+DISTRO ?= 'fsl-imx-wayland'
+EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+USER_CLASSES ?= "buildstats"
+PATCHRESOLVE = "noop"
+BB_DISKMON_DIRS ??= "\
+    STOPTASKS,${TMPDIR},1G,100K \
+    STOPTASKS,${DL_DIR},1G,100K \
+    STOPTASKS,${SSTATE_DIR},1G,100K \
+    STOPTASKS,/tmp,100M,100K \
+    HALT,${TMPDIR},100M,1K \
+    HALT,${DL_DIR},100M,1K \
+    HALT,${SSTATE_DIR},100M,1K \
+    HALT,/tmp,10M,1K"
+PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
+CONF_VERSION = "2"
+
+DL_DIR = "/yocto-cache/downloads/"
+SSTATE_DIR = "/yocto-cache/sstate-cache"
+ACCEPT_FSL_EULA = "1"
+
+# Switch to Debian packaging and include package-management in the image
+PACKAGE_CLASSES = "package_deb"
+EXTRA_IMAGE_FEATURES += "package-management"
 
 #$ bitbake core-image-minimal
 #$ bitbake imx-image-full
 $ bitbake imx-image-core
 ```
 
-## 2.2. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/helper_cookerX.md)
+## 3.2. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/helper_cookerX.md)
 
-### 2.2.1. Configuration
+### 3.2.1. Configuration
 
 #### A.  imx8mm-evk-scarthgap-menu.json
 
 > 這邊參考 [imx-manifest](https://github.com/nxp-imx/imx-manifest) / [imx-6.6.52-2.2.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-scarthgap/imx-6.6.52-2.2.0.xml) 進行整合。
 
-### 2.2.2. build imx-image-xxx
+### 3.2.2. build imx-image-xxx
 
 ```bash
 $ python -V
@@ -119,9 +167,28 @@ cooker update
 cooker generate
 cooker  -v build imx8mm-evk-scarthgap
 ```
-# 3. Outputs
+## 3.3. List of Images
 
-> 這邊採用 cookerX 進行解說
+| IMAGE                | DESC                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| imx-image-core       | This is the basic core image with minimal tests              |
+| imx-image-multimedia | NXP Image to validate i.MX machines. This image contains everything used to test i.MX machines including GUI, demos and lots of applications. This creates a very large image, not suitable for production. |
+| imx-image-full       | NXP Image to validate i.MX machines. This image contains everything used to test i.MX machines including GUI, demos and lots of applications. This creates a very large image, not suitable for production. |
+
+```bash
+$ bitbake -s | grep imx-image
+$ bitbake -e imx-image-core | grep ^DESCRIPTION=
+```
+
+## 3.4. List of Layers
+
+```bash
+$ bitbake-layers show-layers
+```
+
+# 4. Outputs
+
+> 本篇都會採用 cookerX 進行解說
 
 ```bash
 $ make lnk-generate
@@ -130,7 +197,7 @@ $ ./confs/sh/cooker_123.sh lnk
 $ ./confs/sh/bb_linker.sh
 ```
 
-## 3.1. rootfs
+## 4.1. rootfs
 
 ```bash
 $ echo builds-lnk/$PJ_YOCTO_BUILD-rootfs
@@ -160,7 +227,21 @@ drwxr-xr-x 11 lanka lanka 4096 Mar  9  2018 usr/
 drwxr-xr-x  9 lanka lanka 4096 Mar  9  2018 var/
 ```
 
-## 3.2. images-lnk
+### 4.1.1. rebuild rootfs
+
+> 在roofs 進行刪除後，進行還原
+
+```bash
+# ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs $PJ_YOCTO_BUILD-rootfs
+
+$ echo $PJ_YOCTO_IMAGE
+imx-image-core
+
+# 強制執行 do_rootfs
+$ bitbake -f $PJ_YOCTO_IMAGE -c rootfs
+```
+
+## 4.2. images-lnk
 
 ```bash
 $ ll images-lnk/
@@ -173,7 +254,7 @@ lrwxrwxrwx  1 lanka lanka     152 Jul  9 16:05 imx-image-core-imx8mm-lpddr4-evk.
 -rw-rw-r--  1 lanka lanka    7791 Jul  9 16:06 pn-buildlist
 ```
 
-### 3.2.1. image
+### 4.2.1. Info of wic
 
 > 不管是用 Official or cookerX 都會產出 imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst。
 
@@ -184,6 +265,8 @@ lrwxrwxrwx 1 lanka lanka 152 Jul  9 16:05 images-lnk/imx-image-core-imx8mm-lpddr
 $ cp images-lnk/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst ./
 
 # unpack
+$ sudo apt-get install zstd
+
 $ unzstd imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
 imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst: 2411107328 bytes
 $ ll imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
@@ -195,7 +278,22 @@ Num     Start        End          Size      Fstype
  2     360710144   2411107327   2050397184  ext4
 ```
 
-## 3.3. builds-lnk
+### 4.2.2. Build History
+
+```bash
+$ cat images-lnk/pn-buildlist
+$ cat images-lnk/task-depends.dot
+$ cat images-lnk/environment.txt
+$ cat images-lnk/$PJ_YOCTO_IMAGE_MANIFEST
+```
+
+### 4.2.3. List of Packages
+
+```bash
+$ oe-pkgdata-util list-pkgs
+```
+
+## 4.3. builds-lnk
 
 ```bash
 $ ll builds-lnk
@@ -208,9 +306,21 @@ lrwxrwxrwx 1 lanka lanka   89 Jul  8 08:04 imx8mm-lpddr4-evk -> /yocto/cookerX/b
 lrwxrwxrwx 1 lanka lanka   68 Jul  8 08:04 sdk -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/deploy/sdk
 ```
 
-# 4. Burn Your Image
+## 4.4. bb-lnk
 
-## 4.1. Boot Switch Setup
+> 這邊是方便查看相關的 bb ，將它們進行連結
+
+```bash
+$ ./confs/sh/bb_linker.sh
+```
+
+```bash
+$ ll bb-lnk/
+```
+
+# 5. Burn Your Image
+
+## 5.1. Boot Switch Setup
 
 > 請記得設定 Download Mode
 
@@ -223,7 +333,7 @@ lrwxrwxrwx 1 lanka lanka   68 Jul  8 08:04 sdk -> /yocto/cookerX/builds/build-im
 | QSPI NOR Flash        | 0110xxxxxx        | 00000x0010        |
 | Serial Download Mode  | 1010xxxxxx        | xxxxxxxxx0        |
 
-## 4.2. uuu (Universal Update Utility)
+## 5.2. uuu (Universal Update Utility)
 
 > [nxp-imx](https://github.com/nxp-imx)/**[mfgtools](https://github.com/nxp-imx/mfgtools)**
 >
@@ -231,7 +341,7 @@ lrwxrwxrwx 1 lanka lanka   68 Jul  8 08:04 sdk -> /yocto/cookerX/builds/build-im
 
 > 安裝 uuu；手邊是用win10。將 uuu.exe 複製到 C:\Windows\System32
 
-## 4.3. Burn to eMMC
+## 5.3. Burn to eMMC
 
 ```bash
 $ cd /drives/d/WINAPPS/Worker/uuu
@@ -246,14 +356,14 @@ Connected Known USB Devices
         1:2      MX8MM   SDP:    0x1FC9 0x0134   0x0101
 ```
 
-### 4.3.1. NXP - android
+### 5.3.1. NXP - android
 
 > [Android OS for i.MX Applications Processors](https://www.nxp.com/design/design-center/software/embedded-software/i-mx-software/android-os-for-i-mx-applications-processors:IMXANDROID?tid=vanIMXANDROID)
 >
 > [15.0.0_1.0.0_DEMO_8MM](https://www.nxp.com/webapp/Download?colCode=15.0.0_1.0.0_DEMO_8MM&appType=license)
 
 ```bash
-# 採用 -dryrun，分兩段，沒辦法一次完成。
+# 採用 -dryrun，分兩段，沒辦法一次完成。此命令主要是產出 uuu.lst。
 $ ./uuu_imx_android_flash.sh -f imx8mm -a -e -D ./ -t emmc -dryrun
 This script is validated with uuu 1.5.179 version, it is recommended to align with this version.
 dtbo is supported
@@ -274,7 +384,7 @@ $ cp /tmp/uuu.lst ./
 $ uuu uuu.lst
 ```
 
-### 4.3.2. NXP - Linux
+### 5.3.2. NXP - Linux
 
 >  [Embedded Linux for i.MX Applications Processors](https://www.nxp.com/design/design-center/software/embedded-software/i-mx-software/embedded-linux-for-i-mx-applications-processors:IMXLINUX)
 >
@@ -362,7 +472,7 @@ New USB Device Attached at 1:2-0A1D3209DAB5B3C9
 1:2-0A1D3209DAB5B3C9>Okay (0s)
 ```
 
-### 4.3.3. Myself
+### 5.3.3. Myself
 
 ```bash
 # 這邊是自己編譯的
@@ -370,6 +480,7 @@ $ uuu -b emmc_all \
  ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk \
  ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
 
+# 舊版的 uuu 只允許 *.wic，如果還是 *.zst，請用 unzstd 解開
 $ uuu -b emmc_all \
  ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk \
  ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
@@ -491,11 +602,11 @@ New USB Device Attached at 1:2-0A1D3209DAB5B3C9
 1:2-0A1D3209DAB5B3C9>Okay (0s)
 ```
 
-# 5. Toolchain
+# 6. Toolchain
 
-## 5.1. Generate the Toolchain
+## 6.1. Generate the Toolchain
 
-### 5.1.1. cross-compile SDK
+### 6.1.1. cross-compile SDK
 
 > 會產生 target rootfs 中的所有頭檔與庫（**針對該 image**）
 
@@ -521,7 +632,7 @@ Each time you wish to use the SDK in a new shell session, you need to source the
  $ . /opt/fsl-imx-wayland/6.6-scarthgap/environment-setup-armv8a-poky-linux
 ```
 
-### 5.1.2. generic SDK
+### 6.1.2. generic SDK
 
 > 很簡單的 cross-compiler 和 基本 C runtime（如 glibc 或 musl）
 
@@ -531,11 +642,12 @@ $ make toolchain-pure
 bitbake meta-toolchain
 ```
 
-## 5.2. Helloworld.c
+## 6.2. Helloworld.c
 
-### 5.2.1. Native-Compilation
+### 6.2.1. Native-Compilation
 
 ```bash
+# on Ubuntu 20.04.6 LTS
 $	cat > helloworld.c <<EOF
 #include <stdio.h>
 
@@ -552,10 +664,9 @@ $ ./helloworld
 Hello world !!!
 $ file helloworld
 helloworld: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=963bb5841deba5e7bed613604b0c89116249fae8, for GNU/Linux 3.2.0, not stripped
-
 ```
 
-### 5.2.2. Cross-Compilation
+### 6.2.2. Cross-Compilation
 
 ```bash
 #Each time you wish to use the SDK in a new shell session, you need to source the env
@@ -575,13 +686,297 @@ $ ./helloworld
 
 $ file helloworld
 helloworld: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, BuildID[sha1]=b595ef8ba580a186cb7fd98e609a1bc385e32971, for GNU/Linux 5.15.0, with debug_info, not stripped
-
 ```
 
 ```bash
 # Run on imx8mm-lpddr4-evk
 root@imx8mm-lpddr4-evk:/tmp# ./helloworld
 Hello world !!!
+```
+
+# 7. Customize
+
+## 7.1. **[meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)**
+
+```bash
+$ find123 ffmpeg pyav hass
+```
+
+### 7.1.1. *.bb
+
+> 因為 homeassistant 相依很多套件，這邊就不列出所有的。
+
+#### A. python3-homeassistant
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-homeassistant
+```
+
+```bash
+$ bb-info python3-homeassistant
+
+python3-homeassistant                           :2023.12.0-r0                                          
+
+./bb-lnk/python3-homeassistant_2023.12.0.bb
+./layers-scarthgap/meta-homeassistant/recipes-homeassistant/homeassistant/python3-homeassistant_2023.12.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/h/homeassistant/homeassistant-2023.12.0.tar.gz;downloadfilename=homeassistant-2023.12.0.tar.gz      file://homeassistant.service     file://0001-Update-pyproject.toml-to-allow-compilation.patch "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-homeassistant/2023.12.0/homeassistant-2023.12.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-homeassistant/2023.12.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native base-files shadow-native shadow-sysroot shadow base-passwd systemd-systemctl-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-homeassistant="       python3-homeassistant-recorder       python3-homeassistant-ffmpeg       python3-homeassistant-dhcp     python3-homeassistant-zeroconf      python3-homeassistant-frontend     python3-homeassistant-hardware     python3-homeassistant-http     python3-homeassistant-image-upload     python3-homeassistant-mobile-app     python3-homeassistant-stream         python3-homeassistant-google-translate      python3-homeassistant-bluetooth     python3-homeassistant-usb      python3-homeassistant-assist-pipeline     python3-homeassistant-conversation       python3-homeassistant-cloud     python3-homeassistant-matter     python3-homeassistant-radio-browser      python3-homeassistant-file-upload      python3-aiohttp (>=3.9.1)     python3-aiohttp-cors (=0.7.0)     python3-aiohttp-fast-url-dispatcher (=0.3.0)     python3-aiohttp-zlib-ng (=0.1.1)     python3-astral (=2.2)     python3-attrs (>=23.1.0)     python3-atomicwrites-homeassistant (=1.4.1)     python3-awesomeversion (>=23.11.0)     python3-bcrypt (>=4.0.1)     python3-certifi (>=2021.5.30)     python3-ciso8601 (=2.3.0)     python3-httpx (=0.25.0)     python3-home-assistant-bluetooth (=1.10.4)     python3-ifaddr (=0.2.0)     python3-jinja2 (>=3.1.2)     python3-lru-dict (>=1.2.0)     python3-pyjwt (=2.8.0)     python3-cryptography (>=41.0.7)     python3-pyopenssl (>=23.2.0)     python3-orjson (=3.9.9)     python3-packaging (>=23.1)     python3-pip (>=21.3.1)     python3-python-slugify (=4.0.1)     python3-pyyaml (=6.0.1)     python3-requests (=2.31.0)     python3-typing-extensions (>=4.8.0)     python3-ulid-transform (=0.9.0)     python3-voluptuous (=0.13.1)     python3-voluptuous-serialize (=2.6.0)     python3-yarl (>=1.9.2)         python3-statistics     python3-core (>=3.11.0)  python3-core"
+RDEPENDS:python3-homeassistant-amazon-polly="    python3-boto3 (>=1.28.17) "
+RDEPENDS:python3-homeassistant-assist-pipeline="    python3-webrtc-noise-gain (>=1.2.3) "
+RDEPENDS:python3-homeassistant-axis="    python3-axis (=48) "
+RDEPENDS:python3-homeassistant-backup="    python3-securetar (=2023.3.0) "
+RDEPENDS:python3-homeassistant-bluetooth="    python3-bleak (=0.21.1)     python3-bleak-retry-connector (=3.3.0)     python3-bluetooth-adapters (=0.16.1)     python3-bluetooth-auto-recovery (=1.2.3)     python3-bluetooth-data-tools (=1.15.0)     python3-dbus-fast (>=2.12.0) "
+RDEPENDS:python3-homeassistant-cast="    python3-pychromecast (>=13.0.8) "
+RDEPENDS:python3-homeassistant-cloud="    python3-hass-nabucasa (=0.74.0) "
+RDEPENDS:python3-homeassistant-conversation="    python3-hassil (>=1.2.5)     python3-home-assistant-intents (>=2023.12.5) "
+RDEPENDS:python3-homeassistant-dhcp="    python3-aiodiscover (=1.5.1)     python3-scapy (=2.5.0) "
+RDEPENDS:python3-homeassistant-ffmpeg="    python3-ha-ffmpeg (=3.1.0) "
+RDEPENDS:python3-homeassistant-file-upload="    python3-janus (=1.0.0) "
+RDEPENDS:python3-homeassistant-fritz="    python3-fritzconnection (=1.13.2)     python3-xmltodict (=0.13.0) "
+RDEPENDS:python3-homeassistant-fritzbox="    python3-pyfritzhome (=0.6.9) "
+RDEPENDS:python3-homeassistant-frontend="    python3-home-assistant-frontend (=20231206.0) "
+RDEPENDS:python3-homeassistant-google-translate="    python3-gtts (=2.2.4) "
+RDEPENDS:python3-homeassistant-hacs="    python3-aiogithubapi (=22.10.1) "
+RDEPENDS:python3-homeassistant-hardware="    python3-psutil-home-assistant (=0.0.1) "
+RDEPENDS:python3-homeassistant-http="    python3-aiohttp-cors (=0.7.0) "
+RDEPENDS:python3-homeassistant-hue="    python3-aiohue (=4.7.0) "
+RDEPENDS:python3-homeassistant-image-upload="    python3-pillow (>=10.1.0) "
+RDEPENDS:python3-homeassistant-ipp="    python3-pyipp (=0.14.4) "
+RDEPENDS:python3-homeassistant-keyboard-remote="    python3-evdev (>=1.6.1)     python3-asyncinotify (>=4.0.2) "
+RDEPENDS:python3-homeassistant-matter="    python3-matter-server (=5.0.0) "
+RDEPENDS:python3-homeassistant-met="    python3-pymetno (>=0.11.0) "
+RDEPENDS:python3-homeassistant-mobile-app="    python3-pynacl (=1.5.0) "
+RDEPENDS:python3-homeassistant-modbus="    python3-pymodbus (>=3.5.4) "
+RDEPENDS:python3-homeassistant-octoprint="    python3-pyoctoprintapi (=0.1.12) "
+RDEPENDS:python3-homeassistant-pulseaudio-loopback="    python3-pulsectl (>=23.5.2) "
+RDEPENDS:python3-homeassistant-radio-browser="    python3-radios (=0.2.0) "
+RDEPENDS:python3-homeassistant-recorder="    python3-sqlite3     python3-fnv-hash-fast (=0.5.0)     python3-sqlalchemy (>=2.0.22)     python3-psutil-home-assistant (=0.0.1) "
+RDEPENDS:python3-homeassistant-route53="    python3-boto3 (>=1.28.17) "
+RDEPENDS:python3-homeassistant-scrape="    python3-beautifulsoup4 (>=4.12.2)     python3-lxml (>=4.9.3) "
+RDEPENDS:python3-homeassistant-sentry="    python3-sentry-sdk (>=1.31.0) "
+RDEPENDS:python3-homeassistant-shelly="    python3-aioshelly (=6.1.0) "
+RDEPENDS:python3-homeassistant-ssdp="    python3-async-upnp-client (=0.36.2) "
+RDEPENDS:python3-homeassistant-staticdev="python3-homeassistant-dev (= 2023.12.0-r0)"
+RDEPENDS:python3-homeassistant-stream="    python3-pyturbojpeg (=1.7.1)     python3-ha-av (=10.1.1)     python3-numpy (>=1.26.0) "
+RDEPENDS:python3-homeassistant-systemmonitor="    python3-psutil (>=5.9.6) "
+RDEPENDS:python3-homeassistant-tts="    python3-mutagen (=1.47.0) "
+RDEPENDS:python3-homeassistant-upnp="    python3-async-upnp-client (=0.36.2)     python3-getmac (=0.8.2) "
+RDEPENDS:python3-homeassistant-usb="    python3-pyserial (=3.5)     python3-pyudev (>=0.23.2) "
+RDEPENDS:python3-homeassistant-vlc="    python3-python-vlc (>=3.0.18122) "
+RDEPENDS:python3-homeassistant-zeroconf="    python3-zeroconf (>=0.119.0) "
+```
+
+#### B. python3-ha-av
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-ha-av
+```
+
+```bash
+$ bb-info python3-ha-av
+
+python3-ha-av                                      :10.1.1-r0                                          
+
+./bb-lnk/python3-ha-av_10.1.1.bb
+./layers-scarthgap/meta-homeassistant/recipes-devtools/python/python3-ha-av_10.1.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/h/ha-av/ha-av-10.1.1.tar.gz;downloadfilename=ha-av-10.1.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-av/10.1.1/ha-av-10.1.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-av/10.1.1"
+
+DEPENDS="pkgconfig-native virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native     python3-cython-native     ffmpeg  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-ha-av="     python3-numpy     python3-pillow  python3-core"
+RDEPENDS:python3-ha-av-staticdev="python3-ha-av-dev (= 10.1.1-r0)"
+```
+
+#### C. python3-ha-ffmpeg
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-ha-ffmpeg
+```
+
+```bash
+$ bb-info python3-ha-ffmpeg
+
+python3-ha-ffmpeg                                   :3.1.0-r0
+
+./layers-scarthgap/meta-homeassistant/recipes-devtools/python/python3-ha-ffmpeg_3.1.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/h/ha-ffmpeg/ha-ffmpeg-3.1.0.tar.gz;downloadfilename=ha-ffmpeg-3.1.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-ffmpeg/3.1.0/ha-ffmpeg-3.1.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-ffmpeg/3.1.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-ha-ffmpeg="     python3-async-timeout     ffmpeg  python3-core"
+RDEPENDS:python3-ha-ffmpeg-staticdev="python3-ha-ffmpeg-dev (= 3.1.0-r0)"
+```
+
+### 7.1.2. Add into cooker-menu
+
+>  修改 cooker-menu/*-menu.json
+
+```json
+  "sources": [
+    {
+      "url": "https://github.com/meta-homeassistant/meta-homeassistant",
+      "branch": "main",
+      "dir": "meta-homeassistant",
+      "rev": "5ee63318c53bec1bfc2e56221783c23c61b32a1e"
+    },
+  ],
+  "layers": [
+    "meta-homeassistant",
+  ],
+  "builds": {
+    "imx8mm-evk-scarthgap-home": {
+      "local.conf": [
+        "IMAGE_INSTALL:append = ' python3-homeassistant'",
+        "LICENSE_FLAGS_ACCEPTED += 'commercial'"
+      ]
+    }
+  }
+```
+
+> 因為 python3-ha-av dependency ffmpeg，但是 ffmpeg LICENSE = "commercial"
+
+```bash
+$ cat /yocto/cookerX-home/layers-scarthgap/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb | grep LICENSE_FLAGS
+LICENSE_FLAGS = "commercial"
+```
+
+### 7.1.3. Showtime
+
+> You should now be able to access Home Assistant via web browser usually under the address: 
+>
+> http://<ip>:8123
+>
+> 預設的 Port: 8123
+
+> 因為本篇不是研究 homeassistant，而是讓 homeassistant 在 NXP 8MMINILPD4‑EVKB 上執行。
+
+```bash
+http://192.168.31.62:8123
+```
+
+![Yocto-NXP-8MMINILPD4‑EVKB-hass](./images/Yocto-NXP-8MMINILPD4‑EVKB-hass.png)
+
+#### A. change port
+
+> change 8123 -> 12345
+
+```bash
+root@imx8mm-lpddr4-evk:~# ps -aux | grep hass
+homeass+     400 50.3 13.6 2709920 262844 ?      Ssl  02:20   0:32 python3 /usr/bin/hass --skip-pip -c /var/lib/homeassistant
+root         600  0.0  0.0   3508  1280 ttymxc1  S+   02:21   0:00 grep hass
+
+root@imx8mm-lpddr4-evk:~# ls -al /var/lib/homeassistant
+total 1008
+drwxr-xr-x  7 homeassistant homeassistant   4096 Jul 14 02:20 .
+drwxr-xr-x 15 root          root            4096 Feb 27  2024 ..
+-rw-r--r--  1 homeassistant homeassistant      9 Feb 27  2024 .HA_VERSION
+drwxr-xr-x  2 homeassistant homeassistant   4096 Jul 11 08:10 .cloud
+drwxr-xr-x  2 homeassistant homeassistant   4096 Jul 14 02:20 .storage
+-rw-r--r--  1 homeassistant homeassistant      2 Feb 27  2024 automations.yaml
+drwxr-xr-x  4 homeassistant homeassistant   4096 Feb 27  2024 blueprints
+-rw-r--r--  1 homeassistant homeassistant    295 Jul 14 02:20 configuration.yaml
+drwxr-xr-x  2 homeassistant homeassistant   4096 Feb 27  2024 deps
+-rw-r--r--  1 homeassistant homeassistant  18980 Jul 14 02:21 home-assistant.log
+-rw-r--r--  1 homeassistant homeassistant  42081 Jul 14 02:19 home-assistant.log.1
+-rw-r--r--  1 homeassistant homeassistant      0 Jul 14 02:20 home-assistant.log.fault
+-rw-r--r--  1 homeassistant homeassistant 679936 Jul 14 02:20 home-assistant_v2.db
+-rw-r--r--  1 homeassistant homeassistant  32768 Jul 14 02:21 home-assistant_v2.db-shm
+-rw-r--r--  1 homeassistant homeassistant 206032 Jul 14 02:21 home-assistant_v2.db-wal
+-rw-r--r--  1 homeassistant homeassistant      0 Feb 27  2024 scenes.yaml
+-rw-r--r--  1 homeassistant homeassistant      0 Feb 27  2024 scripts.yaml
+-rw-r--r--  1 homeassistant homeassistant    161 Feb 27  2024 secrets.yaml
+drwxr-xr-x  2 homeassistant homeassistant   4096 Feb 27  2024 tts
+
+root@imx8mm-lpddr4-evk:~# vi /var/lib/homeassistant/configuration.yaml
+# 新增下面的設定
+http:
+  server_port: 12345
+
+root@imx8mm-lpddr4-evk:~# reboot
+```
+
+### 7.1.4. Debug
+
+> 比較有無 meta-homeassistant 後的狀況，方便評估是否
+
+```bash
+root@imx8mm-lpddr4-evk:~# free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.8Gi       592Mi       1.1Gi        17Mi       293Mi       1.3Gi
+Swap:             0B          0B          0B
+
+root@imx8mm-lpddr4-evk:~# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root       3.0G  1.8G  1.2G  61% /
+devtmpfs        619M  4.0K  619M   1% /dev
+tmpfs           941M     0  941M   0% /dev/shm
+tmpfs           377M  9.0M  368M   3% /run
+tmpfs           941M  4.0K  941M   1% /tmp
+tmpfs           941M   16K  941M   1% /var/volatile
+tmpfs           189M  8.0K  189M   1% /run/user/0
+/dev/mmcblk2p1  333M   36M  297M  11% /run/media/boot-mmcblk2p1
+
+root@imx8mm-lpddr4-evk:~# cat /proc/partitions
+major minor  #blocks  name
+
+  31        0      32768 mtdblock0
+ 179        0   30535680 mmcblk2
+ 179        1     340787 mmcblk2p1
+ 179        2    3322603 mmcblk2p2
+ 179       32       4096 mmcblk2boot0
+ 179       64       4096 mmcblk2boot1
+
+root@imx8mm-lpddr4-evk:~# fdisk -l /dev/mmcblk2
+Disk /dev/mmcblk2: 29.12 GiB, 31268536320 bytes, 61071360 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x076c4a2a
+
+Device         Boot  Start     End Sectors   Size Id Type
+/dev/mmcblk2p1 *     16384  697957  681574 332.8M  c W95 FAT32 (LBA)
+/dev/mmcblk2p2      704512 7349717 6645206   3.2G 83 Linux
+
 ```
 
 # Appendix
