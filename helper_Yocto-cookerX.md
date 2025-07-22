@@ -441,7 +441,7 @@ $ vi $PJ_YOCTO_LAYERS_DIR/poky/meta/recipes-core/dropbear/dropbear/dropbear.defa
 
 ## 7.4. [meta-lanka](https://github.com/lankahsu520/CrossCompilationX/tree/master/Yocto/meta-lanka)
 
-### 7.4.1. create the layer
+### 7.4.1. create-layer
 
 ```bash
 $ cd $PJ_YOCTO_LAYERS_DIR
@@ -450,6 +450,25 @@ NOTE: Starting bitbake server...
 Add your new layer with 'bitbake-layers add-layer meta-lanka'
 
 # we don't need to add-layer.
+
+# check example exist
+$ bitbake -s | grep example
+# not found
+
+$ echo $PJ_COOKER_MENU
+pi3-master-2b733d5-menu.json
+
+$ cd-root; vi ./cooker-menu/$PJ_COOKER_MENU
+# add "meta-lanka" into "layers"
+$ cooker generate
+$ bitbake-layers show-layers | grep meta-lanka
+$ cat $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf | grep meta-lanka
+
+# check example
+$ bitbake -s | grep example
+example                                               :0.1-r0
+
+# Then update meta-lanka/recipes-example/example/example_0.1.bb and add meta-lanka/recipes-example/example/files/* 
 ```
 
 ```bash
@@ -462,46 +481,37 @@ $ yocto-check-layer meta-lanka
 $ rm -rf build
 ```
 
-#### A. example
+### 7.4.2. show-recipes
 
 ```bash
-# check example exist
-$ bitbake -s | grep example
-# not found
-
-$ vi ./cooker-menu/pi3-master-2b733d5-menu.json 
-# add "meta-lanka" into "layers"
-
-# prepare the build-dir and configuration files (local.conf, bblayers.conf, template.conf) needed by Yocto Project.
-$ cooker generate
-$ cat $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf | grep meta-lanka
-
-# check again
-$ bitbake -s | grep example
-example                                               :0.1-r0
-
-# Then update meta-lanka/recipes-example/example/example_0.1.bb and add meta-lanka/recipes-example/example/files/* 
+$ bitbake-layers show-recipes example
+NOTE: Starting bitbake server...
+Loading cache: 100% |#################################################################################################################################################################| Time: 0:00:00
+Loaded 2929 entries from dependency cache.
+=== Matching recipes: ===
+example:
+  meta-lanka           0.1
 ```
 
-#### B. Update [example_0.1.bb](https://github.com/lankahsu520/CrossCompilationX/blob/master/Yocto/meta-lanka/recipes-example/example/example_0.1.bb)
+### 7.4.3. [example_0.1.bb](https://github.com/lankahsu520/CrossCompilationX/blob/master/Yocto/meta-lanka/recipes-example/example/example_0.1.bb)
 
-#### C. Add files - [helloworld-123.c and Makefile](https://github.com/lankahsu520/HelperX/tree/master/Yocto/meta-lanka/recipes-example/example/files)
+#### A. Add files - [helloworld-123.c and Makefile](https://github.com/lankahsu520/HelperX/tree/master/Yocto/meta-lanka/recipes-example/example/files)
 
-#### D. Install into Image
+#### B. Install into Image
 
 ```bash
-$ vi ./cooker-menu/pi3-master-2b733d5-menu.json
+$ cd-root; vi ./cooker-menu/$PJ_COOKER_MENU
 # add "example" into "local.conf"
 # ,"IMAGE_INSTALL:append = ' example'"
 ```
 
-#### E. check IMAGE_INSTALL
+#### C. check IMAGE_INSTALL
 
 ```bash
 $ bitbake -e $PJ_YOCTO_TARGET | grep ^IMAGE_INSTALL=
 ```
 
-### 7.4.2. example.bb
+#### D. example.bb
 
 ```bash
 $ bb-info example

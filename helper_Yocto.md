@@ -236,7 +236,8 @@ $ bitbake -s | grep systemd
 
 # 4. bb helper
 
-## 4.1. utils - [layers/poky/bitbake/lib/bb/utils.py](layers/poky/bitbake/lib/bb/utils.py)
+## 4.1. bb.utils
+> [layers/poky/bitbake/lib/bb/utils.py](layers/poky/bitbake/lib/bb/utils.py)
 
 #### A. def contains(variable, checkvalues, truevalue, falsevalue, d):
 
@@ -263,9 +264,38 @@ PACKAGECONFIG ??= "${@bb.utils.filter('DISTRO_FEATURES', 'x11', d)}"
 
 ```
 
-# 5. Others
+## 4.2 Variables
 
-## 5.1. BB_ENV_EXTRAWHITE
+>  [root](https://git.yoctoproject.org/poky/tree/)/[meta](https://git.yoctoproject.org/poky/tree/meta)/[conf](https://git.yoctoproject.org/poky/tree/meta/conf)/[bitbake.conf](https://git.yoctoproject.org/poky/tree/meta/conf/bitbake.conf)
+>
+> [Variables Glossary](https://docs.yoctoproject.org/ref-manual/variables.html#filesystem-layout)
+
+### 4.2.1. Commons
+
+> 列出常用
+
+```bash
+$ grep -rn "bindir" $PJ_YOCTO_LAYERS_DIR/poky/meta/conf
+```
+
+| 變數名稱        | 預設值            | 用途                          |
+| --------------- | ----------------- | ----------------------------- |
+| `bindir`        | `/usr/bin`        | 可執行程式的安裝位置          |
+| `sbindir`       | `/usr/sbin`       | 系統工具                      |
+| `base_bindir`   | `/bin`            | 基礎指令                      |
+| `base_sbindir`  | `/sbin`           | 系統管理指令                  |
+| `libdir`        | `/usr/lib`        | 程式庫                        |
+| `includedir`    | `/usr/include`    | 標頭檔                        |
+| `datadir`       | `/usr/share`      | 資料檔案                      |
+| `sysconfdir`    | `/etc`            | 設定檔                        |
+| `localstatedir` | `/var`            | 可變資料（log, spool, cache） |
+| `docdir`        | `/usr/share/doc`  | 說明文件                      |
+| `mandir`        | `/usr/share/man`  | man page                      |
+| `infodir`       | `/usr/share/info` | info 文件                     |
+
+### 4.2.2. Others
+
+#### A. BB_ENV_EXTRAWHITE
 
 ```bb
 ERROR: Variable BB_ENV_EXTRAWHITE has been renamed to BB_ENV_PASSTHROUGH_ADDITIONS
@@ -274,7 +304,7 @@ ERROR: Exiting to allow enviroment variables to be corrected
 
 ```
 
-## 5.2. [BB_ENV_PASSTHROUGH_ADDITIONS](https://docs.yoctoproject.org/bitbake/dev/bitbake-user-manual/bitbake-user-manual-ref-variables.html#term-BB_ENV_PASSTHROUGH_ADDITIONS)
+#### B. [BB_ENV_PASSTHROUGH_ADDITIONS](https://docs.yoctoproject.org/bitbake/dev/bitbake-user-manual/bitbake-user-manual-ref-variables.html#term-BB_ENV_PASSTHROUGH_ADDITIONS)
 
 ```mermaid
 flowchart LR
@@ -304,6 +334,29 @@ or
 SRCREV = "${@'${AUTOREV}' if d.getVar('BB_EXTRA_SRCREV', 'AUTOINC') \
          else '${SRCREV_RELEASE}'}"
 ```
+
+## 4.3. inherit
+
+### 4.3.1. setuptools3
+
+```bash
+python3 setup.py build
+python3 setup.py install
+```
+
+### 4.3.2. pypi
+
+```bash
+pip install
+```
+
+
+
+## 4.4. Documentation
+
+>  [root](https://git.yoctoproject.org/poky/tree/)/[meta](https://git.yoctoproject.org/poky/tree/meta)/[conf](https://git.yoctoproject.org/poky/tree/meta/conf)/[documentation.conf](https://git.yoctoproject.org/poky/tree/meta/conf/documentation.conf)
+
+# 5. Others
 
 # Appendix
 

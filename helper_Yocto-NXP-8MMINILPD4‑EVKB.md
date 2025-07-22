@@ -699,7 +699,7 @@ Hello world !!!
 ## 7.1. **[meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)**
 
 ```bash
-$ find123 ffmpeg pyav hass
+$ find123 ffmpeg pyav hass haffmpeg
 ```
 
 ### 7.1.1. *.bb
@@ -781,6 +781,28 @@ RDEPENDS:python3-homeassistant-vlc="    python3-python-vlc (>=3.0.18122) "
 RDEPENDS:python3-homeassistant-zeroconf="    python3-zeroconf (>=0.119.0) "
 ```
 
+##### A.1. homeassistant.service
+
+> HOMEASSISTANT_CONFIG_DIR : /var/lib/homeassistant
+
+```bash
+$ vi $PJ_YOCTO_LAYERS_DIR/meta-homeassistant/recipes-homeassistant/homeassistant/python3-homeassistant/homeassistant.service
+[Unit]
+Description=Home Assistant
+After=network.target
+
+[Service]
+Type=simple
+User=@HOMEASSISTANT_USER@
+ExecStart=/usr/bin/hass --skip-pip -c "@HOMEASSISTANT_CONFIG_DIR@"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+$ vi builds-lnk/$PJ_YOCTO_BUILD-rootfs/usr/lib/systemd/system/homeassistant.service
+```
+
 #### B. python3-ha-av
 
 ```bash
@@ -846,11 +868,17 @@ RDEPENDS:python3-ha-ffmpeg="     python3-async-timeout     ffmpeg  python3-core"
 RDEPENDS:python3-ha-ffmpeg-staticdev="python3-ha-ffmpeg-dev (= 3.1.0-r0)"
 ```
 
-### 7.1.2. Add into cooker-menu
+### 7.1.2. Add the Recipe
 
 >  修改 cooker-menu/*-menu.json
 
-```json
+```bash
+$ echo $PJ_COOKER_MENU
+imx8mm-evk-scarthgap-home-menu.json
+
+# 更新 $PJ_COOKER_MENU
+$ vi cooker-menu/$PJ_COOKER_MENU
+  ...
   "sources": [
     {
       "url": "https://github.com/meta-homeassistant/meta-homeassistant",
@@ -870,12 +898,36 @@ RDEPENDS:python3-ha-ffmpeg-staticdev="python3-ha-ffmpeg-dev (= 3.1.0-r0)"
       ]
     }
   }
+
+# 更新完記得執行
+$ cooker generate
+
+$ cat $PJ_YOCTO_BUILD_DIR/conf/local.conf
+$ cat $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf
+
+$ bitbake-layers show-recipes python3-homeassistant
+NOTE: Starting bitbake server...
+Loading cache: 100% |############################################################| Time: 0:00:01
+Loaded 5813 entries from dependency cache.
+Parsing recipes: 100% |##########################################################| Time: 0:00:00
+Parsing of 3734 .bb files complete (3731 cached, 3 parsed). 5811 targets, 586 skipped, 3 masked, 0 errors.
+WARNING: preferred version 4.18.imx+stable of xen not available
+WARNING: versions of xen available: 4.17+stable 4.18+stable 4.19+git 4.19.0+stable
+WARNING: preferred version 1.24.0.imx of gst-devtools not available
+WARNING: versions of gst-devtools available: 1.22.12 1.22.5.imx
+=== Matching recipes: ===
+python3-homeassistant:
+  meta-homeassistant   2023.12.0
 ```
 
 > 因為 python3-ha-av dependency ffmpeg，但是 ffmpeg LICENSE = "commercial"
 
 ```bash
-$ cat /yocto/cookerX-home/layers-scarthgap/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb | grep LICENSE_FLAGS
+$ find -name ffmpeg*.bb
+./layers-scarthgap/poky/meta/recipes-multimedia/ffmpeg/ffmpeg_6.1.1.bb
+./layers-scarthgap/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb
+
+$ cat $PJ_YOCTO_LAYERS_DIR/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb | grep LICENSE_FLAGS
 LICENSE_FLAGS = "commercial"
 ```
 
@@ -889,15 +941,17 @@ LICENSE_FLAGS = "commercial"
 
 > 因為本篇不是研究 homeassistant，而是讓 homeassistant 在 NXP 8MMINILPD4‑EVKB 上執行。
 
-```bash
-http://192.168.31.62:8123
-```
+> http://192.168.31.62:8123
 
 ![Yocto-NXP-8MMINILPD4‑EVKB-hass](./images/Yocto-NXP-8MMINILPD4‑EVKB-hass.png)
 
-#### A. change port
+#### A. Change listen port
 
-> change 8123 -> 12345
+> 這邊是 run time 就進行修改
+>
+> change default:8123 -> 12345
+
+> http://192.168.31.62:12345
 
 ```bash
 root@imx8mm-lpddr4-evk:~# ps -aux | grep hass
@@ -931,12 +985,16 @@ root@imx8mm-lpddr4-evk:~# vi /var/lib/homeassistant/configuration.yaml
 http:
   server_port: 12345
 
+root@imx8mm-lpddr4-evk:/# systemctl restart homeassistant.service
+# or
 root@imx8mm-lpddr4-evk:~# reboot
 ```
 
 ### 7.1.4. Debug
 
 > 比較有無 meta-homeassistant 後的狀況，方便評估是否
+
+#### A. Usage of Disk / Memory
 
 ```bash
 root@imx8mm-lpddr4-evk:~# free -h
@@ -977,6 +1035,850 @@ Device         Boot  Start     End Sectors   Size Id Type
 /dev/mmcblk2p1 *     16384  697957  681574 332.8M  c W95 FAT32 (LBA)
 /dev/mmcblk2p2      704512 7349717 6645206   3.2G 83 Linux
 
+```
+
+#### B. homeassistant.service
+
+```bash
+root@imx8mm-lpddr4-evk:/# ps -aux | grep home
+homeass+     429  3.4 13.8 2771104 266664 ?      Ssl  07:38   0:46 python3 /usr/bin/hass --skip-pip -c /var/lib/homeassistant
+root         657  0.0  0.0   3508  1280 ttymxc1  S+   08:00   0:00 grep home
+
+root@imx8mm-lpddr4-evk:~# vi /usr/lib/systemd/system/homeassistant.service
+[Unit]
+Description=Home Assistant
+After=network.target
+
+[Service]
+Type=simple
+User=homeassistant
+ExecStart=/usr/bin/hass --skip-pip -c "/var/lib/homeassistant"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
+```
+
+## 7.2. meta-homeassistant-plus
+
+> 這邊要先有一個重要的認知，homeassistant 算是整合各家的 IoT 系統，當要整入 embedded 時，就有可能會有`缺失`，而這`缺失`是不是剛好是自己所欠的，而這將是一個很大的考驗。
+>
+> 或許聰明的人就會說，「pip 安裝就好了」、「rpm 安裝也行」、「最慘的用setup 」。
+>
+> 問題是不是這樣，這邊不多解釋，但是 embedded engineer 必須了解。
+
+### 7.2.1. create-layer
+
+```bash
+$ echo $PJ_YOCTO_LAYERS_DIR
+/yocto/cookerX-home/layers-scarthgap
+$ cd $PJ_YOCTO_LAYERS_DIR
+$ bitbake-layers create-layer meta-homeassistant-plus
+NOTE: Starting bitbake server...
+Add your new layer with 'bitbake-layers add-layer meta-homeassistant-plus'
+
+$ mv meta-homeassistant-plus/recipes-example meta-homeassistant-plus/recipes-homeassistant-plus
+
+$ cd meta-homeassistant-plus/recipes-homeassistant-plus
+$ mv example homeassistant-plus
+
+$ cd homeassistant-plus
+$ mv example_0.1.bb homeassistant-plus_0.1.bb
+
+$ echo $PJ_COOKER_MENU
+imx8mm-evk-scarthgap-home-menu.json
+
+$ cd-root; vi ./cooker-menu/$PJ_COOKER_MENU
+imx8mm-evk-scarthgap-home-menu.json
+# add "meta-homeassistant-plus" into "layers"
+$ cooker generate
+$ bitbake-layers show-layers | grep meta-homeassistant-plus
+$ cat $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf | grep meta-homeassistant-plus
+
+# check homeassistant-plus
+$ bitbake -s | grep homeassistant-plus
+homeassistant-plus                                    :0.1-r0
+```
+
+### 7.2.2. show-recipes
+
+```bash
+$ bitbake-layers show-recipes homeassistant-plus
+NOTE: Starting bitbake server...
+Loading cache: 100% |############################################################| Time: 0:00:01
+Loaded 5810 entries from dependency cache.
+Parsing recipes: 100% |##########################################################| Time: 0:00:00
+Parsing of 3735 .bb files complete (3733 cached, 2 parsed). 5812 targets, 586 skipped, 3 masked, 0 errors.
+WARNING: preferred version 4.18.imx+stable of xen not available
+WARNING: versions of xen available: 4.17+stable 4.18+stable 4.19+git 4.19.0+stable
+WARNING: preferred version 1.24.0.imx of gst-devtools not available
+WARNING: versions of gst-devtools available: 1.22.12 1.22.5.imx
+=== Matching recipes: ===
+homeassistant-plus:
+  meta-homeassistant-plus 0.1
+```
+
+### 7.2.3. python3-homeassistant_%.bbappend
+
+> 儘量不要去更改 python3-homeassistant.bb，而使用 *.bbappend
+
+```bash
+$ cd $PJ_YOCTO_LAYERS_DIR
+$ vi $PJ_YOCTO_LAYERS_DIR/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-homeassistant_%.bbappend
+
+$ bitbake-layers show-appends | grep homeassistant
+
+$ bitbake -c build python3-homeassistant
+```
+
+#### A. Configurate listen port
+
+> 這邊是 compile time 就進行修改
+>
+> change default:8123 -> 12345
+
+> http://192.168.31.62:12345
+
+```bash
+$ cd $PJ_YOCTO_LAYERS_DIR
+$ mkdir -p meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/files
+$ vi meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/files/configuration.yaml
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+http:
+  server_port: 12345
+```
+
+### 7.2.4. No module named 'xxxx'
+
+```bash
+$ find123 pyasn1* pydantic* bitstruct* python_otbr_api* miniaudio* pysensibo* tuya_iot* srptools* chacha20poly1305* pyatv* mediafile* filetype* hap-python* aiohomekit* synology_dsm* commentjson* lark*
+
+```
+
+```bash
+root@imx8mm-lpddr4-evk:/# cat /var/lib/homeassistant/home-assistant.log
+```
+
+#### pyasn1
+
+> pypi: [pyasn1 0.6.1](https://pypi.org/project/pyasn1/)
+>
+> This is a free and open source implementation of ASN.1 types and codecs as a Python package. It has been first written to support particular protocol (SNMP) but then generalized to be suitable for a wide range of protocols based on [ASN.1 specification](https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-X.208-198811-W!!PDF-E&type=items).
+
+```bash
+$ bitbake -s | grep pyasn1
+# yocto 已經內建 python3-pyasn1
+$ bb-info python3-pyasn1
+
+python3-pyatv                                      :0.14.5-r0                                              
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pyatv_0.14.5.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/pyatv/pyatv-0.14.5.tar.gz;downloadfilename=pyatv-0.14.5.tar.gz https://github.com/postlund/pyatv/releases/download/v0.14.5/pyatv-0.14.5.tar.gz"
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5/pyatv-0.14.5"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-pytest-runner-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-pyatv="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools  python3-core"
+RDEPENDS:python3-pyatv-staticdev="python3-pyatv-dev (= 0.14.5-r0)"
+```
+
+```bash
+$ bitbake -c build python3-pyasn1
+```
+
+#### pydantic
+
+> pypi: [pydantic 2.11.7](https://pypi.org/project/pydantic/)
+>
+> Data validation using Python type hints.
+>
+> Fast and extensible, Pydantic plays nicely with your linters/IDE/brain. Define how data should be in pure, canonical Python 3.9+; validate it with Pydantic.
+
+```bash
+$ bitbake -s | grep pydantic
+# yocto 已經內建 python3-pydantic
+$ bb-info python3-pydantic
+
+meta-python-image-ptest-python3-pydantic                   :1.0-r0
+meta-python-image-ptest-python3-pydantic-core                   :1.0-r0                                                
+python3-pydantic                                   :1.10.7-r0
+python3-pydantic-core                              :2.18.4-r0
+
+./layers-scarthgap/meta-homeassistant/recipes-devtools/python/python3-pydantic_1.10.7.bb
+./layers-scarthgap/meta-openembedded/meta-python/recipes-devtools/python/python3-pydantic-core_2.18.4.bb
+./layers-scarthgap/meta-openembedded/meta-python/recipes-devtools/python/python3-pydantic_2.7.4.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/pydantic/pydantic-1.10.7.tar.gz;downloadfilename=pydantic-1.10.7.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pydantic/1.10.7/pydantic-1.10.7"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pydantic/1.10.7"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-pydantic="     python3-core     python3-datetime     python3-image     python3-io     python3-json     python3-logging     python3-netclient     python3-numbers     python3-profile     python3-typing-extensions  python3-core"
+RDEPENDS:python3-pydantic-staticdev="python3-pydantic-dev (= 1.10.7-r0)"
+```
+
+```bash
+$ bitbake -c build python3-pydantic
+```
+
+#### bitstruct
+
+> pypi: [bitstruct 8.21.0](https://pypi.org/project/bitstruct/)
+>
+> This module is intended to have a similar interface as the python struct module, but working on bits instead of primitive data types (char, int, …).
+
+```bash
+$ bitbake -s | grep bitstruct
+# yocto 已經內建 python3-bitstruct
+$ bb-info python3-bitstruct
+
+python3-bitstruct                                  :8.19.0-r0
+
+./meta-openembedded/meta-python/recipes-devtools/python/python3-bitstruct_8.19.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/b/bitstruct/bitstruct-8.19.0.tar.gz;downloadfilename=bitstruct-8.19.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-bitstruct/8.19.0/bitstruct-8.19.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-bitstruct/8.19.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-bitstruct=" python3-core"
+RDEPENDS:python3-bitstruct-staticdev="python3-bitstruct-dev (= 8.19.0-r0)"
+```
+
+```bash
+$ bitbake -c build python3-bitstruct
+```
+
+#### python_otbr_api
+
+> pypi: [python-otbr-api 2.6.0](https://pypi.org/project/python-otbr-api/)
+>
+> Python package to interact with an OTBR via its REST API
+
+```bash
+$ bitbake -s | grep otbr
+# yocto 未內建 python3-otbr-api
+# 因為採用 inherit pypi，檔案名就只能 python3-python-otbr-api
+$ bb-info python3-python-otbr-api
+
+python3-python-otbr-api                             :2.6.0-r0                            
+
+./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-python-otbr-api_2.6.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/python-otbr-api/python-otbr-api-2.6.0.tar.gz;downloadfilename=python-otbr-api-2.6.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0/python-otbr-api-2.6.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-python-otbr-api="      python3-requests     python3-dbus     python3-typing-extensions  python3-core"
+RDEPENDS:python3-python-otbr-api-staticdev="python3-python-otbr-api-dev (= 2.6.0-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-python-otbr-api
+$ bitbake -c cleanall python3-python-otbr-api
+$ bitbake -c build python3-python-otbr-api
+```
+
+#### miniaudio
+
+> pypi: [miniaudio 1.61](https://pypi.org/project/miniaudio/)
+>
+> Multiplatform audio playback, recording, decoding and sample format conversion for Linux (including Raspberri Pi), Windows, Mac and others.
+
+```bash
+$ bitbake -s | grep miniaudio
+# yocto 未內建 python3-miniaudio
+$ bb-info python3-miniaudio
+
+python3-miniaudio                                    :1.61-r0
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/m/miniaudio/miniaudio-1.61.tar.gz;downloadfilename=miniaudio-1.61.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61/miniaudio-1.61"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-pytest-runner-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-miniaudio="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools  python3-core"
+RDEPENDS:python3-miniaudio-staticdev="python3-miniaudio-dev (= 1.61-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-miniaudio
+$ bitbake -c cleanall python3-miniaudio
+$ bitbake -c build python3-miniaudio
+```
+
+#### pysensibo
+
+> pypi: [pysensibo 1.2.1](https://pypi.org/project/pysensibo/)
+>
+> asyncio-friendly python API for Sensibo ([https://sensibo.com](https://sensibo.com/)). Supported on Python 3.11+
+
+```bash
+$ bitbake -s | grep sensibo
+# yocto 未內建 python3-pysensibo
+$ bb-info python3-pysensibo
+
+python3-pysensibo                                   :1.2.1-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pysensibo_1.2.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/pysensibo/pysensibo-1.2.1.tar.gz;downloadfilename=pysensibo-1.2.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1/pysensibo-1.2.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-pysensibo="      python3-requests  python3-core"
+RDEPENDS:python3-pysensibo-staticdev="python3-pysensibo-dev (= 1.2.1-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-pysensibo
+$ bitbake -c cleanall python3-pysensibo
+$ bitbake -c build python3-pysensibo
+```
+
+#### tuya_iot
+
+> pypi: [tuya-iot-py-sdk 0.6.6](https://pypi.org/project/tuya-iot-py-sdk)
+>
+> pypi: [tuya-device-sharing-sdk 0.2.1](https://pypi.org/project/tuya-device-sharing-sdk/) (新版)
+>
+> A Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya officialA Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya official
+
+```bash
+$ bitbake -s | grep tuya
+# yocto 未內建 python3-tuya-iot-py-sdk
+$ bb-info python3-tuya-iot-py-sdk
+
+python3-tuya-iot-py-sdk                             :0.6.6-r0
+
+./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-tuya-iot-py-sdk_0.6.6.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/t/tuya-iot-py-sdk/tuya-iot-py-sdk-0.6.6.tar.gz;downloadfilename=tuya-iot-py-sdk-0.6.6.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6/tuya-iot-py-sdk-0.6.6"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-requests-native     python3-pycryptodome-native     python3-paho-mqtt-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-tuya-iot-py-sdk="      python3-requests     python3-pytz     python3-urllib3  python3-core"
+RDEPENDS:python3-tuya-iot-py-sdk-staticdev="python3-tuya-iot-py-sdk-dev (= 0.6.6-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-tuya-iot-py-sdk
+$ bitbake -c cleanall python3-tuya-iot-py-sdk
+$ bitbake -c build python3-tuya-iot-py-sdk
+```
+
+#### srptools
+
+> pypi: [srptools 1.0.1](https://pypi.org/project/srptools/)
+>
+> *Tools to implement Secure Remote Password (SRP) authentication*
+>
+> SRP is a secure password-based authentication and key-exchange protocol - a password-authenticated key agreement protocol (PAKE).
+>
+> This package contains protocol implementation for Python 2 and 3.
+>
+> You may import it into you applications and use its API or you may use srptools command-line utility (CLI):
+
+```bash
+$ bitbake -s | grep srptools
+# yocto 未內建 python3-tuya-iot-py-sdk
+$ bb-info python3-srptools
+
+python3-srptools                                    :1.0.1-r0
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/s/srptools/srptools-1.0.1.tar.gz;downloadfilename=srptools-1.0.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1/srptools-1.0.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-srptools=" python3-core"
+RDEPENDS:python3-srptools-staticdev="python3-srptools-dev (= 1.0.1-r0)"
+```
+
+```bash
+$ bitbake -c build python3-srptools
+```
+
+#### chacha20poly1305
+
+> pypi: [chacha20poly1305 0.0.3](https://pypi.org/project/chacha20poly1305)
+>
+> Simple pure-python chacha20-poly1305 implementation based on [tlslite-ng](https://github.com/tomato42/tlslite-ng) code. Designed to be compatible with Cryptography API.
+
+```bash
+$ bitbake -s | grep chacha20poly1305
+# yocto 未內建 python3-chacha20poly1305
+$ bb-info python3-chacha20poly1305
+
+```
+
+```bash
+$ bitbake -c build python3-chacha20poly1305
+```
+
+#### chacha20poly1305_reuseable
+
+> pypi: [chacha20poly1305-reuseable 0.13.2](https://pypi.org/project/chacha20poly1305-reuseable/)
+>
+> ChaCha20Poly1305 that is reuseable for asyncio
+
+```bash
+$ bitbake -s | grep chacha20poly1305
+# yocto 未內建 python3-chacha20poly1305_reuseable
+$ bb-info python3-chacha20poly1305-reuseable
+
+python3-chacha20poly1305-reuseable                 :0.13.2-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly1305-reuseable_0.13.2.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305_reuseable/chacha20poly1305_reuseable-0.13.2.tar.gz;downloadfilename=chacha20poly1305_reuseable-0.13.2.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2/chacha20poly1305_reuseable-0.13.2"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-chacha20poly1305-reuseable=" python3-core"
+RDEPENDS:python3-chacha20poly1305-reuseable-staticdev="python3-chacha20poly1305-reuseable-dev (= 0.13.2-r0)"
+```
+
+```bash
+$ bitbake -c build python3-chacha20poly1305-reuseable
+```
+
+#### pyatv
+
+> pypi: [pyatv 0.16.1](https://pypi.org/project/pyatv/)
+>
+> This is an asyncio python library for interacting with Apple TV and AirPlay devices. It mainly targets Apple TVs (all generations, **including tvOS 15 and later**), but also supports audio streaming via AirPlay to receivers like the HomePod, AirPort Express and third-party speakers. It can act as remote control to the Music app/iTunes in macOS.
+
+```bash
+$ bitbake -s | grep pyatv
+# yocto 未內建 python3-pyatv，這邊採用舊版 0.14.5
+$ bb-info python3-pyatv
+
+python3-pyatv                                      :0.14.5-r0                                        
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pyatv_0.14.5.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/pyatv/pyatv-0.14.5.tar.gz;downloadfilename=pyatv-0.14.5.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5/pyatv-0.14.5"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-pytest-runner-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-pyatv="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools     python3-srptools     python3-chacha20poly1305-reuseable  python3-core"
+RDEPENDS:python3-pyatv-staticdev="python3-pyatv-dev (= 0.14.5-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-pyatv
+$ bitbake -c cleanall python3-pyatv
+$ bitbake -c build python3-pyatv
+```
+
+#### mediafile
+
+> pypi: [mediafile 0.13.0](https://pypi.org/project/mediafile/)
+>
+> MediaFile is a simple interface to the metadata tags for many audio file formats. It wraps [Mutagen](https://github.com/quodlibet/mutagen), a high-quality library for low-level tag manipulation, with a high-level, format-independent interface for a common set of tags.
+
+```bash
+$ bitbake -s | grep mediafile
+# yocto 未內建 python3-mediafile
+$ bb-info python3-mediafile
+
+python3-mediafile                                  :0.13.0-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-mediafile_0.13.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/m/mediafile/mediafile-0.13.0.tar.gz;downloadfilename=mediafile-0.13.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0/mediafile-0.13.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-mediafile=" python3-core"
+RDEPENDS:python3-mediafile-staticdev="python3-mediafile-dev (= 0.13.0-r0)"
+```
+
+```bash
+$ bitbake -c build python3-mediafile
+```
+
+#### filetype
+
+> pypi: [filetype 1.2.0](https://pypi.org/project/filetype/)
+>
+> Small and dependency free [Python](http://python.org/) package to infer file type and MIME type checking the [magic numbers](https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files) signature of a file or buffer.
+>
+> This is a Python port from [filetype](https://github.com/h2non/filetype) Go package.
+
+```bash
+$ bitbake -s | grep filetype
+# yocto 未內建 python3-filetype
+$ bb-info python3-filetype
+
+python3-filetype                                    :1.2.0-r0  
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-filetype_1.2.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/f/filetype/filetype-1.2.0.tar.gz;downloadfilename=filetype-1.2.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0/filetype-1.2.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-filetype=" python3-core"
+RDEPENDS:python3-filetype-staticdev="python3-filetype-dev (= 1.2.0-r0)"
+```
+
+```bash
+$ bitbake -c build python3-filetype
+```
+
+#### hap-python
+
+> pypi: [HAP-python 4.9.2](https://pypi.org/project/HAP-python)
+>
+> HomeKit Accessory Protocol implementation in python 3. With this project, you can integrate your own smart devices and add them to your iOS Home app. Since Siri is integrated with the Home app, you can start voice-control your accessories right away.
+
+```bash
+$ bitbake -s | grep hap
+# yocto 未內建 python3-hap-python
+$ bb-info python3-hap-python
+
+python3-hap-python                                  :4.9.1-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-hap-python_4.9.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/H/HAP-python/HAP-python-4.9.1.tar.gz;downloadfilename=HAP-python-4.9.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1/HAP-python-4.9.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-hap-python="      python3-zeroconf     python3-cryptography  python3-core"
+RDEPENDS:python3-hap-python-staticdev="python3-hap-python-dev (= 4.9.1-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-hap-python
+$ bitbake -c cleanall python3-hap-python
+$ bitbake -c build python3-hap-python
+```
+
+#### aiohomekit
+
+> pypi: [aiohomekit 3.2.15](https://pypi.org/project/aiohomekit/)
+>
+> This library implements the HomeKit protocol for controlling Homekit accessories using asyncio.
+>
+> It's primary use is for with Home Assistant. We target the same versions of python as them and try to follow their code standards.
+>
+> At the moment we don't offer any API guarantees. API stability and documentation will happen after we are happy with how things are working within Home Assistant.
+
+```bash
+$ bitbake -s | grep aiohomekit
+# yocto 未內建 python3-aiohomekit，這邊採用舊版 3.2.7
+$ bb-info python3-aiohomekit
+
+python3-aiohomekit                                  :3.2.7-r0                                          
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/a/aiohomekit/aiohomekit-3.2.7.tar.gz;downloadfilename=aiohomekit-3.2.7.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7/aiohomekit-3.2.7"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-hap-python python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-aiohomekit="      python3-zeroconf     python3-cryptography     python3-poetry-core  python3-core"
+RDEPENDS:python3-aiohomekit-staticdev="python3-aiohomekit-dev (= 3.2.7-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-aiohomekit
+$ bitbake -c cleanall python3-aiohomekit
+$ bitbake -c build python3-aiohomekit
+```
+
+#### py-synologydsm-api
+
+> pypi: [py-synologydsm-api 2.7.3](https://pypi.org/project/py-synologydsm-api/)
+>
+> Python API for communication with Synology DSM
+
+```bash
+$ bitbake -s | grep py-synologydsm-api
+# yocto 未內建 python3-py-synologydsm-api
+$ bb-info python3-py-synologydsm-api
+
+python3-py-synologydsm-api                          :2.7.3-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-py-synologydsm-api_2.7.3.bb
+
+SRC_URI="file://py-synologydsm-api-2.7.3.tar.gz"
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3/py-synologydsm-api-2.7.3"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-setuptools-native  python3-build-native python3-installer-native python3-native python3 python3-native  python3"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-py-synologydsm-api="      python3-requests     python3-aiohttp  python3-core"
+RDEPENDS:python3-py-synologydsm-api-staticdev="python3-py-synologydsm-api-dev (= 2.7.3-r0)"
+```
+
+```bash
+$ bitbake -c build python3-py-synologydsm-api
+```
+
+#### commentjson
+
+> pypi: [commentjson 0.9.0](https://pypi.org/project/commentjson)
+>
+> Add Python and JavaScript style comments in your JSON files.
+
+```bash
+$ bitbake -s | grep commentjson
+# yocto 未內建 python3-commentjson
+$ bb-info python3-commentjson
+
+python3-commentjson                                 :0.9.0-r0
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/c/commentjson/commentjson-0.9.0.tar.gz;downloadfilename=commentjson-0.9.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0/commentjson-0.9.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-commentjson=" python3-core"
+RDEPENDS:python3-commentjson-staticdev="python3-commentjson-dev (= 0.9.0-r0)"
+```
+
+```bash
+$ bitbake -c build python3-commentjson
+```
+
+#### lark
+
+> pypi: [lark 1.2.2](https://pypi.org/project/lark)
+>
+> a modern parsing library
+
+```bash
+$ bitbake -s | grep lark
+# yocto 未內建 python3-lark
+$ bb-info python3-lark
+
+python3-lark                                        :1.2.2-r0                                                 
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-lark_1.2.2.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/l/lark/lark-1.2.2.tar.gz;downloadfilename=lark-1.2.2.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2/lark-1.2.2"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-lark=" python3-core"
+RDEPENDS:python3-lark-staticdev="python3-lark-dev (= 1.2.2-r0)"
+```
+
+```bash
+$ bitbake -c build python3-lark
 ```
 
 # Appendix

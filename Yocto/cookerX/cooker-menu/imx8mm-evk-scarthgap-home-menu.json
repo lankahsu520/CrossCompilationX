@@ -112,6 +112,7 @@
     "poky/meta",
     "poky/meta-poky",
     "meta-homeassistant",
+    "meta-homeassistant-plus",
     "meta-openembedded/meta-oe",
     "meta-openembedded/meta-networking",
     "meta-openembedded/meta-python",

@@ -62,7 +62,7 @@ cook:
 	fi
 	touch $@
 
-.PHONY: builds-history bb-linker lnk-generate toolchain toolchain-pure $(BB_TASKS)
+.PHONY: builds-history bb-linker lnk-generate toolchain toolchain-pure rootfs $(BB_TASKS)
 builds-history:
 	@cd $(PJ_YOCTO_BUILD_DIR) \
 	&& buildhistory-collect-srcrevs -a
@@ -78,6 +78,9 @@ toolchain:
 
 toolchain-pure:
 	bitbake meta-toolchain
+
+rootfs:
+	bitbake -f $(PJ_YOCTO_IMAGE) -c rootfs
 
 $(BB_TASKS):
 	@echo "BB_TASK=[$@], BB=[$(BB)]"

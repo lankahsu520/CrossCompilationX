@@ -105,6 +105,11 @@ cfg_fn()
 {
 	#datetime_fn "${FUNCNAME[0]} ... "
 
+	if [ ! -f ~/.local/bin/cooker ]; then
+		echo "Please install cooker first !!!"
+		echo " python3 -m pip install --upgrade git+https://github.com/cpb-/yocto-cooker.git"
+	fi
+
 	[ -f .cookerconfig_bak ] || (cp .cookerconfig .cookerconfig_bak;)
 
 	export PJ_YOCTO_DOWNLOADS_DIR=`realpath $PJ_YOCTO_DOWNLOADS_DIR`
