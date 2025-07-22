@@ -9,7 +9,7 @@ SRC_URI[sha256sum] = "dd8be876e25dfc51909eb35602b77a76e0d01a364584756ab3fa848e24
 
 S = "${WORKDIR}/chacha20poly1305_reuseable-0.13.2"
 
-#PYPI_PACKAGE = "chacha20poly1305_reuseable"
+PYPI_PACKAGE = "chacha20poly1305_reuseable"
 
 inherit pypi python_setuptools_build_meta
 
