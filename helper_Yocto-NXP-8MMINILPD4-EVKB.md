@@ -1517,6 +1517,29 @@ $ bitbake -s | grep chacha20poly1305
 # yocto 未內建 python3-chacha20poly1305
 $ bb-info python3-chacha20poly1305
 
+python3-chacha20poly1305                            :0.0.3-r0                                                                                                                                     
+python3-chacha20poly1305-reuseable                 :0.13.2-r0                                                                                                                                     
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5_0.0.3.bb
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5-reuseable_0.13.2.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305/chacha20poly1305-0.0.3.tar.gz;downloa                                                                                  dfilename=chacha20poly1305-0.0.3.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly130                                                                                  5/0.0.3/chacha20poly1305-0.0.3"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20p                                                                                  oly1305/0.0.3"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools                                                                                  -native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-install                                                                                  er-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-chacha20poly1305=" python3-core"
+RDEPENDS:python3-chacha20poly1305-staticdev="python3-chacha20poly1305-dev (= 0.0.3-r0)"
 ```
 
 ```bash
