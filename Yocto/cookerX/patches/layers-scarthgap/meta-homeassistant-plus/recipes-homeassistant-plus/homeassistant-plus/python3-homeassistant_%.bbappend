@@ -20,6 +20,7 @@ RDEPENDS:${PN} += " \
     python3-tuya-iot-py-sdk \
     python3-aiohomekit \
     python3-py-synologydsm-api \
+    python3-onvif-zeep-async \
 "
 
 do_install:append() {

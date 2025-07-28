@@ -111,6 +111,7 @@
   "layers": [
     "poky/meta",
     "poky/meta-poky",
+    "meta-lanka",
     "meta-homeassistant",
     "meta-homeassistant-plus",
     "meta-openembedded/meta-oe",
@@ -148,7 +149,7 @@
         "INIT_MANAGER = 'systemd'",
         "CONF_VERSION = '2'",
         "ACCEPT_FSL_EULA = '1'",
-        "IMAGE_INSTALL:append = ' python3-homeassistant'",
+        "IMAGE_INSTALL:append = ' tree helloworld123 python3-homeassistant'",
         "LICENSE_FLAGS_ACCEPTED += 'commercial'"
       ]
     }

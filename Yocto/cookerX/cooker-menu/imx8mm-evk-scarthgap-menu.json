@@ -105,6 +105,7 @@
   "layers": [
     "poky/meta",
     "poky/meta-poky",
+    "meta-lanka",
     "meta-openembedded/meta-oe",
     "meta-openembedded/meta-networking",
     "meta-openembedded/meta-python",
@@ -140,6 +141,7 @@
         "INIT_MANAGER = 'systemd'",
         "CONF_VERSION = '2'",
         "ACCEPT_FSL_EULA = '1'",
+        "IMAGE_INSTALL:append = ' helloworld123'",
       ]
     },
     "imx8mm-evk-scarthgap-full": {
@@ -152,6 +154,7 @@
         "INIT_MANAGER = 'systemd'",
         "CONF_VERSION = '2'",
         "ACCEPT_FSL_EULA = '1'",
+        "IMAGE_INSTALL:append = ' helloworld123'",
       ]
     }
   }

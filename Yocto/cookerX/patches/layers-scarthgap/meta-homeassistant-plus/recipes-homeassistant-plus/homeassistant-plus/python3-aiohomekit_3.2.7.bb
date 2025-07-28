@@ -23,6 +23,5 @@ RDEPENDS:${PN} += " \
     python3-cryptography \
     python3-poetry-core \
     python3-commentjson \
-    python3-lark \
-    python3-chacha20poly1305 \
+    python3-chacha20poly1305-reuseable \
 "
