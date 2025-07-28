@@ -551,6 +551,172 @@ $ grep -r 'LICENSE_FLAGS' $PJ_YOCTO_LAYERS_DIR/meta-*/recipes-* | grep commercia
 ]
 ```
 
+## 7.6. devtool
+
+> `devtool` 是 Yocto Project 提供的 **開發輔助工具**，隸屬於 `devtools`（開發者工具）套件的一部分，目的是讓開發者更方便地：
+>
+> - 建立新的 BitBake recipe（配方）
+> - 修改、patch、測試現有套件
+> - 管理 source code 與 build 的整合
+
+### 7.6.1. [python-zeep](https://github.com/mvantellingen/python-zeep.git) (github)
+
+> 這邊以 python-zeep 為範例，
+
+#### A. Check exist
+
+```bash
+$ bitbake -s | grep zeep
+```
+
+#### B. add
+
+```bash
+$ devtool add python-zeep https://github.com/mvantellingen/python-zeep.git
+
+
+$ ll ./builds/build-imx8mm-evk-scarthgap-home/workspace/recipes/python-zeep/python-zeep_git.bb
+-rw-rw-r-- 1 lanka lanka 831 Jul 23 14:55 ./builds/build-imx8mm-evk-scarthgap-home/workspace/recipes/python-zeep/python-zeep_git.bb
+```
+
+#### C. python-zeep_git.bb
+
+```bash
+$ cat ./builds/build-imx8mm-evk-scarthgap-home/workspace/recipes/python-zeep/python-zeep_git.bb
+# Recipe created by recipetool
+# This is the basis of a recipe and may need further editing in order to be fully functional.
+# (Feel free to remove these comments when editing.)
+
+# WARNING: the following LICENSE and LIC_FILES_CHKSUM values are best guesses - it is
+# your responsibility to verify that the values are complete and correct.
+#
+# The following license files were not able to be identified and are
+# represented as "Unknown" below, you will need to check them yourself:
+#   LICENSE
+LICENSE = "Unknown"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=23356a26b06086844496d9e634f58ae5"
+
+SRC_URI = "git://github.com/mvantellingen/python-zeep.git;protocol=https;branch=master"
+
+# Modify these as desired
+PV = "1.0+git"
+SRCREV = "c80519ef01216f8e5bcfe8de7995d841e03b0f2a"
+
+S = "${WORKDIR}/git"
+
+inherit python_setuptools_build_meta
+
+$ vi ./builds/build-imx8mm-evk-scarthgap-home/workspace/recipes/python-zeep/python-zeep_git.bb
+LICENSE = "MIT"
+```
+
+#### D. build
+
+```bash
+$ devtool build python-zeep
+```
+
+#### E. finish
+
+```bash
+# 將 python-zeep*.bb 安裝到指定的目錄
+$ devtool finish python-zeep ./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/
+```
+
+#### F. reset
+
+```bash
+# 將 python-zeep*.bb 安裝到指定的目錄
+$ devtool reset python-zeep
+```
+
+### 7.6.1. [commentjson](https://pypi.org/project/commentjson) (pypi)
+
+> 這邊以 python-zeep 為範例，
+
+#### A. Check exist
+
+```bash
+$ bitbake -s | grep commentjson
+```
+
+#### B. add
+
+```bash
+$ devtool add python3-commentjson https://files.pythonhosted.org/packages/source/c/commentjson/commentjson-0.9.0.tar.gz
+
+$ ll ./builds/build-imx8mm-evk-scarthgap-home/workspace/recipes/python3-commentjson/python3-commentjson_0.9.0.bb
+-rw-rw-r-- 1 lanka lanka 1642 Jul 23 15:45 ./builds/build-imx8mm-evk-scarthgap-home/workspace/recipes/python3-commentjson/python3-commentjson_0.9.0.bb
+```
+
+#### C. python3-commentjson_0.9.0.bb
+
+```bash
+$ cat ./builds/build-imx8mm-evk-scarthgap-home/workspace/recipes/python3-commentjson/python3-commentjson_0.9.0.bb
+# Recipe created by recipetool
+# This is the basis of a recipe and may need further editing in order to be fully functional.
+# (Feel free to remove these comments when editing.)
+
+SUMMARY = "Add Python and JavaScript style comments in your JSON files."
+HOMEPAGE = "https://github.com/vaidik/commentjson"
+# NOTE: License in setup.py/PKGINFO is: UNKNOWN
+# WARNING: the following LICENSE and LIC_FILES_CHKSUM values are best guesses - it is
+# your responsibility to verify that the values are complete and correct.
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://LICENSE.rst;md5=722175c22a1ab5e2e0fd153da885198b"
+
+SRC_URI[sha256sum] = "42f9f231d97d93aff3286a4dc0de39bfd91ae823d1d9eba9fa901fe0c7113dd4"
+
+inherit pypi setuptools3
+
+# WARNING: the following rdepends are from setuptools install_requires. These
+# upstream names may not correspond exactly to bitbake package names.
+RDEPENDS:${PN} += "python3-lark-parser"
+
+# WARNING: the following rdepends are determined through basic analysis of the
+# python sources, and might not be 100% accurate.
+RDEPENDS:${PN} += "python3-core python3-json python3-lark python3-six python3-tests python3-unittest"
+
+# WARNING: We were unable to map the following python package/module
+# dependencies to the bitbake packages which include them:
+#    json.tests.test_decode
+#    json.tests.test_dump
+#    json.tests.test_encode_basestring_ascii
+#    json.tests.test_float
+#    json.tests.test_indent
+#    json.tests.test_pass1
+#    json.tests.test_pass2
+#    json.tests.test_pass3
+#    json.tests.test_recursion
+#    json.tests.test_separators
+#    json.tests.test_unicode
+#    simplejson
+
+PYPI_PACKAGE = "commentjson"
+```
+
+#### D. build
+
+> 基本上沒辦法編譯過，因為從 RDEPENDS 可以知道其它相依性
+
+```bash
+$ devtool build python3-commentjson
+```
+
+#### E. finish
+
+```bash
+# 將 python3-commentjson*.bb 安裝到指定的目錄
+$ devtool finish python3-commentjson ./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/
+```
+
+#### F. reset
+
+```bash
+# 將 python-zeep*.bb 安裝到指定的目錄
+$ devtool reset python3-commentjson
+```
+
 # 8. Query recipes
 
 ## 8.1. Target
