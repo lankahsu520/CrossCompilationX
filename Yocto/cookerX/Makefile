@@ -17,7 +17,7 @@ BB_TASKS=listtasks configure clean cleanall fetch compile build install package_
 .DEFAULT_GOAL = all
 
 # .cook-build -> cook-patched -> .cook-update -> .cook-init
-.PHONY: all distclean cook-clean cook-target-clean cook-lnk cook-dry-run cook-build cook-rebuild cook
+.PHONY: all distclean cook-clean cook-target-clean cook-lnk cook-dry-run cook-build cook-bundle cook-rebuild cook
 all: cook-build lnk-generate
 
 distclean: cook-clean
@@ -39,6 +39,9 @@ cook-build: .cook-patched
 	$(PJ_ROOT)/confs/sh/cooker_123.sh build
 
 cook-rebuild: cook-clean cook-target-clean cook-build
+
+cook-bundle:
+	$(PJ_ROOT)/confs/sh/cooker_123.sh bundle
 
 cook:
 	$(PJ_ROOT)/confs/sh/cooker_123.sh cook
@@ -74,10 +77,17 @@ lnk-generate: cook-lnk bb-linker
 
 toolchain:
 	#cooker build -s $(PJ_YOCTO_TARGET)
-	bitbake core-image-base -c populate_sdk
+	#bitbake core-image-base -c populate_sdk
+	bitbake $(PJ_YOCTO_IMAGE) -c populate_sdk
 
 toolchain-pure:
 	bitbake meta-toolchain
+
+bundle:
+	bitbake $(PJ_YOCTO_BUNDLE)
+
+image:
+	bitbake $(PJ_YOCTO_IMAGE)
 
 rootfs:
 	bitbake -f $(PJ_YOCTO_IMAGE) -c rootfs

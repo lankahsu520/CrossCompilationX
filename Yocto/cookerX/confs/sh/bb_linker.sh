@@ -44,59 +44,57 @@ main_fn()
 	rm *.bb
 	create_lnk_fn "avahi"
 
-	create_lnk_fn "bluez5"
-	create_lnk_fn "busybox_"
-	create_lnk_fn "bzip2"
-
-	create_lnk_fn "curl_"
-
-	create_lnk_fn "dbus_"
-	create_lnk_fn "dropbear_"
-
-	create_lnk_fn "glib-"
-	create_lnk_fn "glibc_"
-
-	create_lnk_fn "hostapd_"
-
-	create_lnk_fn "jansson_"
-	create_lnk_fn "json-c_"
-
-	create_lnk_fn "libevent_"
-	create_lnk_fn "libical_"
-	create_lnk_fn "libmnl_"
-	create_lnk_fn "libnl_"
-	create_lnk_fn "libsndfile1_"
-	create_lnk_fn "libunistring_"
-	create_lnk_fn "libusb1_"
-	create_lnk_fn "libyokis"
-	create_lnk_fn "libxml2_"
-
-	create_lnk_fn "mosquitto_"
-
-	create_lnk_fn "openssl_"
-
-	create_lnk_fn "p7zip_"
-
-	create_lnk_fn "rsync_"
-
-	create_lnk_fn "sed_"
-
-	create_lnk_fn "tar_"
-
-	create_lnk_fn "unzip_"
-
-	create_lnk_fn "which_"
-
-	create_lnk_fn "xmlto_"
-
-	create_lnk_fn "yaml-cpp_"
-	create_lnk_fn "yk-"
-	create_lnk_fn "yokis"
-
-	create_lnk_fn "zlib_"
-
-	create_lnk_fn "python3-homeassistant"
-	create_lnk_fn "python3-ha-av"
+	#create_lnk_fn "bluez5"
+	#create_lnk_fn "busybox_"
+	#create_lnk_fn "bzip2"
+	#
+	#create_lnk_fn "curl_"
+	#
+	#create_lnk_fn "dbus_"
+	#create_lnk_fn "dropbear_"
+	#
+	#create_lnk_fn "glib-"
+	#create_lnk_fn "glibc_"
+	#
+	#create_lnk_fn "hostapd_"
+	#
+	#create_lnk_fn "jansson_"
+	#create_lnk_fn "json-c_"
+	#
+	#create_lnk_fn "libevent_"
+	#create_lnk_fn "libical_"
+	#create_lnk_fn "libmnl_"
+	#create_lnk_fn "libnl_"
+	#create_lnk_fn "libsndfile1_"
+	#create_lnk_fn "libunistring_"
+	#create_lnk_fn "libusb1_"
+	#create_lnk_fn "libyokis"
+	#create_lnk_fn "libxml2_"
+	#
+	#create_lnk_fn "mosquitto_"
+	#
+	#create_lnk_fn "openssl_"
+	#
+	#create_lnk_fn "p7zip_"
+	#
+	#create_lnk_fn "rsync_"
+	#
+	#create_lnk_fn "sed_"
+	#
+	#create_lnk_fn "tar_"
+	#
+	#create_lnk_fn "unzip_"
+	#
+	#create_lnk_fn "which_"
+	#
+	#create_lnk_fn "xmlto_"
+	#
+	#create_lnk_fn "yaml-cpp_"
+	#
+	#create_lnk_fn "zlib_"
+	#
+	#create_lnk_fn "python3-homeassistant"
+	#create_lnk_fn "python3-ha-av"
 }
 
 main_fn

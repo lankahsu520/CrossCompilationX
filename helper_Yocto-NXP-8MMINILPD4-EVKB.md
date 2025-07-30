@@ -320,7 +320,15 @@ $ ll bb-lnk/
 
 # 5. Burn Your Image
 
-## 5.1. Boot Switch Setup
+## 5.1. uuu (Universal Update Utility)
+
+> [nxp-imx](https://github.com/nxp-imx)/**[mfgtools](https://github.com/nxp-imx/mfgtools)**
+>
+> UUU is a tool designed for deploying images on Freescale/NXP I.MX chips.
+
+> 安裝 uuu；手邊是用win10。將 uuu.exe 複製到 C:\Windows\System32
+
+### 5.1.1. Boot Switch Setup
 
 > 請記得設定 Download Mode
 
@@ -333,15 +341,7 @@ $ ll bb-lnk/
 | QSPI NOR Flash        | 0110xxxxxx        | 00000x0010        |
 | Serial Download Mode  | 1010xxxxxx        | xxxxxxxxx0        |
 
-## 5.2. uuu (Universal Update Utility)
-
-> [nxp-imx](https://github.com/nxp-imx)/**[mfgtools](https://github.com/nxp-imx/mfgtools)**
->
-> UUU is a tool designed for deploying images on Freescale/NXP I.MX chips.
-
-> 安裝 uuu；手邊是用win10。將 uuu.exe 複製到 C:\Windows\System32
-
-## 5.3. Burn to eMMC
+### 5.1.2. Check USB
 
 ```bash
 $ cd /drives/d/WINAPPS/Worker/uuu
@@ -356,7 +356,9 @@ Connected Known USB Devices
         1:2      MX8MM   SDP:    0x1FC9 0x0134   0x0101
 ```
 
-### 5.3.1. NXP - android
+### 5.1.3. Burn to eMMC
+
+#### A. NXP - android
 
 > [Android OS for i.MX Applications Processors](https://www.nxp.com/design/design-center/software/embedded-software/i-mx-software/android-os-for-i-mx-applications-processors:IMXANDROID?tid=vanIMXANDROID)
 >
@@ -384,7 +386,7 @@ $ cp /tmp/uuu.lst ./
 $ uuu uuu.lst
 ```
 
-### 5.3.2. NXP - Linux
+#### B. NXP - Linux
 
 >  [Embedded Linux for i.MX Applications Processors](https://www.nxp.com/design/design-center/software/embedded-software/i-mx-software/embedded-linux-for-i-mx-applications-processors:IMXLINUX)
 >
@@ -472,7 +474,7 @@ New USB Device Attached at 1:2-0A1D3209DAB5B3C9
 1:2-0A1D3209DAB5B3C9>Okay (0s)
 ```
 
-### 5.3.3. Myself
+#### C. Myself
 
 ```bash
 # 這邊是自己編譯的
@@ -484,122 +486,62 @@ $ uuu -b emmc_all \
 $ uuu -b emmc_all \
  ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk \
  ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
-uuu (Universal Update Utility) for nxp imx chips -- libuuu_1.5.201-0-g727fc2b
+```
 
-Your console don't support VT mode, fail back to verbose mode
-Build in config:
-        Pctl     Chip            Vid     Pid     BcdVersion      Serial_No
-        ==================================================
-        SDPS:    MX8QXP          0x1fc9  0x012f  [0x0002..0xffff]
-        SDPS:    MX8QM           0x1fc9  0x0129  [0x0002..0xffff]
-        SDPS:    MX8DXL          0x1fc9  0x0147
-        SDPS:    MX28            0x15a2  0x004f
-        SDPS:    MX815           0x1fc9  0x013e
-        SDPS:    MX865           0x1fc9  0x0146
-        SDPS:    MX8ULP          0x1fc9  0x014a
-        SDPS:    MX8ULP          0x1fc9  0x014b
-        SDPS:    MX93            0x1fc9  0x014e
-        SDPS:    MX91            0x1fc9  0x0159
-        SDPS:    MX95            0x1fc9  0x015d
-        SDPS:    MX95            0x1fc9  0x015c
-        SDPS:    MX943           0x1fc9  0x0027
-        SDP:     MX7D            0x15a2  0x0076
-        SDP:     MX6Q            0x15a2  0x0054
-        SDP:     MX6D            0x15a2  0x0061
-        SDP:     MX6SL           0x15a2  0x0063
-        SDP:     MX6SX           0x15a2  0x0071
-        SDP:     MX6UL           0x15a2  0x007d
-        SDP:     MX6ULL          0x15a2  0x0080
-        SDP:     MX6SLL          0x1fc9  0x0128
-        SDP:     MX7ULP          0x1fc9  0x0126
-        SDP:     MXRT106X        0x1fc9  0x0135
-        SDP:     MX8MM           0x1fc9  0x0134
-        SDP:     MX8MQ           0x1fc9  0x012b
-        SDPU:    SPL             0x0525  0xb4a4  [0x0000..0x04ff]
-        SDPV:    SPL1            0x0525  0xb4a4  [0x0500..0x9998]
-        SDPV:    SPL1            0x1fc9  0x0151  [0x0500..0x9998]
-        SDPU:    SPL             0x0525  0xb4a4  [0x9999..0x9999]
-        SDPU:    SPL             0x3016  0x1001  [0x0000..0x04ff]
-        SDPV:    SPL1            0x3016  0x1001  [0x0500..0x9998]
-        FBK:                     0x066f  0x9afe
-        FBK:                     0x066f  0x9bff
-        FBK:                     0x1fc9  0x0153
-        FB:                      0x0525  0xa4a5
-        FB:                      0x18d1  0x0d02
-        FB:                      0x3016  0x0001
-        FB:                      0x1fc9  0x0152
-        FB:                      0x0483  0x0afb
+## 5.2.  Burn by u-boot
 
-Run built-in script:
+#### A. rootfs
 
-uuu_version 1.4.149
+> imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst 還要解壓縮，所以產出 imx-image-core-imx8mm-lpddr4-evk.rootfs.ext4。
 
-# @_flash.bin            | bootloader, which can extract from wic image
-# @_image   [_flash.bin] | wic image burn to emmc.
+```bash
+u-boot=> setenv serverip 192.168.1.100
+u-boot=> setenv ipaddr 192.168.1.10
+u-boot=> setenv ethaddr 00:11:22:33:44:55
+u-boot=> setenv update_ext4 imx-image-core-imx8mm-lpddr4-evk.rootfs.ext4
 
+u-boot=> setenv tftp_rootfs 'if tftp ${loadaddr} ${update_ext4}; then setexpr blkcnt ${filesize} + 0x1FF;setexpr blkcnt ${blkcnt} / 0x200;mmc write ${loadaddr} 0xac000 ${blkcnt}; fi'
+u-boot=> saveenv
+Saving Environment to MMC... Writing to MMC(2)... OK
 
-# This command will be run when i.MX6/7 i.MX8MM, i.MX8MQ
-SDP: boot -f ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -scanlimited 0x800000
+u-boot=> run tftp_rootfs
+```
 
-# This command will be run when ROM support stream mode
-# i.MX8QXP, i.MX8QM
-SDPS: boot -scanterm -f ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -scanlimited 0x800000
+> 主要的命令如下
 
-# These commands will be run when use SPL and will be skipped if no spl
-# SDPU will be deprecated. please use SDPV instead of SDPU
-# {
-SDPU: delay 1000
-SDPU: write -f ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -offset 0x57c00
-SDPU: jump -scanlimited 0x800000
-# }
+```bash
+# imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst 還要解壓縮
+u-boot=> mmc dev 2
+u-boot=> tftp ${loadaddr} ${update_ext4}
 
-# These commands will be run when use SPL and will be skipped if no spl
-# if (SPL support SDPV)
-# {
-SDPV: delay 1000
-SDPV: write -f ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -skipspl -scanterm -scanlimited 0x800000
-SDPV: jump -scanlimited 0x800000
-# }
+done
+Bytes transferred = 1580126208 (5e2ed000 hex)
 
+u-boot=> part list mmc 2
 
-FB: ucmd setenv fastboot_dev mmc
-FB: ucmd setenv mmcdev ${emmc_dev}
-FB: ucmd mmc dev ${emmc_dev}
-FB: flash -raw2sparse all ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
-FB: flash -scanterm -scanlimited 0x800000 bootloader ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk
-FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
-FB: ucmd mmc partconf ${emmc_dev} ${emmc_ack} 1 0
-FB: done
+Partition Map for MMC device 2  --   Partition Type: DOS
 
+Part    Start Sector    Num Sectors     UUID            Type
+  1     16384           681574          076c4a2a-01     0c Boot
+  2     704512          4005994         076c4a2a-02     83
 
-Wait for Known USB Device Appear...
-New USB Device Attached at 1:2-
-1:2->Start Cmd:SDP: boot -f ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -scanlimited 0x800000
-100%1:2->Okay (0.392s)
-New USB Device Attached at 1:2-0A1D3209DAB5B3C9
-1:2-0A1D3209DAB5B3C9>Start Cmd:SDPV: delay 1000
-1:2-0A1D3209DAB5B3C9>Okay (1.001s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:SDPV: write -f ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -skipspl -scanterm -scanlimited 0x800000
-100%1:2-0A1D3209DAB5B3C9>Okay (2.848s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:SDPV: jump -scanlimited 0x800000
-100%1:2-0A1D3209DAB5B3C9>Okay (0.076s)
-New USB Device Attached at 1:2-0A1D3209DAB5B3C9
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: ucmd setenv fastboot_dev mmc
-1:2-0A1D3209DAB5B3C9>Okay (0.228s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: ucmd setenv mmcdev ${emmc_dev}
-1:2-0A1D3209DAB5B3C9>Okay (0.133s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: ucmd mmc dev ${emmc_dev}
-1:2-0A1D3209DAB5B3C9>Okay (0.041s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: flash -raw2sparse all ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
-100%1:2-0A1D3209DAB5B3C9>Okay (87.72s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: flash -scanterm -scanlimited 0x800000 bootloader ./evkb/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk
-0x400000001:2-0A1D3209DAB5B3C9>Okay (0.117s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: ucmd if env exists emmc_ack; then ; else setenv emmc_ack 0; fi;
-1:2-0A1D3209DAB5B3C9>Okay (0.004s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: ucmd mmc partconf ${emmc_dev} ${emmc_ack} 1 0
-1:2-0A1D3209DAB5B3C9>Okay (0.004s)
-1:2-0A1D3209DAB5B3C9>Start Cmd:FB: done
-1:2-0A1D3209DAB5B3C9>Okay (0s)
+# 704512 = 0xAC000
+# 1580126208 / 512 = 0x2F1768
+u-boot=> mmc write ${loadaddr} 0xAC000 0x2F1768
+
+MMC write: dev # 2, block # 704512, count 3086184 ... 3086184 blocks written: OK
+```
+
+#### ~~B. u-boot~~
+
+> ~~不建議使用~~
+
+```bash
+$ tftp ${loadaddr} u-boot.bin
+
+$ setexpr blkcnt ${filesize} + 0x1FF
+$ setexpr blkcnt ${blkcnt} / 0x200
+$ mmc write ${loadaddr} 0x2 ${blkcnt}
 ```
 
 # 6. Toolchain
@@ -698,15 +640,74 @@ Hello world !!!
 
 ## 7.1. **[meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)**
 
-```bash
-$ find123 ffmpeg pyav hass haffmpeg
-```
-
-### 7.1.1. *.bb
+### 7.1.1. Add layer
 
 > 因為 homeassistant 相依很多套件，這邊就不列出所有的。
 
-#### A. python3-homeassistant
+#### A. *-menu.json
+
+>  修改 cooker-menu/*-menu.json
+
+```bash
+$ echo $PJ_COOKER_MENU
+imx8mm-evk-scarthgap-home-menu.json
+
+# 更新 $PJ_COOKER_MENU
+$ vi cooker-menu/$PJ_COOKER_MENU
+  ...
+  "sources": [
+    {
+      "url": "https://github.com/meta-homeassistant/meta-homeassistant",
+      "branch": "main",
+      "dir": "meta-homeassistant",
+      "rev": "5ee63318c53bec1bfc2e56221783c23c61b32a1e"
+    },
+  ],
+  "layers": [
+    "meta-homeassistant",
+  ],
+  "builds": {
+    "imx8mm-evk-scarthgap-home": {
+      "local.conf": [
+        "IMAGE_INSTALL:append = ' python3-homeassistant'",
+        "LICENSE_FLAGS_ACCEPTED += 'commercial'"
+      ]
+    }
+  }
+
+# 更新完記得執行
+$ cooker generate
+
+$ cat $PJ_YOCTO_BUILD_DIR/conf/local.conf
+$ cat $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf
+
+$ bitbake-layers show-recipes python3-homeassistant
+NOTE: Starting bitbake server...
+Loading cache: 100% |############################################################| Time: 0:00:01
+Loaded 5813 entries from dependency cache.
+Parsing recipes: 100% |##########################################################| Time: 0:00:00
+Parsing of 3734 .bb files complete (3731 cached, 3 parsed). 5811 targets, 586 skipped, 3 masked, 0 errors.
+WARNING: preferred version 4.18.imx+stable of xen not available
+WARNING: versions of xen available: 4.17+stable 4.18+stable 4.19+git 4.19.0+stable
+WARNING: preferred version 1.24.0.imx of gst-devtools not available
+WARNING: versions of gst-devtools available: 1.22.12 1.22.5.imx
+=== Matching recipes: ===
+python3-homeassistant:
+  meta-homeassistant   2023.12.0
+```
+
+> 因為 python3-ha-av dependency ffmpeg，但是 ffmpeg LICENSE = "commercial"
+
+```bash
+$ find -name ffmpeg*.bb
+./layers-scarthgap/poky/meta/recipes-multimedia/ffmpeg/ffmpeg_6.1.1.bb
+./layers-scarthgap/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb
+
+$ cat $PJ_YOCTO_LAYERS_DIR/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb | grep LICENSE_FLAGS
+LICENSE_FLAGS = "commercial"
+```
+
+#### B. python3-homeassistant
 
 ```bash
 $ oe-pkgdata-util list-pkg-files python3-homeassistant
@@ -781,7 +782,7 @@ RDEPENDS:python3-homeassistant-vlc="    python3-python-vlc (>=3.0.18122) "
 RDEPENDS:python3-homeassistant-zeroconf="    python3-zeroconf (>=0.119.0) "
 ```
 
-##### A.1. homeassistant.service
+##### B.1. homeassistant.service
 
 > HOMEASSISTANT_CONFIG_DIR : /var/lib/homeassistant
 
@@ -803,7 +804,7 @@ WantedBy=multi-user.target
 $ vi builds-lnk/$PJ_YOCTO_BUILD-rootfs/usr/lib/systemd/system/homeassistant.service
 ```
 
-#### B. python3-ha-av
+#### C. python3-ha-av
 
 ```bash
 $ oe-pkgdata-util list-pkg-files python3-ha-av
@@ -836,7 +837,7 @@ RDEPENDS:python3-ha-av="     python3-numpy     python3-pillow  python3-core"
 RDEPENDS:python3-ha-av-staticdev="python3-ha-av-dev (= 10.1.1-r0)"
 ```
 
-#### C. python3-ha-ffmpeg
+#### D. python3-ha-ffmpeg
 
 ```bash
 $ oe-pkgdata-util list-pkg-files python3-ha-ffmpeg
@@ -868,67 +869,20 @@ RDEPENDS:python3-ha-ffmpeg="     python3-async-timeout     ffmpeg  python3-core"
 RDEPENDS:python3-ha-ffmpeg-staticdev="python3-ha-ffmpeg-dev (= 3.1.0-r0)"
 ```
 
-### 7.1.2. Add the Recipe
+### 7.1.2. Check Image
 
->  修改 cooker-menu/*-menu.json
+> 請先編譯出 image
 
 ```bash
-$ echo $PJ_COOKER_MENU
-imx8mm-evk-scarthgap-home-menu.json
-
-# 更新 $PJ_COOKER_MENU
-$ vi cooker-menu/$PJ_COOKER_MENU
-  ...
-  "sources": [
-    {
-      "url": "https://github.com/meta-homeassistant/meta-homeassistant",
-      "branch": "main",
-      "dir": "meta-homeassistant",
-      "rev": "5ee63318c53bec1bfc2e56221783c23c61b32a1e"
-    },
-  ],
-  "layers": [
-    "meta-homeassistant",
-  ],
-  "builds": {
-    "imx8mm-evk-scarthgap-home": {
-      "local.conf": [
-        "IMAGE_INSTALL:append = ' python3-homeassistant'",
-        "LICENSE_FLAGS_ACCEPTED += 'commercial'"
-      ]
-    }
-  }
-
-# 更新完記得執行
-$ cooker generate
-
-$ cat $PJ_YOCTO_BUILD_DIR/conf/local.conf
-$ cat $PJ_YOCTO_BUILD_DIR/conf/bblayers.conf
-
-$ bitbake-layers show-recipes python3-homeassistant
-NOTE: Starting bitbake server...
-Loading cache: 100% |############################################################| Time: 0:00:01
-Loaded 5813 entries from dependency cache.
-Parsing recipes: 100% |##########################################################| Time: 0:00:00
-Parsing of 3734 .bb files complete (3731 cached, 3 parsed). 5811 targets, 586 skipped, 3 masked, 0 errors.
-WARNING: preferred version 4.18.imx+stable of xen not available
-WARNING: versions of xen available: 4.17+stable 4.18+stable 4.19+git 4.19.0+stable
-WARNING: preferred version 1.24.0.imx of gst-devtools not available
-WARNING: versions of gst-devtools available: 1.22.12 1.22.5.imx
-=== Matching recipes: ===
-python3-homeassistant:
-  meta-homeassistant   2023.12.0
+# 編譯
+$ make
+# or
+$ bitbake imx-image-core
 ```
 
-> 因為 python3-ha-av dependency ffmpeg，但是 ffmpeg LICENSE = "commercial"
-
 ```bash
-$ find -name ffmpeg*.bb
-./layers-scarthgap/poky/meta/recipes-multimedia/ffmpeg/ffmpeg_6.1.1.bb
-./layers-scarthgap/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb
-
-$ cat $PJ_YOCTO_LAYERS_DIR/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1.bb | grep LICENSE_FLAGS
-LICENSE_FLAGS = "commercial"
+$ cd-rootfs
+$ find123 ffmpeg pyav hass haffmpeg
 ```
 
 ### 7.1.3. Showtime
@@ -943,7 +897,7 @@ LICENSE_FLAGS = "commercial"
 
 > http://192.168.31.62:8123
 
-![Yocto-NXP-8MMINILPD4‑EVKB-hass](./images/Yocto-NXP-8MMINILPD4‑EVKB-hass.png)
+![Yocto-NXP-8MMINILPD4-EVKB-hass](T:/codebase/lankahsu520/CrossCompilationX/images/Yocto-NXP-8MMINILPD4-EVKB-hass.png)
 
 #### A. Change listen port
 
@@ -999,19 +953,19 @@ root@imx8mm-lpddr4-evk:~# reboot
 ```bash
 root@imx8mm-lpddr4-evk:~# free -h
                total        used        free      shared  buff/cache   available
-Mem:           1.8Gi       592Mi       1.1Gi        17Mi       293Mi       1.3Gi
+Mem:           1.8Gi       567Mi       1.0Gi        10Mi       348Mi       1.3Gi
 Swap:             0B          0B          0B
 
 root@imx8mm-lpddr4-evk:~# df -h
 Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       3.0G  1.8G  1.2G  61% /
+/dev/root       3.1G  1.8G  1.2G  61% /
 devtmpfs        619M  4.0K  619M   1% /dev
 tmpfs           941M     0  941M   0% /dev/shm
-tmpfs           377M  9.0M  368M   3% /run
-tmpfs           941M  4.0K  941M   1% /tmp
+tmpfs           377M   10M  367M   3% /run
+tmpfs           941M     0  941M   0% /tmp
 tmpfs           941M   16K  941M   1% /var/volatile
-tmpfs           189M  8.0K  189M   1% /run/user/0
 /dev/mmcblk2p1  333M   36M  297M  11% /run/media/boot-mmcblk2p1
+tmpfs           189M  4.0K  189M   1% /run/user/0
 
 root@imx8mm-lpddr4-evk:~# cat /proc/partitions
 major minor  #blocks  name
@@ -1019,7 +973,7 @@ major minor  #blocks  name
   31        0      32768 mtdblock0
  179        0   30535680 mmcblk2
  179        1     340787 mmcblk2p1
- 179        2    3322603 mmcblk2p2
+ 179        2    3352394 mmcblk2p2
  179       32       4096 mmcblk2boot0
  179       64       4096 mmcblk2boot1
 
@@ -1033,8 +987,7 @@ Disk identifier: 0x076c4a2a
 
 Device         Boot  Start     End Sectors   Size Id Type
 /dev/mmcblk2p1 *     16384  697957  681574 332.8M  c W95 FAT32 (LBA)
-/dev/mmcblk2p2      704512 7349717 6645206   3.2G 83 Linux
-
+/dev/mmcblk2p2      704512 7409299 6704788   3.2G 83 Linux
 ```
 
 #### B. homeassistant.service
@@ -1059,11 +1012,38 @@ Restart=on-failure
 WantedBy=multi-user.target
 
 root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
+root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
+root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
+```
+
+#### C. /var/lib/homeassistant
+
+```bash
+root@imx8mm-lpddr4-evk:/var/lib/homeassistant# ls -al
+total 1432
+drwxr-xr-x  6 homeassistant homeassistant    4096 Jul 23 02:52 .
+drwxr-xr-x 15 root          root             4096 Jul 23 02:51 ..
+-rw-r--r--  1 homeassistant homeassistant       9 Feb 27  2024 .HA_VERSION
+drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:51 .cloud
+drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 03:22 .storage
+-rw-r--r--  1 root          root                2 Mar  9  2018 automations.yaml
+drwxr-xr-x  4 homeassistant homeassistant    4096 Jul 23 02:52 blueprints
+-rw-r--r--  1 root          root              294 Mar  9  2018 configuration.yaml
+-rw-r--r--  1 homeassistant homeassistant     796 Jul 23 03:08 home-assistant.log
+-rw-r--r--  1 homeassistant homeassistant       0 Feb 27  2024 home-assistant.log.1
+-rw-r--r--  1 homeassistant homeassistant       0 Feb 27  2024 home-assistant.log.fault
+-rw-r--r--  1 homeassistant homeassistant    4096 Jul 23 02:51 home-assistant_v2.db
+-rw-r--r--  1 homeassistant homeassistant   32768 Jul 23 03:31 home-assistant_v2.db-shm
+-rw-r--r--  1 homeassistant homeassistant 1384352 Jul 23 03:31 home-assistant_v2.db-wal
+-rw-r--r--  1 root          root                0 Mar  9  2018 scenes.yaml
+-rw-r--r--  1 root          root                0 Mar  9  2018 scripts.yaml
+-rw-r--r--  1 root          root              161 Mar  9  2018 secrets.yaml
+drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:52 tts
 ```
 
 ## 7.2. meta-homeassistant-plus
 
-> 這邊要先有一個重要的認知，homeassistant 算是整合各家的 IoT 系統，當要整入 embedded 時，就有可能會有`缺失`，而這`缺失`是不是剛好是自己所欠的，而這將是一個很大的考驗。
+> 這邊要先有一個重要的認知，homeassistant 算是整合各家的 IoT 系統，當要整入 embedded 時，就有可能會有`缺失`，而這`缺失`是不是剛好是自己需要的，而之後將是個很大的考驗。
 >
 > 或許聰明的人就會說，「pip 安裝就好了」、「rpm 安裝也行」、「最慘的用setup 」。
 >
@@ -1133,7 +1113,7 @@ $ bitbake-layers show-appends | grep homeassistant
 $ bitbake -c build python3-homeassistant
 ```
 
-#### A. Configurate listen port
+#### A. Configurate listen
 
 > 這邊是 compile time 就進行修改
 >
@@ -1161,14 +1141,837 @@ http:
   server_port: 12345
 ```
 
-### 7.2.4. No module named 'xxxx'
+### 7.2.4. Add recipes - ONVIF
+
+#### onvif-zeep
+
+> pypi: [onvif-zeep 0.2.12](https://pypi.org/project/onvif-zeep)
+>
+> ONVIF Client Implementation in Python
 
 ```bash
-$ find123 pyasn1* pydantic* bitstruct* python_otbr_api* miniaudio* pysensibo* tuya_iot* srptools* chacha20poly1305* pyatv* mediafile* filetype* hap-python* aiohomekit* synology_dsm* commentjson* lark*
+$ bitbake -s | grep onvif-zeep
+# yocto 未內建 python3-onvif-zeep
+$ bb-info python3-onvif-zeep
 
+python3-onvif-zeep                                 :0.2.12-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-onvif-zeep_0.2.12.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/o/onvif-zeep/onvif_zeep-0.2.12.tar.gz"
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep/0.2.12/onvif_zeep-0.2.12"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep/0.2.12"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-onvif-zeep="      python3-zeep     python3-requests     python3-six     python3-lxml     python3-isodate  python3-core"
+RDEPENDS:python3-onvif-zeep-staticdev="python3-onvif-zeep-dev (= 0.2.12-r0)"
 ```
 
 ```bash
+$ bitbake -c build python3-onvif-zeep
+```
+
+#### onvif-zeep-async
+
+> pypi: [onvif-zeep-async 4.0.1](https://pypi.org/project/onvif-zeep-async)
+>
+> ONVIF Client Implementation in Python 3
+
+```bash
+$ bitbake -s | onvif-zeep-async
+# yocto 未內建 python3-onvif-zeep-async，這邊採用舊版 3.1.13
+$ bb-info python3-onvif-zeep-async
+
+python3-onvif-zeep-async                            :4.0.1-r0                                     
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-onvif-zeep-async_4.0.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/o/onvif-zeep-async/onvif_zeep_async-4.0.1.tar.gz"
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep-async/4.0.1/onvif_zeep_async-4.0.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep-async/4.0.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-onvif-zeep-async="      python3-aiohttp     python3-zeep     python3-xmltodict  python3-core"
+RDEPENDS:python3-onvif-zeep-async-staticdev="python3-onvif-zeep-async-dev (= 4.0.1-r0)"
+```
+
+```bash
+$ bitbake -c build python3-onvif-zeep-async
+```
+
+#### requests-file
+
+> pypi: [requests-file 2.1.0](https://pypi.org/project/requests-file)
+>
+> Requests-File is a transport adapter for use with the [Requests](https://github.com/kennethreitz/requests) Python library to allow local filesystem access via file:// URLs.
+
+```bash
+$ bitbake -s | grep requests-file
+# yocto 已經內建 python3-requests-file
+$ bb-info python3-requests-file
+
+meta-python-image-ptest-python3-requests-file                   :1.0-r0                                                 
+python3-requests-file                               :1.5.1-r0
+
+./layers-scarthgap/meta-openembedded/meta-python/recipes-devtools/python/python3-requests-file_1.5.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/r/requests-file/requests-file-1.5.1.tar.gz;downloadfilename=requests-file-1.5.1.tar.gz           file://run-ptest "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-requests-file/1.5.1/requests-file-1.5.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-requests-file/1.5.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-requests-file="      python3-requests  python3-core"
+RDEPENDS:python3-requests-file-ptest=" python3-requests-file      python3-pytest     python3-unittest-automake-output "
+RDEPENDS:python3-requests-file-ptest:class-native=""
+RDEPENDS:python3-requests-file-ptest:class-nativesdk=""
+RDEPENDS:python3-requests-file-staticdev="python3-requests-file-dev (= 1.5.1-r0)"
+```
+
+```bash
+$ bitbake -c build python3-requests-file
+```
+
+#### wsdiscovery
+
+> pypi: [WSDiscovery 2.1.2](https://pypi.org/project/WSDiscovery)
+>
+> This is WS-Discovery implementation for Python 3. It allows to both discover services and publish discoverable services. For Python 2 support, use the latest 1.x version of this package.
+
+```bash
+$ bitbake -s | grep wsdiscovery
+# yocto 未內建 python3-onvif-zeep-async
+$ bb-info python3-wsdiscovery
+
+python3-wsdiscovery                                 :2.1.2-r0
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/W/WSDiscovery/WSDiscovery-2.1.2.tar.gz;downloadfilename=WSDiscovery-2.1.2.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-wsdiscovery/2.1.2/WSDiscovery-2.1.2"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-wsdiscovery/2.1.2"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-wsdiscovery="      python3-xml  python3-core"
+RDEPENDS:python3-wsdiscovery-staticdev="python3-wsdiscovery-dev (= 2.1.2-r0)"
+```
+
+```bash
+$ bitbake -c build python3-wsdiscovery
+```
+
+#### zeep
+
+> pypi: [zeep 4.3.1](https://pypi.org/project/zeep)
+>
+> a modern parsing library
+
+```bash
+$ bitbake -s | grep zeep
+# yocto 未內建 python3-zeep
+$ bb-info python3-zeep
+
+python3-zeep                                        :4.3.1-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-zeep_4.3.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/z/zeep/zeep-4.3.1.tar.gz;downloadfilename=zeep-4.3.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-zeep/4.3.1/zeep-4.3.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-zeep/4.3.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-zeep=" python3-core"
+RDEPENDS:python3-zeep-staticdev="python3-zeep-dev (= 4.3.1-r0)"
+```
+
+```bash
+$ bitbake -c build python3-zeep
+```
+
+### 7.2.5. Add recipes - Homekit
+
+#### aiohomekit
+
+> pypi: [aiohomekit 3.2.15](https://pypi.org/project/aiohomekit/)
+>
+> This library implements the HomeKit protocol for controlling Homekit accessories using asyncio.
+>
+> It's primary use is for with Home Assistant. We target the same versions of python as them and try to follow their code standards.
+>
+> At the moment we don't offer any API guarantees. API stability and documentation will happen after we are happy with how things are working within Home Assistant.
+
+```bash
+$ bitbake -s | grep aiohomekit
+# yocto 未內建 python3-aiohomekit，這邊採用舊版 3.2.7
+$ bb-info python3-aiohomekit
+
+python3-aiohomekit                                  :3.2.7-r0                                          
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/a/aiohomekit/aiohomekit-3.2.7.tar.gz;downloadfilename=aiohomekit-3.2.7.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7/aiohomekit-3.2.7"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-hap-python python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-aiohomekit="      python3-zeroconf     python3-cryptography     python3-poetry-core  python3-core"
+RDEPENDS:python3-aiohomekit-staticdev="python3-aiohomekit-dev (= 3.2.7-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-aiohomekit
+$ bitbake -c cleanall python3-aiohomekit
+$ bitbake -c build python3-aiohomekit
+```
+
+#### commentjson
+
+> pypi: [commentjson 0.9.0](https://pypi.org/project/commentjson)
+>
+> commentjson (Comment JSON) is a Python package that helps you create JSON files with Python and JavaScript style inline comments. Its API is very similar to the Python standard library’s [json](http://docs.python.org/2/library/json.html) module.
+
+```bash
+$ bitbake -s | grep commentjson
+# yocto 未內建 python3-commentjson
+$ bb-info python3-commentjson
+
+python3-commentjson                                 :0.9.0-r0
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/c/commentjson/commentjson-0.9.0.tar.gz;downloadfilename=commentjson-0.9.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0/commentjson-0.9.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-commentjson=" python3-core"
+RDEPENDS:python3-commentjson-staticdev="python3-commentjson-dev (= 0.9.0-r0)"
+```
+
+```bash
+$ bitbake -c build python3-commentjson
+```
+
+#### hap-python
+
+> pypi: [HAP-python 4.9.2](https://pypi.org/project/HAP-python)
+>
+> HomeKit Accessory Protocol implementation in python 3. With this project, you can integrate your own smart devices and add them to your iOS Home app. Since Siri is integrated with the Home app, you can start voice-control your accessories right away.
+
+```bash
+$ bitbake -s | grep hap
+# yocto 未內建 python3-hap-python
+$ bb-info python3-hap-python
+
+python3-hap-python                                  :4.9.1-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-hap-python_4.9.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/H/HAP-python/HAP-python-4.9.1.tar.gz;downloadfilename=HAP-python-4.9.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1/HAP-python-4.9.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-hap-python="      python3-zeroconf     python3-cryptography  python3-core"
+RDEPENDS:python3-hap-python-staticdev="python3-hap-python-dev (= 4.9.1-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-hap-python
+$ bitbake -c cleanall python3-hap-python
+$ bitbake -c build python3-hap-python
+```
+
+#### lark
+
+> pypi: [lark 1.2.2](https://pypi.org/project/lark)
+>
+> Lark is a modern general-purpose parsing library for Python. With Lark, you can parse any context-free grammar, efficiently, with very little code. 
+
+```bash
+$ bitbake -s | grep lark
+# yocto 未內建 python3-lark
+$ bb-info python3-lark
+
+python3-lark                                        :1.2.2-r0                                                 
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-lark_1.2.2.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/l/lark/lark-1.2.2.tar.gz;downloadfilename=lark-1.2.2.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2/lark-1.2.2"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-lark=" python3-core"
+RDEPENDS:python3-lark-staticdev="python3-lark-dev (= 1.2.2-r0)"
+```
+
+```bash
+$ bitbake -c build python3-lark
+```
+
+### 7.2.6. Add recipes - Apple TV
+
+#### chacha20poly1305
+
+> pypi: [chacha20poly1305 0.0.3](https://pypi.org/project/chacha20poly1305)
+>
+> Simple pure-python chacha20-poly1305 implementation based on [tlslite-ng](https://github.com/tomato42/tlslite-ng) code. Designed to be compatible with Cryptography API.
+
+```bash
+$ bitbake -s | grep chacha20poly1305
+# yocto 未內建 python3-chacha20poly1305
+$ bb-info python3-chacha20poly1305
+
+python3-chacha20poly1305                            :0.0.3-r0                                                                                                                                     
+python3-chacha20poly1305-reuseable                 :0.13.2-r0                                                                                                                                     
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5_0.0.3.bb
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5-reuseable_0.13.2.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305/chacha20poly1305-0.0.3.tar.gz;downloa                                                                                  dfilename=chacha20poly1305-0.0.3.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly130                                                                                  5/0.0.3/chacha20poly1305-0.0.3"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20p                                                                                  oly1305/0.0.3"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools                                                                                  -native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-install                                                                                  er-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-chacha20poly1305=" python3-core"
+RDEPENDS:python3-chacha20poly1305-staticdev="python3-chacha20poly1305-dev (= 0.0.3-r0)"
+```
+
+```bash
+$ bitbake -c build python3-chacha20poly1305
+```
+
+#### chacha20poly1305_reuseable
+
+> pypi: [chacha20poly1305-reuseable 0.13.2](https://pypi.org/project/chacha20poly1305-reuseable/)
+>
+> ChaCha20Poly1305 that is reuseable for asyncio
+
+```bash
+$ bitbake -s | grep chacha20poly1305
+# yocto 未內建 python3-chacha20poly1305_reuseable
+$ bb-info python3-chacha20poly1305-reuseable
+
+python3-chacha20poly1305-reuseable                 :0.13.2-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly1305-reuseable_0.13.2.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305_reuseable/chacha20poly1305_reuseable-0.13.2.tar.gz;downloadfilename=chacha20poly1305_reuseable-0.13.2.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2/chacha20poly1305_reuseable-0.13.2"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-chacha20poly1305-reuseable=" python3-core"
+RDEPENDS:python3-chacha20poly1305-reuseable-staticdev="python3-chacha20poly1305-reuseable-dev (= 0.13.2-r0)"
+```
+
+```bash
+$ bitbake -c build python3-chacha20poly1305-reuseable
+```
+
+#### filetype
+
+> pypi: [filetype 1.2.0](https://pypi.org/project/filetype/)
+>
+> Small and dependency free [Python](http://python.org/) package to infer file type and MIME type checking the [magic numbers](https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files) signature of a file or buffer.
+>
+> This is a Python port from [filetype](https://github.com/h2non/filetype) Go package.
+
+```bash
+$ bitbake -s | grep filetype
+# yocto 未內建 python3-filetype
+$ bb-info python3-filetype
+
+python3-filetype                                    :1.2.0-r0  
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-filetype_1.2.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/f/filetype/filetype-1.2.0.tar.gz;downloadfilename=filetype-1.2.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0/filetype-1.2.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-filetype=" python3-core"
+RDEPENDS:python3-filetype-staticdev="python3-filetype-dev (= 1.2.0-r0)"
+```
+
+```bash
+$ bitbake -c build python3-filetype
+```
+
+#### mediafile
+
+> pypi: [mediafile 0.13.0](https://pypi.org/project/mediafile/)
+>
+> MediaFile is a simple interface to the metadata tags for many audio file formats. It wraps [Mutagen](https://github.com/quodlibet/mutagen), a high-quality library for low-level tag manipulation, with a high-level, format-independent interface for a common set of tags.
+
+```bash
+$ bitbake -s | grep mediafile
+# yocto 未內建 python3-mediafile
+$ bb-info python3-mediafile
+
+python3-mediafile                                  :0.13.0-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-mediafile_0.13.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/m/mediafile/mediafile-0.13.0.tar.gz;downloadfilename=mediafile-0.13.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0/mediafile-0.13.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-mediafile=" python3-core"
+RDEPENDS:python3-mediafile-staticdev="python3-mediafile-dev (= 0.13.0-r0)"
+```
+
+```bash
+$ bitbake -c build python3-mediafile
+```
+
+#### pyatv
+
+> pypi: [pyatv 0.16.1](https://pypi.org/project/pyatv/)
+>
+> This is an asyncio python library for interacting with Apple TV and AirPlay devices. It mainly targets Apple TVs (all generations, **including tvOS 15 and later**), but also supports audio streaming via AirPlay to receivers like the HomePod, AirPort Express and third-party speakers. It can act as remote control to the Music app/iTunes in macOS.
+
+```bash
+$ bitbake -s | grep pyatv
+# yocto 未內建 python3-pyatv，這邊採用舊版 0.14.5
+$ bb-info python3-pyatv
+
+python3-pyatv                                      :0.14.5-r0                                        
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pyatv_0.14.5.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/pyatv/pyatv-0.14.5.tar.gz;downloadfilename=pyatv-0.14.5.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5/pyatv-0.14.5"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-pytest-runner-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-pyatv="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools     python3-srptools     python3-chacha20poly1305-reuseable  python3-core"
+RDEPENDS:python3-pyatv-staticdev="python3-pyatv-dev (= 0.14.5-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-pyatv
+$ bitbake -c cleanall python3-pyatv
+$ bitbake -c build python3-pyatv
+```
+
+#### srptools
+
+> pypi: [srptools 1.0.1](https://pypi.org/project/srptools/)
+>
+> *Tools to implement Secure Remote Password (SRP) authentication*
+>
+> SRP is a secure password-based authentication and key-exchange protocol - a password-authenticated key agreement protocol (PAKE).
+>
+> This package contains protocol implementation for Python 2 and 3.
+>
+> You may import it into you applications and use its API or you may use srptools command-line utility (CLI):
+
+```bash
+$ bitbake -s | grep srptools
+# yocto 未內建 python3-tuya-iot-py-sdk
+$ bb-info python3-srptools
+
+python3-srptools                                    :1.0.1-r0
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/s/srptools/srptools-1.0.1.tar.gz;downloadfilename=srptools-1.0.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1/srptools-1.0.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-srptools=" python3-core"
+RDEPENDS:python3-srptools-staticdev="python3-srptools-dev (= 1.0.1-r0)"
+```
+
+```bash
+$ bitbake -c build python3-srptools
+```
+
+### 7.2.7. Add recipes - synologydsm
+
+#### py-synologydsm-api
+
+> pypi: [py-synologydsm-api 2.7.3](https://pypi.org/project/py-synologydsm-api/)
+>
+> Python API for communication with Synology DSM
+
+```bash
+$ bitbake -s | grep py-synologydsm-api
+# yocto 未內建 python3-py-synologydsm-api
+$ bb-info python3-py-synologydsm-api
+
+python3-py-synologydsm-api                          :2.7.3-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-py-synologydsm-api_2.7.3.bb
+
+SRC_URI="file://py-synologydsm-api-2.7.3.tar.gz"
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3/py-synologydsm-api-2.7.3"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-setuptools-native  python3-build-native python3-installer-native python3-native python3 python3-native  python3"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-py-synologydsm-api="      python3-requests     python3-aiohttp  python3-core"
+RDEPENDS:python3-py-synologydsm-api-staticdev="python3-py-synologydsm-api-dev (= 2.7.3-r0)"
+```
+
+```bash
+$ bitbake -c build python3-py-synologydsm-api
+```
+
+### 7.2.8. Add recipes - tuya_iot
+
+#### tuya_iot
+
+> pypi: [tuya-iot-py-sdk 0.6.6](https://pypi.org/project/tuya-iot-py-sdk)
+>
+> pypi: [tuya-device-sharing-sdk 0.2.1](https://pypi.org/project/tuya-device-sharing-sdk/) (新版)
+>
+> A Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya officialA Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya official
+
+```bash
+$ bitbake -s | grep tuya
+# yocto 未內建 python3-tuya-iot-py-sdk
+$ bb-info python3-tuya-iot-py-sdk
+
+python3-tuya-iot-py-sdk                             :0.6.6-r0
+
+./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-tuya-iot-py-sdk_0.6.6.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/t/tuya-iot-py-sdk/tuya-iot-py-sdk-0.6.6.tar.gz;downloadfilename=tuya-iot-py-sdk-0.6.6.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6/tuya-iot-py-sdk-0.6.6"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-requests-native     python3-pycryptodome-native     python3-paho-mqtt-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-tuya-iot-py-sdk="      python3-requests     python3-pytz     python3-urllib3  python3-core"
+RDEPENDS:python3-tuya-iot-py-sdk-staticdev="python3-tuya-iot-py-sdk-dev (= 0.6.6-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-tuya-iot-py-sdk
+$ bitbake -c cleanall python3-tuya-iot-py-sdk
+$ bitbake -c build python3-tuya-iot-py-sdk
+```
+
+### 7.2.9. Add recipes - pysensibo
+
+#### miniaudio
+
+> pypi: [miniaudio 1.61](https://pypi.org/project/miniaudio/)
+>
+> Multiplatform audio playback, recording, decoding and sample format conversion for Linux (including Raspberri Pi), Windows, Mac and others.
+
+```bash
+$ bitbake -s | grep miniaudio
+# yocto 未內建 python3-miniaudio
+$ bb-info python3-miniaudio
+
+python3-miniaudio                                    :1.61-r0
+
+
+SRC_URI="https://files.pythonhosted.org/packages/source/m/miniaudio/miniaudio-1.61.tar.gz;downloadfilename=miniaudio-1.61.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61/miniaudio-1.61"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-pytest-runner-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-miniaudio="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools  python3-core"
+RDEPENDS:python3-miniaudio-staticdev="python3-miniaudio-dev (= 1.61-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-miniaudio
+$ bitbake -c cleanall python3-miniaudio
+$ bitbake -c build python3-miniaudio
+```
+
+#### pysensibo
+
+> pypi: [pysensibo 1.2.1](https://pypi.org/project/pysensibo/)
+>
+> asyncio-friendly python API for Sensibo ([https://sensibo.com](https://sensibo.com/)). Supported on Python 3.11+
+
+```bash
+$ bitbake -s | grep sensibo
+# yocto 未內建 python3-pysensibo
+$ bb-info python3-pysensibo
+
+python3-pysensibo                                   :1.2.1-r0
+
+./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pysensibo_1.2.1.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/pysensibo/pysensibo-1.2.1.tar.gz;downloadfilename=pysensibo-1.2.1.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1/pysensibo-1.2.1"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-pysensibo="      python3-requests  python3-core"
+RDEPENDS:python3-pysensibo-staticdev="python3-pysensibo-dev (= 1.2.1-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-pysensibo
+$ bitbake -c cleanall python3-pysensibo
+$ bitbake -c build python3-pysensibo
+```
+
+### 7.2.10. Add recipes - python_otbr_api
+
+#### python_otbr_api
+
+> pypi: [python-otbr-api 2.6.0](https://pypi.org/project/python-otbr-api/)
+>
+> Python package to interact with an OTBR via its REST API
+
+```bash
+$ bitbake -s | grep otbr
+# yocto 未內建 python3-otbr-api
+# 因為採用 inherit pypi，檔案名就只能 python3-python-otbr-api
+$ bb-info python3-python-otbr-api
+
+python3-python-otbr-api                             :2.6.0-r0                            
+
+./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-python-otbr-api_2.6.0.bb
+
+SRC_URI="https://files.pythonhosted.org/packages/source/p/python-otbr-api/python-otbr-api-2.6.0.tar.gz;downloadfilename=python-otbr-api-2.6.0.tar.gz "
+
+S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0/python-otbr-api-2.6.0"
+
+WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:python3-python-otbr-api="      python3-requests     python3-dbus     python3-typing-extensions  python3-core"
+RDEPENDS:python3-python-otbr-api-staticdev="python3-python-otbr-api-dev (= 2.6.0-r0)"
+```
+
+```bash
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-python-otbr-api
+$ bitbake -c cleanall python3-python-otbr-api
+$ bitbake -c build python3-python-otbr-api
+```
+
+### 7.2.11. Add recipes - No module named 'xxxx'
+
+```bash
+# 查看是否已經安裝至 yocto-rootfs 
+$ cd-rootfs
+$ pwd
+/yocto/cookerX-home/builds-lnk/imx8mm-evk-scarthgap-home-rootfs
+
+$ find123 pyasn1* pydantic* bitstruct* python_otbr_api* miniaudio* pysensibo* tuya_iot* srptools* chacha20poly1305* pyatv* mediafile* filetype* hap-python* aiohomekit* synology_dsm* commentjson* lark* zeep* onvif_zeep* onvif_zeep_async* requests_file* wsdiscovery*
+```
+
+```bash
+# 可以進到 NXP 板子裏直接查看 log
 root@imx8mm-lpddr4-evk:/# cat /var/lib/homeassistant/home-assistant.log
 ```
 
@@ -1293,29 +2096,225 @@ RDEPENDS:python3-bitstruct-staticdev="python3-bitstruct-dev (= 8.19.0-r0)"
 $ bitbake -c build python3-bitstruct
 ```
 
-#### python_otbr_api
+## 7.3. meta-rauc
 
-> pypi: [python-otbr-api 2.6.0](https://pypi.org/project/python-otbr-api/)
+> 一套 Firmware 升級系統。有支援 `Dual Image`。
+
+> [ChatGPT] meta-rauc 的功用
 >
-> Python package to interact with an OTBR via its REST API
+> `meta-rauc` 是一個專門為 **RAUC（Robust Auto-Update Controller）** 提供 Yocto 整合的 **Layer**，用途是讓你能輕鬆地在 Yocto 系統裡啟用、設定並建構 RAUC OTA 更新功能。
+>
+> | 功能                        | 說明                                                         |
+> | --------------------------- | ------------------------------------------------------------ |
+> | 提供 RAUC 的 bitbake recipe | 安裝 `rauc` 主程式、相關工具、DBus 服務等                    |
+> | 整合 systemd 支援           | 提供 `rauc.service` 啟用 systemd 開機啟動                    |
+> | 支援 keyring 安全驗證       | 預設支援製作與部署公私鑰 (`keyring.pem`, `private.pem`) 驗證 bundle |
+> | 提供 `system.conf` 範本     | 給你參考如何定義 A/B slot 等更新邏輯                         |
+> | 整合與 WIC image 工具       | 搭配 A/B 分割 wks 建立更新支援的 rootfs image                |
+
+> 以下的操作，網路找不到相關的範例，
+
+### 7.3.1. Create keyring.pem
 
 ```bash
-$ bitbake -s | grep otbr
-# yocto 未內建 python3-otbr-api
-# 因為採用 inherit pypi，檔案名就只能 python3-python-otbr-api
-$ bb-info python3-python-otbr-api
+$ mkdir -p rauc-keys
+$ cd rauc-keys
+$ openssl genrsa -out private.pem 2048
+# 產生自簽憑證（有效期 10 年）
+$ openssl req -new -x509 -key private.pem -out cert.pem -days 3650 \
+  -subj "/O=lankahsu520/CN=rauc"
+$ cp cert.pem keyring.pem
+```
 
-python3-python-otbr-api                             :2.6.0-r0                            
+### 7.3.2. Add Recipe
 
-./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-python-otbr-api_2.6.0.bb
+#### A. *-menu.json
 
-SRC_URI="https://files.pythonhosted.org/packages/source/p/python-otbr-api/python-otbr-api-2.6.0.tar.gz;downloadfilename=python-otbr-api-2.6.0.tar.gz "
+>  修改 cooker-menu/*-menu.json
+>
+>  WKS_FILE:  使用 imx-imx-boot-bootpart-lanka520.wks.in
+>
+>  RAUC_KEY_FILE: 指定 private.pem
+>
+>  RAUC_CERT_FILE: 指定 keyring.pem
+>
+>  IMAGE_FSTYPES: 會在編譯時產出 imx-image-core-imx8mm-lpddr4-evk.rootfs.ext4
+>
+>  IMAGE_INSTALL: rauc libubootenv-bin
 
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0/python-otbr-api-2.6.0"
+```bash
+$ echo $PJ_COOKER_MENU
+imx8mm-evk-scarthgap-emmc-menu.json
 
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0"
+# 更新 $PJ_COOKER_MENU
+$ vi cooker-menu/$PJ_COOKER_MENU
+  ...
+  "sources": [
+    {
+      "url": "https://github.com/rauc/meta-rauc.git",
+      "branch": "scarthgap",
+      "dir": "meta-rauc",
+      "rev": "a0f4a8b9986954239850b9d4256c003c91e6b931"
+    },
+  ],
+  "layers": [
+    "meta-rauc",
+  ],
+  "builds": {
+    "imx8mm-evk-scarthgap-emmc": {
+      "local.conf": [
+        "WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'",
+        "RAUC_KEY_FILE = '${TOPDIR}/../../layers-scarthgap/meta-lanka/recipes-core/rauc/files/private.pem'",
+        "RAUC_CERT_FILE = '${TOPDIR}/../../layers-scarthgap/meta-lanka/recipes-core/rauc/files/keyring.pem'",
+        "DISTRO_FEATURES:append = ' rauc'",
+        "IMAGE_FSTYPES += '  wic.zst ext4'",
+        "IMAGE_INSTALL:append = ' rauc libubootenv-bin'",
+      ]
+    }
+  }
+```
 
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+#### B. Folder Tree
+
+> 這邊加入兩個檔案 keyring.pem 和 system.conf
+
+```bash
+# ./layers-scarthgap/meta-lanka/recipes-core/rauc
+$ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-lanka/recipes-core/rauc
+/yocto/cookerX-home/layers-scarthgap/meta-lanka/recipes-core/rauc
+├── files
+│   ├── keyring.pem
+│   ├── private.pem
+│   └── system.conf
+└── rauc-conf.bbappend
+
+1 directory, 4 files
+
+$ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-lanka/recipes-core/base-files
+/yocto/cookerX-emmc/layers-scarthgap/meta-lanka/recipes-core/base-files
+├── base-files
+│   └── etc
+│       ├── fstab
+│       └── profile.d
+│           └── alias.sh
+└── base-files_%.bbappend
+
+3 directories, 3 files
+```
+
+```bash
+$ cd-rootfs
+$ cat ./etc/rauc/keyring.pem
+$ cat ./etc/rauc/system.conf 
+```
+
+### 7.3.3. Disk Partition
+
+#### A. OpenEmbedded Kickstart (wks)
+
+> 這邊有幾個重點，官網提供的設定只能測試用，而且錯誤很多
+>
+> u-boot-env: 要指定 u-boot-imx-initial-env-sd
+>
+> /: 分割兩塊 rootfs
+>
+> data: 保留使用者區塊
+
+| Default            | Default Size                  | New Size                       | New                                           |
+| ------------------ | ----------------------------- | ------------------------------ | --------------------------------------------- |
+| mtdblock0          | 33,554,432<br/>(~32 MB)       | 33,554,432<br/>(~32 MB)        | mtdblock0                                     |
+| mmcblk2            | 31,268,536,320<br>(~29.12 GB) | 31,268,536,320<br/>(~29.12 GB) | mmcblk2                                       |
+| mmcblk2p1 (boot)   | 348,965,888<br>(~332.8 MB)    | 348,965,888<br/>(~332.8 MB)    | mmcblk2p1 (boot)<br>/run/media/boot-mmcblk2p1 |
+| mmcblk2p2 (rootfs) | 1,898,146,816<br>(~1.8 GB)    | 5,583,457,280<br>(~5.2 GB)     | mmcblk2p2 (rootfs A)                          |
+|                    |                               | 5,583,457,280<br/>(~5.2 GB)    | mmcblk2p3 (rootfs B)                          |
+|                    |                               | 4,294,967,296<br>(~4 GB)       | mmcblk2p4 (data)<br/>/data                    |
+| mmcblk2boot0       | 4,194,304                     |                                |                                               |
+| mmcblk2boot1       | 4,194,304                     |                                |                                               |
+
+```bash
+root@imx8mm-lpddr4-evk:~# fdisk -l /dev/mmcblk2
+Disk /dev/mmcblk2: 29.12 GiB, 31268536320 bytes, 61071360 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x076c4a2a
+
+Device         Boot    Start      End  Sectors   Size Id Type
+/dev/mmcblk2p1 *       16384   697957   681574 332.8M  c W95 FAT32 (LBA)
+/dev/mmcblk2p2        704512 11609701 10905190   5.2G 83 Linux
+/dev/mmcblk2p3      11616256 22521445 10905190   5.2G 83 Linux
+/dev/mmcblk2p4      22528000 30916607  8388608     4G 83 Linux
+```
+
+#### B. fstab
+
+```bash
+# 開機自動掛載
+/dev/mmcblk2p4 /data auto defaults 0 2
+```
+
+#### C. Folder Tree
+
+```bash
+# ./layers-scarthgap/meta-freescale/wic
+$ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-freescale/wic
+/yocto/cookerX-emmc/layers-scarthgap/meta-freescale/wic
+├── imx-imx-boot-bootpart-lanka520.wks.in
+├── imx-imx-boot-bootpart.wks.in
+├── imx-imx-boot.wks.in
+├── imx-uboot-bootpart.wks.in
+├── imx-uboot-mxs-bootpart.wks.in
+├── imx-uboot-mxs.wks.in
+├── imx-uboot-spl-bootpart.wks.in
+├── imx-uboot-spl.wks.in
+├── imx-uboot.wks
+└── ls104x-uboot-bootpart.wks.in
+
+0 directories, 10 files
+```
+
+### 7.3.4. u-boot
+
+> 這邊主要因為要使用 fw_printenv
+
+#### A. u-boot-imx
+
+> 網路上沒有一篇是對的，大多是複製貼上，就連官網也是。這邊讓大家如何查詢
+>
+> CONFIG_ENV_SIZE=0x4000
+> CONFIG_ENV_OFFSET=0x700000
+
+```bash
+$ bitbake -e u-boot-imx | grep ^UBOOT_CONFIG=
+UBOOT_CONFIG="sd"
+$ bitbake -e u-boot-imx | grep ^UBOOT_MACHINE=
+UBOOT_MACHINE=" imx8mm_evk_defconfig"
+
+$ cat $PJ_YOCTO_BUILD_DIR/tmp/work/imx8mm_lpddr4_evk-poky-linux/u-boot-imx/2024.04/git/configs/imx8mm_evk_defconfig | grep CONFIG_ENV_
+CONFIG_ENV_SIZE=0x4000
+CONFIG_ENV_OFFSET=0x700000
+CONFIG_ENV_OVERWRITE=y
+CONFIG_ENV_IS_IN_MMC=y
+CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+```
+
+```bash
+$ bb-info u-boot-imx
+
+nativesdk-u-boot-imx-tools                        :2024.04-r0
+u-boot-imx                                        :2024.04-r0
+u-boot-imx-tools                                  :2024.04-r0
+u-boot-imx-tools-native                           :2024.04-r0
+
+
+SRC_URI="git://github.com/nxp-imx/uboot-imx.git;protocol=https;branch=lf_v2024.04"
+
+S="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/u-boot-imx/2024.04/git"
+
+WORKDIR="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/u-boot-imx/2024.04"
+
+DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc   swig-native kern-tools-native      bc-native     bison-native     dtc-native     flex-native     gnutls-native     xxd-native  python3-native  openssl-native"
 
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
@@ -1324,39 +2323,38 @@ RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-python-otbr-api="      python3-requests     python3-dbus     python3-typing-extensions  python3-core"
-RDEPENDS:python3-python-otbr-api-staticdev="python3-python-otbr-api-dev (= 2.6.0-r0)"
+RDEPENDS:u-boot-imx="  u-boot-imx-env"
+RDEPENDS:u-boot-imx-staticdev="u-boot-imx-dev (= 2024.04-r0)"
 ```
 
 ```bash
-# 清除 bitbake cache
-$ bitbake -p -f
-$ bitbake -c cleansstate python3-python-otbr-api
-$ bitbake -c cleanall python3-python-otbr-api
-$ bitbake -c build python3-python-otbr-api
+$ bitbake -c cleansstate u-boot-imx
+$ bitbake u-boot-imx
 ```
 
-#### miniaudio
+#### B. libubootenv
 
-> pypi: [miniaudio 1.61](https://pypi.org/project/miniaudio/)
+> In Yocto Project 3.1, `u-boot-fw-utils`: functionally replaced by `libubootenv`
 >
-> Multiplatform audio playback, recording, decoding and sample format conversion for Linux (including Raspberri Pi), Windows, Mac and others.
+> 首先要新增相關的 u-boot 工具
 
 ```bash
-$ bitbake -s | grep miniaudio
-# yocto 未內建 python3-miniaudio
-$ bb-info python3-miniaudio
+$ bitbake -s | grep libubootenv
+# yocto 已經內建 libubootenv
+$ bb-info libubootenv
 
-python3-miniaudio                                    :1.61-r0
+libubootenv                                         :0.3.5-r0
+libubootenv-native                                  :0.3.5-r0
 
+./poky/meta/recipes-bsp/u-boot/libubootenv_0.3.5.bb
 
-SRC_URI="https://files.pythonhosted.org/packages/source/m/miniaudio/miniaudio-1.61.tar.gz;downloadfilename=miniaudio-1.61.tar.gz "
+SRC_URI="git://github.com/sbabic/libubootenv;protocol=https;branch=master"
 
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61/miniaudio-1.61"
+S="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/armv8a-poky-linux/libubootenv/0.3.5/git"
 
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61"
+WORKDIR="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/armv8a-poky-linux/libubootenv/0.3.5"
 
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-pytest-runner-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+DEPENDS="cmake-native virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc zlib libyaml ninja-native"
 
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
@@ -1365,40 +2363,29 @@ RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-miniaudio="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools  python3-core"
-RDEPENDS:python3-miniaudio-staticdev="python3-miniaudio-dev (= 1.61-r0)"
+RDEPENDS:libubootenv-staticdev="libubootenv-dev (= 0.3.5-r0)"
 ```
 
-```bash
-# 清除 bitbake cache
-$ bitbake -p -f
-$ bitbake -c cleansstate python3-miniaudio
-$ bitbake -c cleanall python3-miniaudio
-$ bitbake -c build python3-miniaudio
-```
+#### C. u-boot-tools
 
-#### pysensibo
-
-> pypi: [pysensibo 1.2.1](https://pypi.org/project/pysensibo/)
->
-> asyncio-friendly python API for Sensibo ([https://sensibo.com](https://sensibo.com/)). Supported on Python 3.11+
+> 用於安裝 fw_printenv
 
 ```bash
-$ bitbake -s | grep sensibo
-# yocto 未內建 python3-pysensibo
-$ bb-info python3-pysensibo
+$ bb-info u-boot-tools
 
-python3-pysensibo                                   :1.2.1-r0
+nativesdk-u-boot-tools                           1:2024.01-r0
+u-boot-tools                                     1:2024.01-r0
+u-boot-tools-native                              1:2024.01-r0
 
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pysensibo_1.2.1.bb
+./layers-scarthgap/poky/meta/recipes-bsp/u-boot/u-boot-tools_2024.01.bb
 
-SRC_URI="https://files.pythonhosted.org/packages/source/p/pysensibo/pysensibo-1.2.1.tar.gz;downloadfilename=pysensibo-1.2.1.tar.gz "
+SRC_URI="git://source.denx.de/u-boot/u-boot.git;protocol=https;branch=master"
 
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1/pysensibo-1.2.1"
+S="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/armv8a-poky-linux/u-boot-tools/2024.01/git"
 
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1"
+WORKDIR="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/armv8a-poky-linux/u-boot-tools/2024.01"
 
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+DEPENDS="pkgconfig-native virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  flex-native bison-native python3-setuptools-native gnutls openssl util-linux swig-native python3-native "
 
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
@@ -1407,501 +2394,416 @@ RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
 RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-pysensibo="      python3-requests  python3-core"
-RDEPENDS:python3-pysensibo-staticdev="python3-pysensibo-dev (= 1.2.1-r0)"
+RDEPENDS:u-boot-tools=" u-boot-tools-mkimage u-boot-tools-mkenvimage u-boot-tools-mkeficapsule"
+RDEPENDS:u-boot-tools-mkimage=" dtc"
+RDEPENDS:u-boot-tools-staticdev="u-boot-tools-dev (= 1:2024.01-r0)"
+RDEPENDS:u-boot-tools:class-native=""
 ```
 
-```bash
-# 清除 bitbake cache
-$ bitbake -p -f
-$ bitbake -c cleansstate python3-pysensibo
-$ bitbake -c cleanall python3-pysensibo
-$ bitbake -c build python3-pysensibo
-```
+#### D. /etc/fw_env.config
 
-#### tuya_iot
-
-> pypi: [tuya-iot-py-sdk 0.6.6](https://pypi.org/project/tuya-iot-py-sdk)
+> fw_printenv 操作時，需要使用 /etc/fw_env.config
 >
-> pypi: [tuya-device-sharing-sdk 0.2.1](https://pypi.org/project/tuya-device-sharing-sdk/) (新版)
+> 透過 libubootenv_%.bbappend 將 fw_env.config 檔案放入 rootfs
 >
-> A Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya officialA Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya official
+> 為什麼是 0x700000 0x400，請參照 u-boot-imx 裏的 imx8mm_evk_defconfig
 
 ```bash
-$ bitbake -s | grep tuya
-# yocto 未內建 python3-tuya-iot-py-sdk
-$ bb-info python3-tuya-iot-py-sdk
-
-python3-tuya-iot-py-sdk                             :0.6.6-r0
-
-./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-tuya-iot-py-sdk_0.6.6.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/t/tuya-iot-py-sdk/tuya-iot-py-sdk-0.6.6.tar.gz;downloadfilename=tuya-iot-py-sdk-0.6.6.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6/tuya-iot-py-sdk-0.6.6"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-requests-native     python3-pycryptodome-native     python3-paho-mqtt-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-tuya-iot-py-sdk="      python3-requests     python3-pytz     python3-urllib3  python3-core"
-RDEPENDS:python3-tuya-iot-py-sdk-staticdev="python3-tuya-iot-py-sdk-dev (= 0.6.6-r0)"
+# on ubuntu
+$ cd-rootfs
+$ find123 fw_env.config
 ```
+
+> 如果發生 Cannot read environment, using default。請重新開機進入 u-boot，saveenv 後，再重新進到Linux 就好了。
 
 ```bash
-# 清除 bitbake cache
-$ bitbake -p -f
-$ bitbake -c cleansstate python3-tuya-iot-py-sdk
-$ bitbake -c cleanall python3-tuya-iot-py-sdk
-$ bitbake -c build python3-tuya-iot-py-sdk
+root@imx8mm-lpddr4-evk:~# cat /etc/fw_env.config
+/dev/mmcblk2 0x700000 0x4000
+
+root@imx8mm-lpddr4-evk:~# fw_printenv
+Cannot read environment, using default
+Cannot read default environment from file
 ```
 
-#### srptools
+#### E. Folder Tree
 
-> pypi: [srptools 1.0.1](https://pypi.org/project/srptools/)
+```bash
+# ./layers-scarthgap/meta-lanka/recipes-bsp/u-boot
+$ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-lanka/recipes-bsp/u-boot
+/yocto/cookerX-emmc/layers-scarthgap/meta-lanka/recipes-bsp/u-boot
+├── files
+│   └── fw_env.config
+└── libubootenv_%.bbappend
+
+1 directory, 2 files
+```
+
+### 7.3.5. 1st Check
+
+> 這邊就可以先燒錄測試，因為後面的變更可能造成開不了機
+
+#### A. Build
+
+```bash
+$ bitbake -e $(PJ_YOCTO_IMAGE) | grep ^IMAGE_FSTYPES=
+IMAGE_FSTYPES="  wic.zst ext4"
+
+# 編譯
+$ make image
+# or
+# bitbake $(PJ_YOCTO_IMAGE)
+$ bitbake imx-image-core
+```
+
+#### B. Check Image
+
+```bash
+$ make lnk-generate
+
+$ cd-rootfs
+$ cat ./usr/lib/systemd/system/rauc.service
+$ cat ./etc/fstab
+$ cat ./etc/rauc/system.conf 
+
+$ cd-root
+# check *.ext4
+$ ll images-lnk/*.ext4
+# check *.zst
+$ ll images-lnk/*.zst
+ 
+# check *.wic.zst
+$ cp images-lnk/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst ./
+$ unzstd imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
+$ ll imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
+$ wic ls imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
+Num     Start        End          Size      Fstype
+ 1       8388608    357354495    348965888  fat16
+ 2     360710144   5944167423   5583457280  ext4
+ 3    5947523072  11530980351   5583457280  ext4
+ 4   11534336000  15829303295   4294967296  ext4
+```
+
+#### C.  Check on Board
+
+```bash
+# 在板子查看
+root@imx8mm-lpddr4-evk:~# cat /proc/partitions
+major minor  #blocks  name
+
+  31        0      32768 mtdblock0
+ 179        0   30535680 mmcblk2
+ 179        1     340787 mmcblk2p1
+ 179        2    5452595 mmcblk2p2
+ 179        3    5452595 mmcblk2p3
+ 179        4    4194304 mmcblk2p4
+ 179       32       4096 mmcblk2boot0
+ 179       64       4096 mmcblk2boot1
+
+root@imx8mm-lpddr4-evk:~# fdisk -l /dev/mmcblk2
+Disk /dev/mmcblk2: 29.12 GiB, 31268536320 bytes, 61071360 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x076c4a2a
+
+Device         Boot    Start      End  Sectors   Size Id Type
+/dev/mmcblk2p1 *       16384   697957   681574 332.8M  c W95 FAT32 (LBA)
+/dev/mmcblk2p2        704512 11609701 10905190   5.2G 83 Linux
+/dev/mmcblk2p3      11616256 22521445 10905190   5.2G 83 Linux
+/dev/mmcblk2p4      22528000 30916607  8388608     4G 83 Linux
+
+root@imx8mm-lpddr4-evk:~# cat /usr/lib/systemd/system/rauc.service
+
+root@imx8mm-lpddr4-evk:~# cat /etc/fstab
+
+root@imx8mm-lpddr4-evk:~# cat /etc/rauc/system.conf 
+
+root@imx8mm-lpddr4-evk:~# systemctl status rauc
+
+root@imx8mm-lpddr4-evk:~# ls -l /boot
+total 33292
+lrwxrwxrwx 1 root root       35 Mar  9  2018 Image -> Image-6.6.52-lts-next-ge0f9e2afd4cf
+-rw-r--r-- 1 root root 35631616 Mar  9  2018 Image-6.6.52-lts-next-ge0f9e2afd4cf
+
+root@imx8mm-lpddr4-evk:~# mount /dev/mmcblk2p1 /mnt
+root@imx8mm-lpddr4-evk:~# ls -l /mnt
+total 36456
+-rwxrwx--- 1 root disk 35631616 Apr  5  2011 Image
+-rwxrwx--- 1 root disk    50816 Apr  5  2011 imx8mm-evk-8mic-revE.dtb
+-rwxrwx--- 1 root disk    51184 Apr  5  2011 imx8mm-evk-8mic-swpdm.dtb
+-rwxrwx--- 1 root disk    48591 Apr  5  2011 imx8mm-evk-ak4497.dtb
+-rwxrwx--- 1 root disk    48283 Apr  5  2011 imx8mm-evk-ak5558.dtb
+-rwxrwx--- 1 root disk    48355 Apr  5  2011 imx8mm-evk-audio-tdm.dtb
+-rwxrwx--- 1 root disk    48169 Apr  5  2011 imx8mm-evk-dpdk.dtb
+-rwxrwx--- 1 root disk    48176 Apr  5  2011 imx8mm-evk-ecspi-slave.dtb
+-rwxrwx--- 1 root disk     3171 Apr  5  2011 imx8mm-evk-inmate.dtb
+-rwxrwx--- 1 root disk    48976 Apr  5  2011 imx8mm-evk-lk.dtb
+-rwxrwx--- 1 root disk    48371 Apr  5  2011 imx8mm-evk-pcie-ep.dtb
+-rwxrwx--- 1 root disk    48406 Apr  5  2011 imx8mm-evk-qca-wifi.dtb
+-rwxrwx--- 1 root disk    48430 Apr  5  2011 imx8mm-evk-revb-qca-wifi.dtb
+-rwxrwx--- 1 root disk    48713 Apr  5  2011 imx8mm-evk-rm67191-cmd-ram.dtb
+-rwxrwx--- 1 root disk    48713 Apr  5  2011 imx8mm-evk-rm67191.dtb
+-rwxrwx--- 1 root disk    48787 Apr  5  2011 imx8mm-evk-rm67199-cmd-ram.dtb
+-rwxrwx--- 1 root disk    48787 Apr  5  2011 imx8mm-evk-rm67199.dtb
+-rwxrwx--- 1 root disk    48848 Apr  5  2011 imx8mm-evk-root.dtb
+-rwxrwx--- 1 root disk    49943 Apr  5  2011 imx8mm-evk-rpmsg-wm8524-lpv.dtb
+-rwxrwx--- 1 root disk    49955 Apr  5  2011 imx8mm-evk-rpmsg-wm8524.dtb
+-rwxrwx--- 1 root disk    49552 Apr  5  2011 imx8mm-evk-rpmsg.dtb
+-rwxrwx--- 1 root disk    48199 Apr  5  2011 imx8mm-evk-usd-wifi.dtb
+-rwxrwx--- 1 root disk    48263 Apr  5  2011 imx8mm-evk.dtb
+drwxrwx--- 2 root disk     8192 Apr  5  2011 mcore-demos
+-rwxrwx--- 1 root disk   599952 Apr  5  2011 tee.bin
+```
+
+### 7.3.6. RAUC Bundle
+
+> 這邊就是要產生 *.raucb
+
+#### A. update-bundle.bb
+
+> RAUC bundle generator
+
+> 不使用 verity，免除 rootfs 驗證機制
 >
-> *Tools to implement Secure Remote Password (SRP) authentication*
+> RAUC_BUNDLE_FORMAT = "plain"
 >
-> SRP is a secure password-based authentication and key-exchange protocol - a password-authenticated key agreement protocol (PAKE).
->
-> This package contains protocol implementation for Python 2 and 3.
->
-> You may import it into you applications and use its API or you may use srptools command-line utility (CLI):
+> ```bash
+> [   54.347755] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+> [   54.369200] device-mapper: table: 253:0: verity: unknown target type
+> [   54.375809] device-mapper: ioctl: error adding target to table
+> 100% Installing failed.
+> LastError: Failed mounting bundle: Failed to load dm table: Invalid argument, check DM_VERITY, DM_CRYPT or CRYPTO_AES kernel options.
+> Installing `/tmp/update-bundle-imx8mm-lpddr4-evk.raucb` failed
+> ```
+
+#### B. Boot .scr Script file Integration
+
+> u-boot-imx_%.bbappend : boot.cmd -> boot.scr
+> imx-image-core.bbappend : boot.scr -> IMAGE_BOOT_FILES
 
 ```bash
-$ bitbake -s | grep srptools
-# yocto 未內建 python3-tuya-iot-py-sdk
-$ bb-info python3-srptools
-
-python3-srptools                                    :1.0.1-r0
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/s/srptools/srptools-1.0.1.tar.gz;downloadfilename=srptools-1.0.1.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1/srptools-1.0.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-srptools=" python3-core"
-RDEPENDS:python3-srptools-staticdev="python3-srptools-dev (= 1.0.1-r0)"
+# 確定有沒有 boot.scr
+$ bitbake -e imx-image-core | grep ^IMAGE_BOOT_FILES=
 ```
 
+#### C. Folder Tree
+
 ```bash
-$ bitbake -c build python3-srptools
+# ./layers-scarthgap/meta-lanka/recipes-core/images
+$ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-lanka/recipes-core/images
+/yocto/cookerX-emmc/layers-scarthgap/meta-lanka/recipes-core/images
+├── imx-image-core.bbappend
+└── update-bundle.bb
+
+0 directories, 2 files
+
+# ./layers-scarthgap/meta-lanka/recipes-bsp/u-boot
+$ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-lanka/recipes-bsp/u-boot
+/yocto/cookerX-emmc/layers-scarthgap/meta-lanka/recipes-bsp/u-boot
+├── files
+│   ├── boot.cmd
+│   └── fw_env.config
+├── libubootenv_%.bbappend
+└── u-boot-imx_%.bbappend
+
+1 directory, 4 files
 ```
 
-#### chacha20poly1305
+### 7.3.7. 2nd Check
 
-> pypi: [chacha20poly1305 0.0.3](https://pypi.org/project/chacha20poly1305)
->
-> Simple pure-python chacha20-poly1305 implementation based on [tlslite-ng](https://github.com/tomato42/tlslite-ng) code. Designed to be compatible with Cryptography API.
+#### A. Build
 
 ```bash
-$ bitbake -s | grep chacha20poly1305
-# yocto 未內建 python3-chacha20poly1305
-$ bb-info python3-chacha20poly1305
-
-python3-chacha20poly1305                            :0.0.3-r0                                                                                                                                     
-python3-chacha20poly1305-reuseable                 :0.13.2-r0                                                                                                                                     
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5_0.0.3.bb
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5-reuseable_0.13.2.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305/chacha20poly1305-0.0.3.tar.gz;downloa                                                                                  dfilename=chacha20poly1305-0.0.3.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly130                                                                                  5/0.0.3/chacha20poly1305-0.0.3"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20p                                                                                  oly1305/0.0.3"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools                                                                                  -native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-install                                                                                  er-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-chacha20poly1305=" python3-core"
-RDEPENDS:python3-chacha20poly1305-staticdev="python3-chacha20poly1305-dev (= 0.0.3-r0)"
+# 編譯
+$ make bundle
+# or
+# bitbake $(PJ_YOCTO_BUNDLE)
+$ bitbake imx-bundle
 ```
 
+#### B. Check Image
+
 ```bash
-$ bitbake -c build python3-chacha20poly1305
+$ make lnk-generate
+
+$ cd-root
+# check *.raucb
+$ ll images-lnk/*.raucb
+
+$ rauc info --no-verify images-lnk/update-bundle-imx8mm-lpddr4-evk.raucb
+
+$ rauc info \
+  --keyring=$PJ_YOCTO_LAYERS_DIR/meta-lanka/recipes-core/rauc/files/keyring.pem \
+  images-lnk/update-bundle-imx8mm-lpddr4-evk.raucb
+  
+$ sudo mkdir /tmp/wic
+$ sudo mount -o loop,offset=$((16384 * 512)) imx-image-core-imx8mm-lpddr4-evk.rootfs.wic /tmp/wic
 ```
 
-#### chacha20poly1305_reuseable
-
-> pypi: [chacha20poly1305-reuseable 0.13.2](https://pypi.org/project/chacha20poly1305-reuseable/)
->
-> ChaCha20Poly1305 that is reuseable for asyncio
+#### C. Check on Board
 
 ```bash
-$ bitbake -s | grep chacha20poly1305
-# yocto 未內建 python3-chacha20poly1305_reuseable
-$ bb-info python3-chacha20poly1305-reuseable
+root@imx8mm-lpddr4-evk:~# ls -l /boot
+total 33292
+lrwxrwxrwx 1 root root       35 Mar  9  2018 Image -> Image-6.6.52-lts-next-ge0f9e2afd4cf
+-rw-r--r-- 1 root root 35631616 Mar  9  2018 Image-6.6.52-lts-next-ge0f9e2afd4cf
 
-python3-chacha20poly1305-reuseable                 :0.13.2-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly1305-reuseable_0.13.2.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305_reuseable/chacha20poly1305_reuseable-0.13.2.tar.gz;downloadfilename=chacha20poly1305_reuseable-0.13.2.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2/chacha20poly1305_reuseable-0.13.2"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-chacha20poly1305-reuseable=" python3-core"
-RDEPENDS:python3-chacha20poly1305-reuseable-staticdev="python3-chacha20poly1305-reuseable-dev (= 0.13.2-r0)"
+root@imx8mm-lpddr4-evk:~# mount /dev/mmcblk2p1 /mnt
+root@imx8mm-lpddr4-evk:~# ls -l /mnt
+total 36464
+-rwxrwx--- 1 root disk 35631616 Apr  5  2011 Image
+-rwxrwx--- 1 root disk     1406 Apr  5  2011 boot.scr
+-rwxrwx--- 1 root disk    50816 Apr  5  2011 imx8mm-evk-8mic-revE.dtb
+-rwxrwx--- 1 root disk    51184 Apr  5  2011 imx8mm-evk-8mic-swpdm.dtb
+-rwxrwx--- 1 root disk    48591 Apr  5  2011 imx8mm-evk-ak4497.dtb
+-rwxrwx--- 1 root disk    48283 Apr  5  2011 imx8mm-evk-ak5558.dtb
+-rwxrwx--- 1 root disk    48355 Apr  5  2011 imx8mm-evk-audio-tdm.dtb
+-rwxrwx--- 1 root disk    48169 Apr  5  2011 imx8mm-evk-dpdk.dtb
+-rwxrwx--- 1 root disk    48176 Apr  5  2011 imx8mm-evk-ecspi-slave.dtb
+-rwxrwx--- 1 root disk     3171 Apr  5  2011 imx8mm-evk-inmate.dtb
+-rwxrwx--- 1 root disk    48976 Apr  5  2011 imx8mm-evk-lk.dtb
+-rwxrwx--- 1 root disk    48371 Apr  5  2011 imx8mm-evk-pcie-ep.dtb
+-rwxrwx--- 1 root disk    48406 Apr  5  2011 imx8mm-evk-qca-wifi.dtb
+-rwxrwx--- 1 root disk    48430 Apr  5  2011 imx8mm-evk-revb-qca-wifi.dtb
+-rwxrwx--- 1 root disk    48713 Apr  5  2011 imx8mm-evk-rm67191-cmd-ram.dtb
+-rwxrwx--- 1 root disk    48713 Apr  5  2011 imx8mm-evk-rm67191.dtb
+-rwxrwx--- 1 root disk    48787 Apr  5  2011 imx8mm-evk-rm67199-cmd-ram.dtb
+-rwxrwx--- 1 root disk    48787 Apr  5  2011 imx8mm-evk-rm67199.dtb
+-rwxrwx--- 1 root disk    48848 Apr  5  2011 imx8mm-evk-root.dtb
+-rwxrwx--- 1 root disk    49943 Apr  5  2011 imx8mm-evk-rpmsg-wm8524-lpv.dtb
+-rwxrwx--- 1 root disk    49955 Apr  5  2011 imx8mm-evk-rpmsg-wm8524.dtb
+-rwxrwx--- 1 root disk    49552 Apr  5  2011 imx8mm-evk-rpmsg.dtb
+-rwxrwx--- 1 root disk    48199 Apr  5  2011 imx8mm-evk-usd-wifi.dtb
+-rwxrwx--- 1 root disk    48263 Apr  5  2011 imx8mm-evk.dtb
+drwxrwx--- 2 root disk     8192 Apr  5  2011 mcore-demos
+-rwxrwx--- 1 root disk   599952 Apr  5  2011 tee.bin
 ```
 
+### 7.3.8. Update raucb
+
 ```bash
-$ bitbake -c build python3-chacha20poly1305-reuseable
+$ cp -avr images-lnk/*.raucb /tmp/
+
+# copy update-bundle-imx8mm-lpddr4-evk.raucb
+root@imx8mm-lpddr4-evk:~# scp lanka@192.168.50.72:/tmp/update-bundle-imx8mm-lpddr4-evk.raucb /tmp
 ```
 
-#### pyatv
-
-> pypi: [pyatv 0.16.1](https://pypi.org/project/pyatv/)
->
-> This is an asyncio python library for interacting with Apple TV and AirPlay devices. It mainly targets Apple TVs (all generations, **including tvOS 15 and later**), but also supports audio streaming via AirPlay to receivers like the HomePod, AirPort Express and third-party speakers. It can act as remote control to the Music app/iTunes in macOS.
+#### A. A->B
 
 ```bash
-$ bitbake -s | grep pyatv
-# yocto 未內建 python3-pyatv，這邊採用舊版 0.14.5
-$ bb-info python3-pyatv
+root@imx8mm-lpddr4-evk:~# rauc status
+=== System Info ===
+Compatible:  Lanka520
+Variant:
+Booted from: rootfs.A (A)
 
-python3-pyatv                                      :0.14.5-r0                                        
+=== Bootloader ===
+Activated: rootfs.A (A)
 
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pyatv_0.14.5.bb
+=== Slot States ===
+  [data.0] (/dev/mmcblk2p4, ext4, inactive)
+      mounted: /data
 
-SRC_URI="https://files.pythonhosted.org/packages/source/p/pyatv/pyatv-0.14.5.tar.gz;downloadfilename=pyatv-0.14.5.tar.gz "
+x [rootfs.A] (/dev/mmcblk2p2, ext4, booted)
+      bootname: A
+      mounted: /
+      boot status: good
 
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5/pyatv-0.14.5"
+o [rootfs.B] (/dev/mmcblk2p3, ext4, inactive)
+      bootname: B
+      mounted: /run/media/rootfs.b-mmcblk2p3
+      boot status: good
 
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5"
+root@imx8mm-lpddr4-evk:~# fw_printenv | grep BOOT
+BOOT_A_LEFT=3
+BOOT_B_LEFT=3
+BOOT_DEV=mmc 2:1
+BOOT_ORDER=A B
 
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-pytest-runner-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
+root@imx8mm-lpddr4-evk:/# BOOT_NEXT=`rauc status | awk '/rootfs\.A/ {flag=1} flag && /mounted:/ {print $2; exit}'`
+root@imx8mm-lpddr4-evk:/# echo $BOOT_NEXT
+/run/media/rootfs.b-mmcblk2p3
 
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-pyatv="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools     python3-srptools     python3-chacha20poly1305-reuseable  python3-core"
-RDEPENDS:python3-pyatv-staticdev="python3-pyatv-dev (= 0.14.5-r0)"
+root@imx8mm-lpddr4-evk:~# umount $BOOT_NEXT
+root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
+root@imx8mm-lpddr4-evk:~# reboot
 ```
 
+#### B. B->A
+
 ```bash
-# 清除 bitbake cache
-$ bitbake -p -f
-$ bitbake -c cleansstate python3-pyatv
-$ bitbake -c cleanall python3-pyatv
-$ bitbake -c build python3-pyatv
+root@imx8mm-lpddr4-evk:~# rauc status
+=== System Info ===
+Compatible:  Lanka520
+Variant:
+Booted from: rootfs.B (B)
+
+=== Bootloader ===
+Activated: rootfs.B (B)
+
+=== Slot States ===
+  [data.0] (/dev/mmcblk2p4, ext4, inactive)
+      mounted: /data
+
+o [rootfs.A] (/dev/mmcblk2p2, ext4, inactive)
+      bootname: A
+      mounted: /run/media/rootfs.a-mmcblk2p2
+      boot status: good
+
+x [rootfs.B] (/dev/mmcblk2p3, ext4, booted)
+      bootname: B
+      mounted: /
+      boot status: good
+
+root@imx8mm-lpddr4-evk:~# fw_printenv | grep BOOT
+BOOT_A_LEFT=3
+BOOT_B_LEFT=3
+BOOT_DEV=mmc 2:1
+BOOT_ORDER=B A
+
+root@imx8mm-lpddr4-evk:/# BOOT_NEXT=`rauc status | awk '/rootfs\.A/ {flag=1} flag && /mounted:/ {print $2; exit}'`
+root@imx8mm-lpddr4-evk:/# echo $BOOT_NEXT
+/run/media/rootfs.a-mmcblk2p2
+
+root@imx8mm-lpddr4-evk:~# umount $BOOT_NEXT
+root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
+root@imx8mm-lpddr4-evk:~# reboot
 ```
 
-#### mediafile
+#### C. Abnormal boot-up occurred 4 times
 
-> pypi: [mediafile 0.13.0](https://pypi.org/project/mediafile/)
->
-> MediaFile is a simple interface to the metadata tags for many audio file formats. It wraps [Mutagen](https://github.com/quodlibet/mutagen), a high-quality library for low-level tag manipulation, with a high-level, format-independent interface for a common set of tags.
+> 這邊操作不正常開機 4次後再次進到 Linux 後查看是否切換到 rootfs.B (/dev/mmcblk2p3)
 
 ```bash
-$ bitbake -s | grep mediafile
-# yocto 未內建 python3-mediafile
-$ bb-info python3-mediafile
-
-python3-mediafile                                  :0.13.0-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-mediafile_0.13.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/m/mediafile/mediafile-0.13.0.tar.gz;downloadfilename=mediafile-0.13.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0/mediafile-0.13.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-mediafile=" python3-core"
-RDEPENDS:python3-mediafile-staticdev="python3-mediafile-dev (= 0.13.0-r0)"
-```
-
-```bash
-$ bitbake -c build python3-mediafile
-```
-
-#### filetype
-
-> pypi: [filetype 1.2.0](https://pypi.org/project/filetype/)
->
-> Small and dependency free [Python](http://python.org/) package to infer file type and MIME type checking the [magic numbers](https://en.wikipedia.org/wiki/Magic_number_(programming)#Magic_numbers_in_files) signature of a file or buffer.
->
-> This is a Python port from [filetype](https://github.com/h2non/filetype) Go package.
-
-```bash
-$ bitbake -s | grep filetype
-# yocto 未內建 python3-filetype
-$ bb-info python3-filetype
-
-python3-filetype                                    :1.2.0-r0  
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-filetype_1.2.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/f/filetype/filetype-1.2.0.tar.gz;downloadfilename=filetype-1.2.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0/filetype-1.2.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-filetype=" python3-core"
-RDEPENDS:python3-filetype-staticdev="python3-filetype-dev (= 1.2.0-r0)"
-```
-
-```bash
-$ bitbake -c build python3-filetype
-```
-
-#### hap-python
-
-> pypi: [HAP-python 4.9.2](https://pypi.org/project/HAP-python)
->
-> HomeKit Accessory Protocol implementation in python 3. With this project, you can integrate your own smart devices and add them to your iOS Home app. Since Siri is integrated with the Home app, you can start voice-control your accessories right away.
-
-```bash
-$ bitbake -s | grep hap
-# yocto 未內建 python3-hap-python
-$ bb-info python3-hap-python
-
-python3-hap-python                                  :4.9.1-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-hap-python_4.9.1.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/H/HAP-python/HAP-python-4.9.1.tar.gz;downloadfilename=HAP-python-4.9.1.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1/HAP-python-4.9.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-hap-python="      python3-zeroconf     python3-cryptography  python3-core"
-RDEPENDS:python3-hap-python-staticdev="python3-hap-python-dev (= 4.9.1-r0)"
-```
-
-```bash
-# 清除 bitbake cache
-$ bitbake -p -f
-$ bitbake -c cleansstate python3-hap-python
-$ bitbake -c cleanall python3-hap-python
-$ bitbake -c build python3-hap-python
-```
-
-#### aiohomekit
-
-> pypi: [aiohomekit 3.2.15](https://pypi.org/project/aiohomekit/)
->
-> This library implements the HomeKit protocol for controlling Homekit accessories using asyncio.
->
-> It's primary use is for with Home Assistant. We target the same versions of python as them and try to follow their code standards.
->
-> At the moment we don't offer any API guarantees. API stability and documentation will happen after we are happy with how things are working within Home Assistant.
-
-```bash
-$ bitbake -s | grep aiohomekit
-# yocto 未內建 python3-aiohomekit，這邊採用舊版 3.2.7
-$ bb-info python3-aiohomekit
-
-python3-aiohomekit                                  :3.2.7-r0                                          
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/a/aiohomekit/aiohomekit-3.2.7.tar.gz;downloadfilename=aiohomekit-3.2.7.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7/aiohomekit-3.2.7"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-hap-python python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-aiohomekit="      python3-zeroconf     python3-cryptography     python3-poetry-core  python3-core"
-RDEPENDS:python3-aiohomekit-staticdev="python3-aiohomekit-dev (= 3.2.7-r0)"
-```
-
-```bash
-# 清除 bitbake cache
-$ bitbake -p -f
-$ bitbake -c cleansstate python3-aiohomekit
-$ bitbake -c cleanall python3-aiohomekit
-$ bitbake -c build python3-aiohomekit
-```
-
-#### py-synologydsm-api
-
-> pypi: [py-synologydsm-api 2.7.3](https://pypi.org/project/py-synologydsm-api/)
->
-> Python API for communication with Synology DSM
-
-```bash
-$ bitbake -s | grep py-synologydsm-api
-# yocto 未內建 python3-py-synologydsm-api
-$ bb-info python3-py-synologydsm-api
-
-python3-py-synologydsm-api                          :2.7.3-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-py-synologydsm-api_2.7.3.bb
-
-SRC_URI="file://py-synologydsm-api-2.7.3.tar.gz"
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3/py-synologydsm-api-2.7.3"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-setuptools-native  python3-build-native python3-installer-native python3-native python3 python3-native  python3"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-py-synologydsm-api="      python3-requests     python3-aiohttp  python3-core"
-RDEPENDS:python3-py-synologydsm-api-staticdev="python3-py-synologydsm-api-dev (= 2.7.3-r0)"
-```
-
-```bash
-$ bitbake -c build python3-py-synologydsm-api
-```
-
-#### commentjson
-
-> pypi: [commentjson 0.9.0](https://pypi.org/project/commentjson)
->
-> Add Python and JavaScript style comments in your JSON files.
-
-```bash
-$ bitbake -s | grep commentjson
-# yocto 未內建 python3-commentjson
-$ bb-info python3-commentjson
-
-python3-commentjson                                 :0.9.0-r0
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/c/commentjson/commentjson-0.9.0.tar.gz;downloadfilename=commentjson-0.9.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0/commentjson-0.9.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-commentjson=" python3-core"
-RDEPENDS:python3-commentjson-staticdev="python3-commentjson-dev (= 0.9.0-r0)"
-```
-
-```bash
-$ bitbake -c build python3-commentjson
-```
-
-#### lark
-
-> pypi: [lark 1.2.2](https://pypi.org/project/lark)
->
-> a modern parsing library
-
-```bash
-$ bitbake -s | grep lark
-# yocto 未內建 python3-lark
-$ bb-info python3-lark
-
-python3-lark                                        :1.2.2-r0                                                 
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-lark_1.2.2.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/l/lark/lark-1.2.2.tar.gz;downloadfilename=lark-1.2.2.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2/lark-1.2.2"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-lark=" python3-core"
-RDEPENDS:python3-lark-staticdev="python3-lark-dev (= 1.2.2-r0)"
-```
-
-```bash
-$ bitbake -c build python3-lark
+root@imx8mm-lpddr4-evk:~# fw_printenv | grep BOOT
+BOOT_A_LEFT=0
+BOOT_B_LEFT=3
+BOOT_DEV=mmc 2:1
+BOOT_ORDER=A B
+
+root@imx8mm-lpddr4-evk:~# rauc status
+=== System Info ===
+Compatible:  Lanka520
+Variant:
+Booted from: rootfs.B (B)
+
+=== Bootloader ===
+Activated: rootfs.B (B)
+
+=== Slot States ===
+  [data.0] (/dev/mmcblk2p4, ext4, inactive)
+      mounted: /data
+
+o [rootfs.A] (/dev/mmcblk2p2, ext4, inactive)
+      bootname: A
+      mounted: /run/media/mmcblk2p2
+      boot status: bad
+
+x [rootfs.B] (/dev/mmcblk2p3, ext4, booted)
+      bootname: B
+      mounted: /
+      boot status: good
 ```
 
 # Appendix
@@ -1914,6 +2816,8 @@ $ bitbake -c build python3-lark
 
 ## I.3. [i.MX 8M Mini EVKB快速入门](https://www.nxp.com.cn/document/guide/getting-started-with-the-i-mx-8m-mini-evkb:GS-iMX-8M-Mini-EVK)
 
+## I.4. [Rauc-Yocto-Integration-Tips.md](https://gist.github.com/Scott31393/497e37790446c59b240f7a788e6329de)
+
 # II. Debug
 
 ## II.1. NXP 8MMINILPD4-EVKB - Hardware Specifications
@@ -1923,6 +2827,8 @@ $ bitbake -c build python3-lark
 | CPU     | 4× Cortex-A53 @1.8 GHz<br/>1× Cortex‑M4 @400 MHz             |
 | RAM     | 2 GB                                                         |
 | Storage | 32 GB                                                        |
+
+## II.2. linux
 
 #### A. CPU
 
@@ -2030,6 +2936,16 @@ Hugetlb:               0 kB
 ```
 
 #### C. DISK
+
+| Default            | Default Size               |
+| ------------------ | -------------------------- |
+| mtdblock0          | 32,768                     |
+| mmcblk2            | 30,535,680<br>(~29,832 MB) |
+| mmcblk2p1 (boot)   | 340,787<br>(~333 MB)       |
+| mmcblk2p2 (rootfs) | 1,853,659<br>(~1,811 MB)   |
+|                    |                            |
+| mmcblk2boot0       | 4,096                      |
+| mmcblk2boot1       | 4,096                      |
 
 ```bash
 root@imx8mm-lpddr4-evk:~# df -h
@@ -2624,6 +3540,390 @@ root@imx8mm-lpddr4-evk:~# dmesg
 [    9.878026] Device caam-keygen registered
 [   19.940868] platform backlight: deferred probe pending
 [   19.946048] platform sound-ak4458: deferred probe pending
+```
+
+## II.3. u-boot
+
+#### A. help
+
+```bash
+u-boot=> help
+?         - alias for 'help'
+base      - print or set address offset
+bdinfo    - print Board Info structure
+bind      - Bind a device to a driver
+blkcache  - block cache diagnostics and control
+bmp       - manipulate BMP image data
+boot      - boot default, i.e., run 'bootcmd'
+bootaux   - Start auxiliary core
+bootd     - boot default, i.e., run 'bootcmd'
+bootefi   - Boots an EFI payload from memory
+bootelf   - Boot from an ELF image in memory
+bootflow  - Boot flows
+booti     - boot Linux kernel 'Image' format from memory
+bootm     - boot application image from memory
+bootp     - boot image via network using BOOTP/TFTP protocol
+bootvx    - Boot vxWorks from an ELF image
+clk       - CLK sub-system
+clocks    - display clocks
+cls       - clear screen
+cmp       - memory compare
+coninfo   - print console devices and information
+cp        - memory copy
+crc32     - checksum calculation
+date      - get/set/reset date & time
+dcache    - enable or disable data cache
+dfu       - Device Firmware Upgrade
+dhcp      - boot image via network using DHCP/TFTP protocol
+dm        - Driver model low level access
+echo      - echo args to console
+editenv   - edit environment variable
+eficonfig - provide menu-driven UEFI variable maintenance interface
+efidebug  - Configure UEFI environment
+env       - environment handling commands
+exit      - exit script
+ext2load  - load binary file from a Ext2 filesystem
+ext2ls    - list files in a directory (default /)
+ext4load  - load binary file from a Ext4 filesystem
+ext4ls    - list files in a directory (default /)
+ext4size  - determine a file's size
+ext4write - create a file in the root directory
+false     - do nothing, unsuccessfully
+fastboot  - run as a fastboot usb or udp device
+fatinfo   - print information about filesystem
+fatload   - load binary file from a dos filesystem
+fatls     - list files in a directory (default /)
+fatmkdir  - create a directory
+fatrm     - delete a file
+fatsize   - determine a file's size
+fatwrite  - write file into a dos filesystem
+fdt       - flattened device tree utility commands
+fspinand  - FSPI NAND Boot Control Blocks(BCB) sub-system
+fstype    - Look up a filesystem type
+fstypes   - List supported filesystem types
+fuse      - Fuse sub-system
+gettime   - get timer val elapsed
+go        - start application at address 'addr'
+gpio      - query and control gpio pins
+gpt       - GUID Partition Table
+gzwrite   - unzip and write memory to block device
+hash      - compute hash message digest
+help      - print command description/usage
+i2c       - I2C sub-system
+icache    - enable or disable instruction cache
+iminfo    - print header information for application image
+imxtract  - extract a part of a multi-image
+itest     - return true/false on integer compare
+lcdputs   - print string on video framebuffer
+ln        - Create a symbolic link
+load      - load binary file from a filesystem
+loadb     - load binary file over serial line (kermit mode)
+loads     - load S-Record file over serial line
+loadx     - load binary file over serial line (xmodem mode)
+loady     - load binary file over serial line (ymodem mode)
+loop      - infinite loop on address range
+ls        - list files in a directory (default /)
+lzmadec   - lzma uncompress a memory region
+md        - memory display
+mdio      - MDIO utility commands
+mii       - MII utility commands
+mm        - memory modify (auto-incrementing address)
+mmc       - MMC sub system
+mmcinfo   - display MMC info
+mtest     - simple RAM read/write test
+mw        - memory write (fill)
+net       - NET sub-system
+nm        - memory modify (constant address)
+optee_rpmb- Provides commands for testing secure storage on RPMB on OPTEE
+panic     - Panic with optional message
+part      - disk partition related commands
+ping      - send ICMP ECHO_REQUEST to network host
+pinmux    - show pin-controller muxing
+poweroff  - Perform POWEROFF of the device
+printenv  - print environment variables
+pxe       - get and boot from pxe files
+qspihdr   - Q(F)SPI Boot Config sub-system
+random    - fill memory with random pattern
+read      - Load binary data from a partition
+regulator - uclass operations
+reset     - Perform RESET of the CPU
+rtc       - RTC subsystem
+run       - run commands in an environment variable
+save      - save file to a filesystem
+saveenv   - save environment variables to persistent storage
+sdp       - Serial Downloader Protocol
+setcurs   - set cursor position within screen
+setenv    - set environment variables
+setexpr   - set environment variable as the result of eval expression
+sf        - SPI flash sub-system
+showvar   - print local hushshell variables
+size      - determine a file's size
+sleep     - delay execution for some time
+sntp      - synchronize RTC via network
+source    - run script from memory
+sysboot   - command to get and boot from syslinux files
+test      - minimal test like /bin/sh
+tftpboot  - load file via network using TFTP protocol
+time      - run commands and summarize execution time
+timer     - access the system timer
+true      - do nothing, successfully
+ums       - Use the UMS [USB Mass Storage]
+unbind    - Unbind a device from a driver
+unlz4     - lz4 uncompress a memory region
+unzip     - unzip a memory region
+usb       - USB sub-system
+usbboot   - boot from USB device
+version   - print monitor, compiler and linker version
+videolink - list and select video link
+u-boot=>
+
+```
+
+#### B. printenv
+
+```bash
+u-boot=> printenv
+arch=arm
+baudrate=115200
+board=imx8mm_evk
+board_name=EVK
+board_rev=iMX8MM
+boot_a_script=load ${devtype} ${devnum}:${distro_bootpart} ${scriptaddr} ${prefix}${script}; source ${scriptaddr}
+boot_efi_binary=load ${devtype} ${devnum}:${distro_bootpart} ${kernel_addr_r} efi/boot/bootaa64.efi; if fdt addr -q ${fdt_addr_r}; then bootefi ${kernel_addr_r} ${fdt_addr_r};else bootefi ${kernel_addr_r} ${fdtcontroladdr};fi
+boot_efi_bootmgr=if fdt addr -q ${fdt_addr_r}; then bootefi bootmgr ${fdt_addr_r};else bootefi bootmgr;fi
+boot_extlinux=sysboot ${devtype} ${devnum}:${distro_bootpart} any ${scriptaddr} ${prefix}${boot_syslinux_conf}
+boot_fit=no
+boot_net_usb_start=usb start
+boot_prefixes=/ /boot/
+boot_script_dhcp=boot.scr.uimg
+boot_scripts=boot.scr.uimg boot.scr
+boot_syslinux_conf=extlinux/extlinux.conf
+boot_targets=usb0 mmc1 mmc2
+bootcmd=run sr_ir_v2_cmd;run distro_bootcmd;run bsp_bootcmd
+bootcmd_mfg=run mfgtool_args;if iminfo ${initrd_addr}; then if test ${tee} = yes; then bootm ${tee_addr} ${initrd_addr} ${fdt_addr}; else booti ${loadaddr} ${initrd_addr} ${fdt_addr}; fi; else echo "Run fastboot ..."; fastboot 0; fi;
+bootcmd_mmc1=devnum=1; run mmc_boot
+bootcmd_mmc2=devnum=2; run mmc_boot
+bootcmd_usb0=devnum=0; run usb_boot
+bootdelay=2
+bootm_size=0x10000000
+bootscript=echo Running bootscript from mmc ...; source
+bsp_bootcmd=echo Running BSP bootcmd ...; mmc dev ${mmcdev}; if mmc rescan; then if run loadbootscript; then run bootscript; else if run loadimage; then run mmcboot; else run netboot; fi; fi; fi;
+bsp_script=boot.scr
+console=ttymxc1,115200
+cpu=armv8
+distro_bootcmd=for target in ${boot_targets}; do run bootcmd_${target}; done
+efi_dtb_prefixes=/ /dtb/ /dtb/current/
+emmc_dev=2
+ethaddr=00:04:9f:07:2a:01
+ethprime=FEC
+fastboot_dev=mmc2
+fdt_addr=0x43000000
+fdt_addr_r=0x43000000
+fdt_high=0xffffffffffffffff
+fdtcontroladdr=bace93f0
+fdtfile=imx8mm-evk.dtb
+image=Image
+initrd_addr=0x43800000
+initrd_high=0xffffffffffffffff
+jh_clk=
+jh_mmcboot=mw 0x303d0518 0xff; setenv fdtfile ${jh_root_dtb};setenv jh_clk kvm.enable_virt_at_load=false clk_ignore_unused mem=1212MB; if run loadimage; then run mmcboot; else run jh_netboot; fi;
+jh_netboot=mw 0x303d0518 0xff; setenv fdtfile ${jh_root_dtb}; setenv jh_clk kvm.enable_virt_at_load=false clk_ignore_unused mem=1212MB; run netboot;
+jh_root_dtb=imx8mm-evk-root.dtb
+kboot=booti
+kernel_addr_r=0x40400000
+load_efi_dtb=load ${devtype} ${devnum}:${distro_bootpart} ${fdt_addr_r} ${prefix}${efi_fdtfile}
+loadaddr=0x40400000
+loadbootscript=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${bsp_script};
+loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr_r} ${fdtfile}
+loadimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${image}
+mfgtool_args=setenv bootargs console=${console},${baudrate} rdinit=/linuxrc clk_ignore_unused
+mmc_boot=if mmc dev ${devnum}; then devtype=mmc; run scan_dev_for_boot_part; fi
+mmcargs=setenv bootargs ${jh_clk} ${mcore_clk} console=${console} root=${mmcroot}
+mmcautodetect=yes
+mmcboot=echo Booting from mmc ...; run mmcargs; if test ${boot_fit} = yes || test ${boot_fit} = try; then bootm ${loadaddr}; else if run loadfdt; then booti ${loadaddr} - ${fdt_addr_r}; else echo WARN: Cannot load the DT; fi; fi;
+mmcdev=2
+mmcpart=1
+mmcroot=/dev/mmcblk2p2 rootwait rw
+nandfit_part=yes
+netargs=setenv bootargs ${jh_clk} ${mcore_clk} console=${console} root=/dev/nfs ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp
+netboot=echo Booting from net ...; run netargs;  if test ${ip_dyn} = yes; then setenv get_cmd dhcp; else setenv get_cmd tftp; fi; ${get_cmd} ${loadaddr} ${image}; if test ${boot_fit} = yes || test ${boot_fit} = try; then bootm ${loadaddr}; else if ${get_cmd} ${fdt_addr_r} ${fdtfile}; then booti ${loadaddr} - ${fdt_addr_r}; else echo WARN: Cannot load the DT; fi; fi;
+nodes=/usbg1 /usbg2 /wdt-reboot /soc@0/caam-sm@100000 /soc@0/bus@30000000/caam_secvio /soc@0/bus@30000000/caam-snvs@30370000 /soc@0/bus@32c00000/lcdif@32e00000 /soc@0/bus@32c00000/csi1_bridge@32e20000 /soc@0/bus@32c00000/mipi_dsi@32e10000 /soc@0/bus@32c00000/mipi_csi@32e30000 /soc@0/bus@32c00000/display-subsystem /audio-codec-bt-sco /sound-bt-sco /audio-codec /sound-wm8524 /dsi-host /rm67199_panel /soc@0/bus@30800000/i2c@30a20000/pca9450@25 /soc@0/bus@30800000/i2c@30a30000/adv7535@3d /soc@0/bus@30800000/i2c@30a30000/tcpc@50 /soc@0/memory-controller@3d400000 /soc@0/bus@30800000/spi@30830000/spi@0 /binman /vpu_h1@38320000 /vpu_g1@38300000 /vpu_g2@38310000 /vpu_v4l2 /gpu@38000000
+prepare_mcore=setenv mcore_clk clk-imx8mm.mcore_booted;
+scan_dev_for_boot=echo Scanning ${devtype} ${devnum}:${distro_bootpart}...; for prefix in ${boot_prefixes}; do run scan_dev_for_extlinux; run scan_dev_for_scripts; done;run scan_dev_for_efi;
+scan_dev_for_boot_part=part list ${devtype} ${devnum} -bootable devplist; env exists devplist || setenv devplist 1; for distro_bootpart in ${devplist}; do if fstype ${devtype} ${devnum}:${distro_bootpart} bootfstype; then part uuid ${devtype} ${devnum}:${distro_bootpart} distro_bootpart_uuid ; run scan_dev_for_boot; fi; done; setenv devplist
+scan_dev_for_efi=setenv efi_fdtfile ${fdtfile}; for prefix in ${efi_dtb_prefixes}; do if test -e ${devtype} ${devnum}:${distro_bootpart} ${prefix}${efi_fdtfile}; then run load_efi_dtb; fi;done;run boot_efi_bootmgr;if test -e ${devtype} ${devnum}:${distro_bootpart} efi/boot/bootaa64.efi; then echo Found EFI removable media binary efi/boot/bootaa64.efi; run boot_efi_binary; echo EFI LOAD FAILED: continuing...; fi; setenv efi_fdtfile
+scan_dev_for_extlinux=if test -e ${devtype} ${devnum}:${distro_bootpart} ${prefix}${boot_syslinux_conf}; then echo Found ${prefix}${boot_syslinux_conf}; run boot_extlinux; echo EXTLINUX FAILED: continuing...; fi
+scan_dev_for_scripts=for script in ${boot_scripts}; do if test -e ${devtype} ${devnum}:${distro_bootpart} ${prefix}${script}; then echo Found U-Boot script ${prefix}${script}; run boot_a_script; echo SCRIPT FAILED: continuing...; fi; done
+scriptaddr=0x43500000
+sd_dev=1
+serial#=0a1d3209dab5b3c9
+soc=imx8m
+soc_type=imx8mm
+splashimage=0x50000000
+sr_ir_v2_cmd=cp.b ${fdtcontroladdr} ${fdt_addr_r} 0x10000;fdt addr ${fdt_addr_r};for i in ${nodes}; do fdt rm ${i}; done
+usb_boot=usb start; if usb dev ${devnum}; then devtype=usb; run scan_dev_for_boot_part; fi
+vendor=freescale
+
+Environment size: 6265/16380 bytes
+
+u-boot=> setenv bootdelay 5
+u-boot=> saveenv
+Saving Environment to MMC... Writing to MMC(2)... OK
+```
+
+#### C. run
+
+```bash
+u-boot=> printenv mmcargs
+mmcargs=setenv bootargs ${jh_clk} ${mcore_clk} console=${console} root=${mmcroot}
+u-boot=> printenv jh_clk
+jh_clk=
+u-boot=> printenv mcore_clk
+## Error: "mcore_clk" not defined
+u-boot=> printenv console
+console=ttymxc1,115200
+u-boot=> printenv mmcroot
+mmcroot=/dev/mmcblk2p2 rootwait rw
+```
+
+```bash
+u-boot=> printenv bootcmd
+bootcmd=run sr_ir_v2_cmd;run distro_bootcmd;run bsp_bootcmd
+u-boot=> printenv bsp_bootcmd
+bsp_bootcmd=echo Running BSP bootcmd ...; mmc dev ${mmcdev}; if mmc rescan; then if run loadbootscript; then run bootscript; else if run loadimage; then run mmcboot; else run netboot; fi; fi; fi;
+
+u-boot=> run bsp_bootcmd
+Running BSP bootcmd ...
+switch to partitions #0, OK
+mmc2(part 0) is current device
+Failed to load 'boot.scr'
+35631616 bytes read in 123 ms (276.3 MiB/s)
+Booting from mmc ...
+48263 bytes read in 19 ms (2.4 MiB/s)
+## Flattened Device Tree blob at 43000000
+   Booting using the fdt blob at 0x43000000
+Working FDT set to 43000000
+   Using Device Tree in place at 0000000043000000, end 000000004300ec86
+Working FDT set to 43000000
+adv7535_mipi2hdmi adv7535@3d: Can't find cec device id=0x3c
+fail to probe panel device adv7535@3d
+mxs_video lcdif@32e00000: failed to get any video link display timings
+probe video device failed, ret -22
+
+Starting kernel ...
+```
+
+```bash
+u-boot=> printenv loadaddr
+loadaddr=0x40400000
+u-boot=> printenv fdt_addr_r
+fdt_addr_r=0x43000000
+u-boot=> printenv console
+console=ttymxc1,115200
+
+u-boot=> fatload mmc 2:1 ${loadaddr} Image
+35631616 bytes read in 133 ms (255.5 MiB/s)
+u-boot=> fatload mmc 2:1 ${fdt_addr_r} imx8mm-evk.dtb
+48263 bytes read in 19 ms (2.4 MiB/s)
+u-boot=> setenv "bootargs console=${console} root=/dev/mmcblk2p2 rootwait rw"
+u-boot=> booti ${loadaddr} - ${fdt_addr_r}
+## Flattened Device Tree blob at 43000000
+   Booting using the fdt blob at 0x43000000
+Working FDT set to 43000000
+   Using Device Tree in place at 0000000043000000, end 000000004300ec86
+Working FDT set to 43000000
+adv7535_mipi2hdmi adv7535@3d: Can't find cec device id=0x3c
+fail to probe panel device adv7535@3d
+mxs_video lcdif@32e00000: failed to get any video link display timings
+probe video device failed, ret -22
+
+Starting kernel ...
+```
+
+#### D. mmc
+
+```bash
+u-boot=> mmc list
+FSL_SDHC: 1
+FSL_SDHC: 2 (eMMC)
+
+u-boot=> mmc dev 1
+MMC: no card present
+
+u-boot=> mmc dev 2
+switch to partitions #0, OK
+mmc2(part 0) is current device
+
+u-boot=> mmc info
+Device: FSL_SDHC
+Manufacturer ID: 45
+OEM: 0
+Name: DG4032
+Bus Speed: 200000000
+Mode: HS400ES (200MHz)
+Rd Block Len: 512
+MMC version 5.1
+High Capacity: Yes
+Capacity: 29.1 GiB
+Bus Width: 8-bit DDR
+Erase Group Size: 512 KiB
+HC WP Group Size: 8 MiB
+User Capacity: 29.1 GiB WRREL
+Boot Capacity: 4 MiB ENH
+RPMB Capacity: 4 MiB ENH
+Boot area 0 is not write protected
+Boot area 1 is not write protected
+```
+
+#### E. part
+
+```bash
+u-boot=> part list mmc 2
+
+Partition Map for MMC device 2  --   Partition Type: DOS
+
+Part    Start Sector    Num Sectors     UUID            Type
+  1     16384           681574          076c4a2a-01     0c Boot
+  2     704512          4005994         076c4a2a-02     83
+```
+
+#### F. ls
+
+> Image: 表示要從 FAT 分割區載入的檔名（通常是 Linux kernel image）
+
+> imx8mm-evk.dtb: 要載入的 Device Tree Blob (DTB) 檔案，描述 SoC 和硬體架構
+>
+> Device Tree (`*.dtb`) 是 Linux 開機時用來**告訴 kernel：板子上有哪些裝置、memory mapping、串口、I2C、SPI、GPIO** 等資訊。
+
+```bash
+u-boot=> ls mmc 2:1
+ 35631616   Image
+    50816   imx8mm-evk-8mic-revE.dtb
+    51184   imx8mm-evk-8mic-swpdm.dtb
+    48591   imx8mm-evk-ak4497.dtb
+    48283   imx8mm-evk-ak5558.dtb
+    48355   imx8mm-evk-audio-tdm.dtb
+    48169   imx8mm-evk-dpdk.dtb
+    48263   imx8mm-evk.dtb
+    48176   imx8mm-evk-ecspi-slave.dtb
+     3171   imx8mm-evk-inmate.dtb
+    48976   imx8mm-evk-lk.dtb
+    48371   imx8mm-evk-pcie-ep.dtb
+    48406   imx8mm-evk-qca-wifi.dtb
+    48430   imx8mm-evk-revb-qca-wifi.dtb
+    48713   imx8mm-evk-rm67191-cmd-ram.dtb
+    48713   imx8mm-evk-rm67191.dtb
+    48787   imx8mm-evk-rm67199-cmd-ram.dtb
+    48787   imx8mm-evk-rm67199.dtb
+    48848   imx8mm-evk-root.dtb
+    49552   imx8mm-evk-rpmsg.dtb
+    49955   imx8mm-evk-rpmsg-wm8524.dtb
+    49943   imx8mm-evk-rpmsg-wm8524-lpv.dtb
+    48199   imx8mm-evk-usd-wifi.dtb
+            mcore-demos/
+   599952   tee.bin
+
+24 file(s), 1 dir(s)
 ```
 
 # III. Glossary

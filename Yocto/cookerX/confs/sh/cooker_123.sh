@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HINT="$0 {all|cook|build|dry-run|generate|shell|clean|distclean|update|init|ls|pull|lnk}"
+HINT="$0 {all|cook|build|bundle|dry-run|generate|shell|clean|distclean|update|init|ls|pull|lnk}"
 HINT+="\nExample:"
 HINT+="\n\t init + update + generate + cook, check: $0 all"
 HINT+="\n\t init + update + generate + cook: $0 cook"
@@ -88,6 +88,9 @@ lnk_fn()
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; rm -f *;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_IMAGE_WIC) $PJ_YOCTO_IMAGE_WIC;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_IMAGE_MANIFEST) $PJ_YOCTO_IMAGE_MANIFEST;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_IMAGE_EXT4) $PJ_YOCTO_IMAGE_EXT4;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_BUNDLE_RAUCB) $PJ_YOCTO_BUNDLE_RAUCB;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_BOOT_BIN) $PJ_YOCTO_BOOT_BIN;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; bitbake -g $PJ_YOCTO_TARGET;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; bitbake -e $PJ_YOCTO_TARGET > environment.txt;)"
 	else
@@ -155,6 +158,19 @@ cook_fn()
 	datetime_fn "${FUNCNAME[0]} ... "
 
 	do_command_fn "cooker $COOKER_DRY $COOKER_VERBOSE cook $COOKER_MENU $PJ_YOCTO_BUILD"
+
+	return 0
+}
+
+bundle_fn()
+{
+	datetime_fn "${FUNCNAME[0]} ... "
+
+	if [ ! -z "$PJ_YOCTO_BUNDLE" ]; then
+		do_command_fn "bitbake $PJ_YOCTO_BUNDLE"
+	else
+		echo "Please check (PJ_YOCTO_BUNDLE=$PJ_YOCTO_BUNDLE) !!!"
+	fi
 
 	return 0
 }
@@ -237,6 +253,9 @@ main_fn()
 		;;
 		cook)
 			cook_fn
+		;;
+		bundle)
+			bundle_fn
 		;;
 		build)
 			build_fn
