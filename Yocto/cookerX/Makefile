@@ -18,7 +18,7 @@ BB_TASKS=listtasks configure clean cleanall fetch compile build install package_
 
 # .cook-build -> cook-patched -> .cook-update -> .cook-init
 .PHONY: all distclean cook-clean cook-target-clean cook-lnk cook-dry-run cook-build cook-bundle cook-rebuild cook
-all: cook-build lnk-generate
+all: cook-build cook-bundle lnk-generate
 
 distclean: cook-clean
 	rm -rf builds
@@ -41,7 +41,9 @@ cook-build: .cook-patched
 cook-rebuild: cook-clean cook-target-clean cook-build
 
 cook-bundle:
+ifneq ("$(PJ_YOCTO_BUNDLE)", "")
 	$(PJ_ROOT)/confs/sh/cooker_123.sh bundle
+endif
 
 cook:
 	$(PJ_ROOT)/confs/sh/cooker_123.sh cook

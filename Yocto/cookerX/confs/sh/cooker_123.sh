@@ -91,6 +91,7 @@ lnk_fn()
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_IMAGE_EXT4) $PJ_YOCTO_IMAGE_EXT4;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_BUNDLE_RAUCB) $PJ_YOCTO_BUNDLE_RAUCB;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_BOOT_BIN) $PJ_YOCTO_BOOT_BIN;)"
+		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_BOOT_ENV) $PJ_YOCTO_BOOT_ENV;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; bitbake -g $PJ_YOCTO_TARGET;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; bitbake -e $PJ_YOCTO_TARGET > environment.txt;)"
 	else
