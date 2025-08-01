@@ -195,13 +195,19 @@ $ vi cooker-menu/$PJ_COOKER_MENU
   ],
   "builds": {
     "imx8mm-evk-scarthgap-emmc": {
+      "target": "imx-image-core",
       "local.conf": [
+        "MACHINE = 'imx8mm-lpddr4-evk'",
+        "DISTRO = 'fsl-imx-wayland'",
+        "PACKAGE_CLASSES = 'package_rpm'",
+        "EXTRA_IMAGE_FEATURES = 'debug-tweaks ssh-server-dropbear'",
+        "INIT_MANAGER = 'systemd'",
+        "CONF_VERSION = '2'",
+        "ACCEPT_FSL_EULA = '1'",
         "WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'",
-        "RAUC_KEY_FILE = '${TOPDIR}/../../layers-scarthgap/meta-rauc-plus/recipes-core/rauc/files/private.pem'",
-        "RAUC_CERT_FILE = '${TOPDIR}/../../layers-scarthgap/meta-rauc-plus/recipes-core/rauc/files/keyring.pem'",
         "DISTRO_FEATURES:append = ' rauc'",
-        "IMAGE_FSTYPES += '  wic.zst ext4'",
-        "IMAGE_INSTALL:append = ' rauc libubootenv-bin'",
+        "IMAGE_FSTYPES += ' wic.zst ext4'",
+        "IMAGE_INSTALL:append = ' rauc libubootenv-bin tree helloworld123'",
       ]
     }
   }
@@ -217,7 +223,7 @@ $ vi cooker-menu/$PJ_COOKER_MENU
 
 > 細節不研究。
 >
-> rootfs 會加入兩個檔案 keyring.pem 和 system.conf
+> rootfs 會加入兩個檔案 ca.cert.pem 和 system.conf
 
 ```bash
 $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/rauc
@@ -273,8 +279,7 @@ $ tree -L 4 ${PJ_YOCTO_ROOT}/rauc-keys
 /yocto/cookerX-emmc/rauc-keys
 ├── ca.cert.pem
 ├── development-1.cert.pem
-├── development-1.key.pem
-└── recipients.pem
+└── development-1.key.pem
 
 0 directories, 4 files
 ```
@@ -292,7 +297,7 @@ bundle-formats=verity
 #bundle-formats=crypt
 
 [keyring]
-path=/etc/rauc/keyring.pem
+path=/etc/rauc/ca.cert.pem
 
 [slot.rootfs.A]
 device=/dev/mmcblk2p2
@@ -827,7 +832,7 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=y
 >
 > [2.6 Configuring the Kernel](https://docs.yoctoproject.org/kernel-dev/common.html#configuring-the-kernel)
 >
-> DELTA_KERNEL_DEFCONFIG:  官網都沒有提到，這是後測試完的結果。
+> DELTA_KERNEL_DEFCONFIG:  官網都沒有提到，這是最後測試完的結果。這邊就要抱怨一下，官網真的有用嗎？
 
 ```bash
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
@@ -851,17 +856,17 @@ $ bitbake -c menuconfig virtual/kernel
 #### D. .config
 
 ```bash
-$ vi /yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build/.config
+$ vi $PJ_YOCTO_BUILD_DIR/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build/.config
 # find CONFIG_DM_VERITY
 
-$ cd /yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build
+$ cd $PJ_YOCTO_BUILD_DIR/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build
 ```
 
 ### 3.5.3. Build & Check
 
-> 燒錄後花時間，所以先請驗證之。
+> 燒錄很花時間，所以請先驗證。
 >
-> 這邊保留命令用於測試
+> 這邊保留常用命令以供測試。
 
 ```bash
 #bitbake -c cleansstate linux-imx
@@ -990,8 +995,6 @@ $ cd-root
 $ ll images-lnk/*.raucb
 
 $ rauc info --no-verify images-lnk/update-bundle-imx8mm-lpddr4-evk.raucb
-
-$ bitbake rauc-native -c addto_recipe_sysroot
  
 $ rauc info \
   --keyring=$PJ_YOCTO_LAYERS_DIR/meta-rauc-plus/recipes-core/rauc/files/ca.cert.pem \
@@ -1011,6 +1014,7 @@ $ oe-run-native rauc-native rauc info \
 ```
 
 ```bash
+$ cd-rootfs
 $ find123 dm-verity.ko
 ```
 
@@ -1213,7 +1217,7 @@ root@imx8mm-lpddr4-evk:~# reboot
 
 #### C. Abnormal boot-up occurred 4 times
 
-> 這邊操作不正常開機 4次後再次進到 Linux 後查看是否切換到 rootfs.B (/dev/mmcblk2p3)
+> 這邊操作不正常開機 4次後再次進到 Linux 查看是否切換到 rootfs.B (/dev/mmcblk2p3)
 
 ```bash
 root@imx8mm-lpddr4-evk:~# fw_printenv | grep BOOT
@@ -1289,8 +1293,6 @@ echo
 
 $ chmod 777 update.sh
 ```
-
-
 
 # Appendix
 
