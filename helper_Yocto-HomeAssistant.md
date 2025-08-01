@@ -358,7 +358,7 @@ $ find123 ffmpeg pyav hass haffmpeg
 
 > http://192.168.31.62:8123
 
-![Yocto-NXP-8MMINILPD4-EVKB-hass](T:/codebase/lankahsu520/CrossCompilationX/images/Yocto-NXP-8MMINILPD4-EVKB-hass.png)
+<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-hass.png" alt="Yocto-NXP-8MMINILPD4-EVKB-hass" style="zoom:33%;" />
 
 ### 2.4.1. Change listen port
 
