@@ -129,8 +129,37 @@ $ cat ./$PJ_YOCTO_LAYERS/poky/meta-poky/conf/distro/poky.conf | grep DISTRO_VERS
 #DISTRO_VERSION = "4.1+snapshot-${METADATA_REVISION}"
 DISTRO_VERSION = "4.1"
 SDK_VERSION = "${@d.getVar('DISTRO_VERSION').replace('snapshot-${METADATA_REVISION}', 'snapshot')}"
-
 ```
+
+## 2.2. bitbake
+
+> bitbake -c CMD
+
+| CMD                | 說明                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| `fetch`            | 下載原始碼（SRC_URI）                                        |
+| `unpack`           | 解壓縮原始碼                                                 |
+| `patch`            | 套用 patch                                                   |
+| `configure`        | 執行 configure（如 autotools 或 kernel config）              |
+| `compile`          | 編譯原始碼                                                   |
+| `install`          | 安裝到 `WORKDIR/image`                                       |
+| `package`          | 打包成 ipk/deb/rpm                                           |
+| `deploy`           | 將成果放到 `DEPLOY_DIR`                                      |
+| `cleansstate`      | **清除所有 build 成果與下載快取**                            |
+| `clean`            | 清除所有 build 成果（保留下載）                              |
+| `menuconfig`       | 針對 kernel 套件，進入圖形化 menuconfig                      |
+| `savedefconfig`    | 將目前 kernel `.config` 儲存為 defconfig                     |
+| `kernel_configme`  | 套用 `defconfig` 與 Yocto config fragment                    |
+| `devshell`         | 開啟 shell，環境變數已設定好                                 |
+| `listtasks`        | 列出此 recipe 所有支援的 task（**很有用！**）                |
+| `populate_sysroot` | 安裝 headers、libs 到 sysroot                                |
+| `populate_lic`     | 安裝 license 檔案                                            |
+| `populate_sdk`     | 建立 cross compile SDK                                       |
+| `populate_sdk_ext` | 建立 extensible SDK                                          |
+| `build`            | 相當於正常 bitbake build 流程（compile+install+package+deploy） |
+| `packagedata`      | 建立 recipe 的 .pkgedata                                     |
+| `image`            | 產生最終映像檔（如 `.wic`、`.sdimg`）                        |
+| `rootfs`           | 建立 rootfs                                                  |
 
 # 3. Yocto Recipes
 

@@ -150,7 +150,7 @@
         "CONF_VERSION = '2'",
         "ACCEPT_FSL_EULA = '1'",
         "IMAGE_INSTALL:append = ' tree helloworld123 python3-homeassistant'",
-        "LICENSE_FLAGS_ACCEPTED += 'commercial'"
+        "LICENSE_FLAGS_ACCEPTED +=' commercial'"
       ]
     }
   }

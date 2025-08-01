@@ -223,31 +223,16 @@ $ vi cooker-menu/$PJ_COOKER_MENU
 $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/rauc
 /yocto/cookerX-emmc/layers-scarthgap/meta-rauc-plus/recipes-core/rauc
 ├── files
-│   ├── keyring.pem
-│   ├── private.pem
+│   ├── ca.cert.pem
 │   └── system.conf
 └── rauc-conf.bbappend
 
-1 directory, 4 files
-
-$ cd-rootfs
-$ cat ./etc/rauc/keyring.pem
-$ cat ./etc/rauc/system.conf 
+1 directory, 3 files
 ```
 
 ### 3.2.1. Generate Testing Certificate
 
 > 建議使用 meta-rauc/scripts/openssl-ca.sh，加解密的處理，有時候只是差個空格都會失敗
-
-```bash
-$ mkdir -p rauc-keys
-$ cd rauc-keys
-$ openssl genrsa -out private.pem 2048
-# 產生自簽憑證（有效期 10 年）
-$ openssl req -new -x509 -key private.pem -out cert.pem -days 3650 \
-  -subj "/O=lankahsu520/CN=rauc"
-$ cp cert.pem keyring.pem
-```
 
 ```bash
 $ cd ${PJ_YOCTO_LAYERS_DIR}/meta-rauc/scripts
@@ -283,6 +268,15 @@ $ echo ${PJ_YOCTO_ROOT}
 $ mkdir -p ${PJ_YOCTO_ROOT}
 $ cp -av openssl-ca/dev/private/development-1.key.pem ${PJ_YOCTO_ROOT}/rauc-keys
 $ cp -av openssl-ca/dev/development-1.cert.pem ${PJ_YOCTO_ROOT}/rauc-keys
+
+$ tree -L 4 ${PJ_YOCTO_ROOT}/rauc-keys
+/yocto/cookerX-emmc/rauc-keys
+├── ca.cert.pem
+├── development-1.cert.pem
+├── development-1.key.pem
+└── recipients.pem
+
+0 directories, 4 files
 ```
 
 ### 3.2.2. system.cnf
@@ -293,8 +287,8 @@ $ cp -av openssl-ca/dev/development-1.cert.pem ${PJ_YOCTO_ROOT}/rauc-keys
 [system]
 compatible=Lanka520
 bootloader=uboot
-bundle-formats=plain
-#bundle-formats=verity
+#bundle-formats=plain
+bundle-formats=verity
 #bundle-formats=crypt
 
 [keyring]
@@ -323,17 +317,17 @@ type=ext4
 ```bbappend
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-RAUC_KEYRING_FILE = "keyring.pem"
+RAUC_KEYRING_FILE = "ca.cert.pem"
 
 SRC_URI:append = " \
     file://system.conf \
-    file://keyring.pem \
+    file://ca.cert.pem\
 "
 
 do_install:append() {
     install -d ${D}${sysconfdir}/rauc
     install -m 0644 ${WORKDIR}/system.conf ${D}${sysconfdir}/rauc/system.conf
-    install -m 0644 ${WORKDIR}/keyring.pem ${D}${sysconfdir}/rauc/keyring.pem
+    install -m 0644 ${WORKDIR}/ca.cert.pem ${D}${sysconfdir}/rauc/ca.cert.pem
 }
 ```
 
@@ -620,8 +614,8 @@ LICENSE = "MIT"
 inherit bundle
 
 RAUC_BUNDLE_COMPATIBLE = "Lanka520"
-RAUC_BUNDLE_FORMAT = "plain"
-#RAUC_BUNDLE_FORMAT = "verity"
+#RAUC_BUNDLE_FORMAT = "plain"
+RAUC_BUNDLE_FORMAT = "verity"
 #RAUC_BUNDLE_FORMAT = "crypt"
 RAUC_BUNDLE_SLOTS ?= "rootfs"
 
@@ -629,6 +623,10 @@ RAUC_SLOT_rootfs ?= "imx-image-core"
 RAUC_SLOT_rootfs[type] ?= "image"
 RAUC_SLOT_rootfs[fstype] ?= "ext4"
 RAUC_SLOT_rootfs[rename] ?= "rootfs.ext4"
+
+RAUC_KEY_FILE = "${COOKER_LAYER_DIR}/../rauc-keys/development-1.key.pem"
+RAUC_CERT_FILE = "${COOKER_LAYER_DIR}/../rauc-keys/development-1.cert.pem"
+#RAUC_KEYRING_FILE = "${COOKER_LAYER_DIR}/../rauc-keys/ca.cert.pem"
 
 #RAUC_CASYNC_BUNDLE = "1"
 ```
@@ -714,6 +712,7 @@ setenv bootargs "console=${console} root=${rootfs_part} rootwait rw rauc.slot=${
 fatload mmc 2:1 ${loadaddr} Image;
 fatload mmc 2:1 ${fdt_addr_r} imx8mm-evk.dtb;
 booti ${loadaddr} - ${fdt_addr_r}
+
 ```
 
 #### B. u-boot-imx_%.bbappend
@@ -741,14 +740,146 @@ do_deploy:append() {
     install -d ${DEPLOYDIR}
     install -m 0644 ${WORKDIR}/${UBOOT_ENV_BINARY} ${DEPLOYDIR}
 }
+
 ```
-
-
 
 #### C. imx-image-core.bbappend
 
 ```bbappend
+
 IMAGE_BOOT_FILES += " boot.scr"
+
+```
+
+## 3.5. kernel
+
+### 3.5.1. linux-imx
+
+```bash
+$ bb-info linux-imx
+
+linux-imx                                      :6.6.52+git-r0
+linux-imx-headers                                     :6.6-r0
+
+./layers-scarthgap/meta-freescale/recipes-kernel/linux/linux-imx_6.6.bb
+./layers-scarthgap/meta-freescale/recipes-kernel/linux/linux-imx-headers_6.6.bb
+./layers-scarthgap/meta-imx/meta-imx-bsp/recipes-kernel/linux/linux-imx_6.6.bb
+./layers-scarthgap/meta-imx/meta-imx-bsp/recipes-kernel/linux/linux-imx-headers_6.6.bb
+
+SRC_URI="git://github.com/nxp-imx/linux-imx.git;protocol=https;branch=lf-6.6.y file://dm-verity.cfg"
+
+S="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/git"
+
+WORKDIR="/yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git"
+
+DEPENDS="pkgconfig-native   virtual/aarch64-poky-linux-binutils virtual/aarch64-poky-linux-gcc kmod-native bc-native bison-native   "
+
+RDEPENDS:kernel="kernel-base (= 6.6.52+git-r0)"
+RDEPENDS:kernel-image="  kernel-image-image (= 6.6.52+git-r0)"
+RDEPENDS:kernel-image:imx8dx-mek=""
+RDEPENDS:kernel-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:kernel-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:kernel-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:kernel-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:kernel-image:imx8qm-mek=""
+RDEPENDS:kernel-image:imx8qxp-mek=""
+RDEPENDS:linux-imx-staticdev="linux-imx-dev (= 6.6.52+git-r0)"
+```
+
+### 3.5.2. dm-verity.ko
+
+> 解決 LastError: Failed mounting bundle: Failed to load dm table: Invalid argument, check DM_VERITY, DM_CRYPT or CRYPTO_AES kernel options.
+
+> 這邊要特別注意，要重複確認好幾次
+
+```bash
+$ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-kernel/linux
+/yocto/cookerX-emmc/layers-scarthgap/meta-rauc-plus/recipes-kernel/linux
+├── files
+│   └── dm-verity.cfg
+└── linux-imx_%.bbappend
+
+1 directory, 2 files
+```
+
+#### A. dm-verity.cfg
+
+```bash
+CONFIG_DM_VERITY=m
+CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y
+CONFIG_DM_VERITY_FEC=y
+CONFIG_BLK_DEV_DM=y
+CONFIG_DM_CRYPT=y
+CONFIG_CRYPTO_SHA256=y
+CONFIG_CRYPTO_SHA512=y
+CONFIG_CRYPTO_AES=y
+CONFIG_CRYPTO_XTS=y
+CONFIG_CRYPTO_USER_API_HASH=y
+CONFIG_CRYPTO_USER_API_SKCIPHER=y
+
+```
+
+#### B. linux-imx_%.bbappend
+
+> 有幾種可以設定 Kernel 的方式
+>
+> [2.3.3. Changing the Configuration](https://docs.yoctoproject.org/kernel-dev/common.html#changing-the-configuration)
+>
+> [2.6 Configuring the Kernel](https://docs.yoctoproject.org/kernel-dev/common.html#configuring-the-kernel)
+>
+> DELTA_KERNEL_DEFCONFIG:  官網都沒有提到，這是後測試完的結果。
+
+```bash
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
+SRC_URI += "file://dm-verity.cfg"
+#SRC_URI += "file://defconfig"
+
+DELTA_KERNEL_DEFCONFIG:append = " dm-verity.cfg"
+
+```
+
+#### C. menuconfig
+
+```bash
+# Device Drivers  ---> Multiple devices driver support (RAID and LVM)  ---> Verity target support
+# Verity data device root hash signature verification support (NEW)
+# Verity forward error correction support (NEW) 
+$ bitbake -c menuconfig virtual/kernel
+```
+
+#### D. .config
+
+```bash
+$ vi /yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build/.config
+# find CONFIG_DM_VERITY
+
+$ cd /yocto/cookerX-emmc/builds/build-imx8mm-evk-scarthgap-emmc/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build
+```
+
+### 3.5.3. Build & Check
+
+> 燒錄後花時間，所以先請驗證之。
+>
+> 這邊保留命令用於測試
+
+```bash
+#bitbake -c cleansstate linux-imx
+bitbake -c clean linux-imx
+
+bitbake -c kernel_configme -f linux-imx
+bitbake -c kernel_configcheck -f linux-imx
+
+bitbake -c configure linux-imx
+
+# 這個會產出 defconfig
+bitbake -c savedefconfig virtual/kernel
+ 
+bitbake linux-imx
+
+$ cd $PJ_YOCTO_BUILD_DIR
+$ find * -name dm-verity.ko 
+$ find * -name dm-crypt.ko
 ```
 
 # 4. Check
@@ -814,6 +945,7 @@ Num     Start        End          Size      Fstype
 $ sudo mkdir -p /tmp/wic
 $ sudo mount -o loop,offset=$((16384 * 512)) imx-image-core-imx8mm-lpddr4-evk.rootfs.wic /tmp/wic
 
+# 看看有沒有 boot.scr
 $ ll /tmp/wic
 total 36520
 drwxr-xr-x  3 root root    16384 Jan  1  1970 ./
@@ -850,6 +982,8 @@ $ sudo umount /tmp/wic
 
 ### 4.2.3. raucb
 
+#### A. plain
+
 ```bash
 $ cd-root
 # check *.raucb
@@ -864,14 +998,27 @@ $ rauc info \
   images-lnk/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
 
+#### B. verity
+
+> 當設定 RAUC_BUNDLE_FORMAT = "verity"
+
 ```bash
-# 當設定 RAUC_BUNDLE_FORMAT = "verity"
 $ bitbake rauc-native -c addto_recipe_sysroot
 
 $ oe-run-native rauc-native rauc info \
   --keyring=$PJ_YOCTO_LAYERS_DIR/meta-rauc-plus/recipes-core/rauc/files/ca.cert.pem \
   images-lnk/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
+
+```bash
+$ find123 dm-verity.ko
+```
+
+#### C. crypt
+
+> 為了能正常使用 verity，就有一堆要修正，且研究和測試時間過長，不值得！
+>
+> 暫不花時間研究 crypt。
 
 ## 4.3.  Check on Board
 
@@ -974,6 +1121,8 @@ $ cp -avr images-lnk/*.raucb /tmp/
 root@imx8mm-lpddr4-evk:~# scp lanka@192.168.50.72:/tmp/update-bundle-imx8mm-lpddr4-evk.raucb /tmp
 ```
 
+## 5.1. Step by Step
+
 #### A. A->B
 
 ```bash
@@ -1005,6 +1154,9 @@ BOOT_A_LEFT=3
 BOOT_B_LEFT=3
 BOOT_DEV=mmc 2:1
 BOOT_ORDER=A B
+
+root@imx8mm-lpddr4-evk:~# fw_printenv rootfs_part
+rootfs_part=/dev/mmcblk2p2
 
 root@imx8mm-lpddr4-evk:/# BOOT_NEXT=`rauc status | awk '/\[rootfs\./ { slot=$2 }/mounted:/ && $2 != "/" { if (slot ~ /\[.*\]/ && $2 ~ /^\//) print $2 }'`
 root@imx8mm-lpddr4-evk:/# echo $BOOT_NEXT
@@ -1046,6 +1198,9 @@ BOOT_A_LEFT=3
 BOOT_B_LEFT=3
 BOOT_DEV=mmc 2:1
 BOOT_ORDER=B A
+
+root@imx8mm-lpddr4-evk:~# fw_printenv rootfs_part
+rootfs_part=/dev/mmcblk2p3
 
 root@imx8mm-lpddr4-evk:/# BOOT_NEXT=`rauc status | awk '/\[rootfs\./ { slot=$2 }/mounted:/ && $2 != "/" { if (slot ~ /\[.*\]/ && $2 ~ /^\//) print $2 }'`
 root@imx8mm-lpddr4-evk:/# echo $BOOT_NEXT
@@ -1091,6 +1246,52 @@ x [rootfs.B] (/dev/mmcblk2p3, ext4, booted)
       boot status: good
 ```
 
+## 5.2. ShellScript
+
+#### A. update.sh
+
+> 一個簡易的更新 sh
+
+```bash
+$ cd /data
+$ vi update.sh
+#!/bin/sh
+
+rauc status
+
+echo
+fw_printenv | grep BOOT
+
+echo
+fw_printenv rootfs_part
+
+echo
+BOOT_NEXT=`rauc status | awk '/\[rootfs\./ { slot=$2 }/mounted:/ && $2 != "/" { if (slot ~ /\[.*\]/ && $2 ~ /^\//) print $2 }'`
+
+echo "(BOOT_NEXT=$BOOT_NEXT)"
+
+echo
+if [ -f "/tmp/update-bundle-imx8mm-lpddr4-evk.raucb" ]; then
+  umount $BOOT_NEXT
+
+  rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
+
+  echo
+  echo "Please wait for 3 seconds for reboot ..."
+  sleep 3
+
+  reboot
+else
+  echo "Couldn't find /tmp/update-bundle-imx8mm-lpddr4-evk.raucb !!!"
+fi
+
+echo
+
+$ chmod 777 update.sh
+```
+
+
+
 # Appendix
 
 # I. Study
@@ -1127,7 +1328,7 @@ $ oe-run-native rauc-native rauc info \
 
 ## II.2. LastError: Failed mounting bundle: Failed to load dm table: Invalid argument, check DM_VERITY, DM_CRYPT or CRYPTO_AES kernel options.
 
-> 這個還找不到解決方法
+> 這邊主要是少了 dm-verity.ko；其它還要確認 dm-crypt.ko
 
 ```bash
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
@@ -1148,10 +1349,7 @@ installing
 100% Installing failed.
 LastError: Failed mounting bundle: Failed to load dm table: Invalid argument, check DM_VERITY, DM_CRYPT or CRYPTO_AES kernel options.
 Installing `/tmp/update-bundle-imx8mm-lpddr4-evk.raucb` failed
-
 ```
-
-
 
 # III. Glossary
 

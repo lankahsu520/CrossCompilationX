@@ -3,8 +3,8 @@ LICENSE = "MIT"
 inherit bundle
 
 RAUC_BUNDLE_COMPATIBLE = "Lanka520"
-RAUC_BUNDLE_FORMAT = "plain"
-#RAUC_BUNDLE_FORMAT = "verity"
+#RAUC_BUNDLE_FORMAT = "plain"
+RAUC_BUNDLE_FORMAT = "verity"
 #RAUC_BUNDLE_FORMAT = "crypt"
 RAUC_BUNDLE_SLOTS ?= "rootfs"
 
