@@ -70,12 +70,12 @@ $ make
 
 ## 2.3. Target
 
-| ITEM        | FILE                                            |
-| ----------- | ----------------------------------------------- |
-| u-boot      | imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk     |
-| u-boot-env  | u-boot-imx-initial-env-sd                       |
-| Image       | imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst |
-| RAUC Bundle | update-bundle-imx8mm-lpddr4-evk.raucb           |
+| ITEM            | FILE                                            |
+| --------------- | ----------------------------------------------- |
+| u-boot          | imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk     |
+| u-boot-env      | u-boot-imx-initial-env-sd                       |
+| Image           | imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst |
+| ~~RAUC Bundle~~ | ~~update-bundle-imx8mm-lpddr4-evk.raucb~~       |
 
 ## 2.4. Burn
 
@@ -89,19 +89,11 @@ $ uuu -b emmc_all \
  ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
 ```
 
-### 2.4.2. rauc install
+### ~~2.4.2. rauc install~~
 
 ```bash
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
-
-
-
-
-
-
-
-
 
 # 2. [meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)
 
