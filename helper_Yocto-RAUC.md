@@ -86,13 +86,13 @@ $ uuu -b emmc_all \
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
 
-# 2. meta-rauc
+# 2. [meta-rauc](https://github.com/rauc/meta-rauc.git)
 
 > 網路上的範例和討論都很陽春，如果要花大把的時間去研讀官方文件，可能你的工作已經沒了。
 
 ## 2.1. Add layer
 
-### 2.2.1. imx8mm-evk-scarthgap-emmc-menu.json
+### 2.1.1. imx8mm-evk-scarthgap-emmc-menu.json
 
 >  DISTRO_FEATURES: rauc
 >
@@ -158,7 +158,7 @@ $ cd-root
 $ make cook-clean
 ```
 
-### 3.3.1. imx8mm-evk-scarthgap-emmc-menu.json
+### 3.1.1. imx8mm-evk-scarthgap-emmc-menu.json
 
 >  修改 cooker-menu/imx8mm-evk-scarthgap-emmc-menu.json
 

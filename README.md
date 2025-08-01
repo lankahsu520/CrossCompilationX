@@ -417,6 +417,8 @@ flowchart LR
 
 ##### A.4. [helper_Yocto-RAUC.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RAUC.md) - Yocto RAUC helper
 
+##### A.5. [helper_Yocto-HomeAssistant.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-HomeAssistant.md) - Yocto Home Assistant helper
+
 ## 4.2. Toolchain generator
 
 >使用一些 Toolchain 的產生器。
