@@ -299,7 +299,7 @@ $ cp -av openssl-ca/dev/ca.cert.pem ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipe
 
 $ echo ${PJ_YOCTO_ROOT}
 /yocto/cookerX-scarthgap
-$ mkdir -p ${PJ_YOCTO_ROOT}
+$ mkdir -p ${PJ_YOCTO_ROOT}/rauc-keys
 $ cp -av openssl-ca/dev/private/development-1.key.pem ${PJ_YOCTO_ROOT}/rauc-keys
 $ cp -av openssl-ca/dev/development-1.cert.pem ${PJ_YOCTO_ROOT}/rauc-keys
 
@@ -366,7 +366,7 @@ do_install:append() {
 
 ## 3.3. Disk Partition
 
-> RAUC 實現了 `Dual Image`，於是 Disk I的配置也要改變。
+> RAUC 實現了 `Dual Image`，於是 Disk 的配置也要改變。
 
 ```bash
 $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-freescale/wic

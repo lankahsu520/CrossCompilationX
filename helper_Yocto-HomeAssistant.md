@@ -89,7 +89,7 @@ $ uuu -b emmc_all \
  ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
 ```
 
-### ~~2.4.2. rauc install~~
+### 2.4.2. rauc install
 
 ```bash
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
