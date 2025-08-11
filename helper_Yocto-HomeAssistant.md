@@ -56,26 +56,26 @@
 
 ## 2.2. Build
 
-| ITEM         | FILE                                |
-| ------------ | ----------------------------------- |
-| configure    | confs/imx8mm-scarthgap-home.conf    |
-| cooker-menu: | imx8mm-evk-scarthgap-home-menu.json |
+| ITEM         | FILE                                              |
+| ------------ | ------------------------------------------------- |
+| configure    | imx8mm-scarthgap-rauc-home2023.12.0.conf          |
+| cooker-menu: | imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json |
 
 ```bash
 $ git clone https://github.com/lankahsu520/CrossCompilationX.git
 $ cd CrossCompilationX/Yocto/cookerX/
-$ . confs/imx8mm-scarthgap-home.conf
+$ . confs/imx8mm-scarthgap-rauc-home2023.12.0.conf
 $ make
 ```
 
 ## 2.3. Target
 
-| ITEM            | FILE                                            |
-| --------------- | ----------------------------------------------- |
-| u-boot          | imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk     |
-| u-boot-env      | u-boot-imx-initial-env-sd                       |
-| Image           | imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst |
-| ~~RAUC Bundle~~ | ~~update-bundle-imx8mm-lpddr4-evk.raucb~~       |
+| ITEM        | FILE                                            |
+| ----------- | ----------------------------------------------- |
+| u-boot      | imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk     |
+| u-boot-env  | u-boot-imx-initial-env-sd                       |
+| Image       | imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst |
+| RAUC Bundle | update-bundle-imx8mm-lpddr4-evk.raucb           |
 
 ## 2.4. Burn
 
@@ -97,11 +97,30 @@ root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.rauc
 
 # 2. [meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)
 
+> 當初一開始接觸時是使用 2023.12.0，花了很長的時間，結果發現無法支援 HACS。
+>
+> 現在就得考慮是不是直接升級到最新版；而要升級至 2025.7.1時，yocto 的版本又要升級至 whinlatter (5.3)；之後又遇到  i.MX Repo Manifest 只支援到 walnascar (5.2)，解決了一部分，又有另一部分顯現，而結果就是環環相扣。
+>
+
+| Check | Yocto                              | python3-homeassistant | Date                | rev                                      |
+| ----- | ---------------------------------- | --------------------- | ------------------- | ---------------------------------------- |
+|       | whinlatter (5.3)                   | 2025.7.1              | 2025/07/16 17:16:37 | 2376bb467084e975fd00e54834fd196ab276f76e |
+|       | whinlatter (5.3)                   | 2025.7.1              | 2025/07/12 23:40:57 | 083ed472adaae7d9c01480faabd30ed284d8ce24 |
+|       | whinlatter (5.3)                   | 2025.7.1              | 2025/07/12 20:51:26 | 67e0a443839df4723b740dd968f649bb7395df90 |
+|       | styhead (5.1),<br/>walnascar (5.2) | 2025.6.0b5            | 2025/06/28 05:11:08 | 65755926143661407c8686ec3ffc4129d504f562 |
+|       | styhead (5.1),<br>walnascar (5.2)  | 2025.5.1              | 2025/05/27 04:59:45 | 4430d53483c50f335d291fdb8790bd11203ae048 |
+| v     | styhead (5.1),<br/>walnascar (5.2) | 2025.4.0              | 2025/05/27 04:42:46 | 1b37b27b8aebee02bd5da8a43129661e5f364be3 |
+|       | styhead (5.1),<br/>walnascar (5.2) | 2025.4.0              | 2025/04/03 16:20:30 | 434ccbe145be248176651b3c664bf769e2b91ca8 |
+|       | styhead (5.1),<br/>walnascar (5.2) | 2025.3.4              | 2025/03/30 05:32:27 | 74d21d78880832ada2c315678004af4e79d72e44 |
+|       | styhead (5.1)                      | 2025.1.0              | 2025/01/06 04:52:46 | 74d90690e18de29fd7a4042752debc4a7d9cdb2c |
+| v     | nanbield (4.3),<br>scarthgap (5.0) | 2023.12.0             | 2024/03/20 05:10:32 | 5ee63318c53bec1bfc2e56221783c23c61b32a1e |
+|       | nanbield (4.3)                     | 2023.12.0             | 2024/02/25 05:56:17 | 863a92980349b6a80d03843ba2958b4d1deb131a |
+
 ## 2.1. Add layer
 
 > 因為 homeassistant 相依很多套件，這邊就不列出所有的。
 
-### 2.1.1. imx8mm-evk-scarthgap-home-menu.json
+### 2.1.1. update $PJ_COOKER_MENU
 
 >  IMAGE_INSTALL: python3-homeassistant
 >
@@ -109,7 +128,7 @@ root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.rauc
 
 ```bash
 $ echo $PJ_COOKER_MENU
-imx8mm-evk-scarthgap-home-menu.json
+imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json
 
 # 更新 $PJ_COOKER_MENU
 $ vi cooker-menu/$PJ_COOKER_MENU
@@ -176,71 +195,7 @@ $ oe-pkgdata-util list-pkg-files python3-homeassistant
 
 ```bash
 $ bb-info python3-homeassistant
-
-python3-homeassistant                           :2023.12.0-r0                                          
-
-./bb-lnk/python3-homeassistant_2023.12.0.bb
-./layers-scarthgap/meta-homeassistant/recipes-homeassistant/homeassistant/python3-homeassistant_2023.12.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/h/homeassistant/homeassistant-2023.12.0.tar.gz;downloadfilename=homeassistant-2023.12.0.tar.gz      file://homeassistant.service     file://0001-Update-pyproject.toml-to-allow-compilation.patch "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-homeassistant/2023.12.0/homeassistant-2023.12.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-homeassistant/2023.12.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native base-files shadow-native shadow-sysroot shadow base-passwd systemd-systemctl-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-homeassistant="       python3-homeassistant-recorder       python3-homeassistant-ffmpeg       python3-homeassistant-dhcp     python3-homeassistant-zeroconf      python3-homeassistant-frontend     python3-homeassistant-hardware     python3-homeassistant-http     python3-homeassistant-image-upload     python3-homeassistant-mobile-app     python3-homeassistant-stream         python3-homeassistant-google-translate      python3-homeassistant-bluetooth     python3-homeassistant-usb      python3-homeassistant-assist-pipeline     python3-homeassistant-conversation       python3-homeassistant-cloud     python3-homeassistant-matter     python3-homeassistant-radio-browser      python3-homeassistant-file-upload      python3-aiohttp (>=3.9.1)     python3-aiohttp-cors (=0.7.0)     python3-aiohttp-fast-url-dispatcher (=0.3.0)     python3-aiohttp-zlib-ng (=0.1.1)     python3-astral (=2.2)     python3-attrs (>=23.1.0)     python3-atomicwrites-homeassistant (=1.4.1)     python3-awesomeversion (>=23.11.0)     python3-bcrypt (>=4.0.1)     python3-certifi (>=2021.5.30)     python3-ciso8601 (=2.3.0)     python3-httpx (=0.25.0)     python3-home-assistant-bluetooth (=1.10.4)     python3-ifaddr (=0.2.0)     python3-jinja2 (>=3.1.2)     python3-lru-dict (>=1.2.0)     python3-pyjwt (=2.8.0)     python3-cryptography (>=41.0.7)     python3-pyopenssl (>=23.2.0)     python3-orjson (=3.9.9)     python3-packaging (>=23.1)     python3-pip (>=21.3.1)     python3-python-slugify (=4.0.1)     python3-pyyaml (=6.0.1)     python3-requests (=2.31.0)     python3-typing-extensions (>=4.8.0)     python3-ulid-transform (=0.9.0)     python3-voluptuous (=0.13.1)     python3-voluptuous-serialize (=2.6.0)     python3-yarl (>=1.9.2)         python3-statistics     python3-core (>=3.11.0)  python3-core"
-RDEPENDS:python3-homeassistant-amazon-polly="    python3-boto3 (>=1.28.17) "
-RDEPENDS:python3-homeassistant-assist-pipeline="    python3-webrtc-noise-gain (>=1.2.3) "
-RDEPENDS:python3-homeassistant-axis="    python3-axis (=48) "
-RDEPENDS:python3-homeassistant-backup="    python3-securetar (=2023.3.0) "
-RDEPENDS:python3-homeassistant-bluetooth="    python3-bleak (=0.21.1)     python3-bleak-retry-connector (=3.3.0)     python3-bluetooth-adapters (=0.16.1)     python3-bluetooth-auto-recovery (=1.2.3)     python3-bluetooth-data-tools (=1.15.0)     python3-dbus-fast (>=2.12.0) "
-RDEPENDS:python3-homeassistant-cast="    python3-pychromecast (>=13.0.8) "
-RDEPENDS:python3-homeassistant-cloud="    python3-hass-nabucasa (=0.74.0) "
-RDEPENDS:python3-homeassistant-conversation="    python3-hassil (>=1.2.5)     python3-home-assistant-intents (>=2023.12.5) "
-RDEPENDS:python3-homeassistant-dhcp="    python3-aiodiscover (=1.5.1)     python3-scapy (=2.5.0) "
-RDEPENDS:python3-homeassistant-ffmpeg="    python3-ha-ffmpeg (=3.1.0) "
-RDEPENDS:python3-homeassistant-file-upload="    python3-janus (=1.0.0) "
-RDEPENDS:python3-homeassistant-fritz="    python3-fritzconnection (=1.13.2)     python3-xmltodict (=0.13.0) "
-RDEPENDS:python3-homeassistant-fritzbox="    python3-pyfritzhome (=0.6.9) "
-RDEPENDS:python3-homeassistant-frontend="    python3-home-assistant-frontend (=20231206.0) "
-RDEPENDS:python3-homeassistant-google-translate="    python3-gtts (=2.2.4) "
-RDEPENDS:python3-homeassistant-hacs="    python3-aiogithubapi (=22.10.1) "
-RDEPENDS:python3-homeassistant-hardware="    python3-psutil-home-assistant (=0.0.1) "
-RDEPENDS:python3-homeassistant-http="    python3-aiohttp-cors (=0.7.0) "
-RDEPENDS:python3-homeassistant-hue="    python3-aiohue (=4.7.0) "
-RDEPENDS:python3-homeassistant-image-upload="    python3-pillow (>=10.1.0) "
-RDEPENDS:python3-homeassistant-ipp="    python3-pyipp (=0.14.4) "
-RDEPENDS:python3-homeassistant-keyboard-remote="    python3-evdev (>=1.6.1)     python3-asyncinotify (>=4.0.2) "
-RDEPENDS:python3-homeassistant-matter="    python3-matter-server (=5.0.0) "
-RDEPENDS:python3-homeassistant-met="    python3-pymetno (>=0.11.0) "
-RDEPENDS:python3-homeassistant-mobile-app="    python3-pynacl (=1.5.0) "
-RDEPENDS:python3-homeassistant-modbus="    python3-pymodbus (>=3.5.4) "
-RDEPENDS:python3-homeassistant-octoprint="    python3-pyoctoprintapi (=0.1.12) "
-RDEPENDS:python3-homeassistant-pulseaudio-loopback="    python3-pulsectl (>=23.5.2) "
-RDEPENDS:python3-homeassistant-radio-browser="    python3-radios (=0.2.0) "
-RDEPENDS:python3-homeassistant-recorder="    python3-sqlite3     python3-fnv-hash-fast (=0.5.0)     python3-sqlalchemy (>=2.0.22)     python3-psutil-home-assistant (=0.0.1) "
-RDEPENDS:python3-homeassistant-route53="    python3-boto3 (>=1.28.17) "
-RDEPENDS:python3-homeassistant-scrape="    python3-beautifulsoup4 (>=4.12.2)     python3-lxml (>=4.9.3) "
-RDEPENDS:python3-homeassistant-sentry="    python3-sentry-sdk (>=1.31.0) "
-RDEPENDS:python3-homeassistant-shelly="    python3-aioshelly (=6.1.0) "
-RDEPENDS:python3-homeassistant-ssdp="    python3-async-upnp-client (=0.36.2) "
-RDEPENDS:python3-homeassistant-staticdev="python3-homeassistant-dev (= 2023.12.0-r0)"
-RDEPENDS:python3-homeassistant-stream="    python3-pyturbojpeg (=1.7.1)     python3-ha-av (=10.1.1)     python3-numpy (>=1.26.0) "
-RDEPENDS:python3-homeassistant-systemmonitor="    python3-psutil (>=5.9.6) "
-RDEPENDS:python3-homeassistant-tts="    python3-mutagen (=1.47.0) "
-RDEPENDS:python3-homeassistant-upnp="    python3-async-upnp-client (=0.36.2)     python3-getmac (=0.8.2) "
-RDEPENDS:python3-homeassistant-usb="    python3-pyserial (=3.5)     python3-pyudev (>=0.23.2) "
-RDEPENDS:python3-homeassistant-vlc="    python3-python-vlc (>=3.0.18122) "
-RDEPENDS:python3-homeassistant-zeroconf="    python3-zeroconf (>=0.119.0) "
+$ bitbake -c build python3-homeassistant
 ```
 
 #### A. homeassistant.service
@@ -273,29 +228,7 @@ $ oe-pkgdata-util list-pkg-files python3-ha-av
 
 ```bash
 $ bb-info python3-ha-av
-
-python3-ha-av                                      :10.1.1-r0                                          
-
-./bb-lnk/python3-ha-av_10.1.1.bb
-./layers-scarthgap/meta-homeassistant/recipes-devtools/python/python3-ha-av_10.1.1.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/h/ha-av/ha-av-10.1.1.tar.gz;downloadfilename=ha-av-10.1.1.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-av/10.1.1/ha-av-10.1.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-av/10.1.1"
-
-DEPENDS="pkgconfig-native virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native     python3-cython-native     ffmpeg  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-ha-av="     python3-numpy     python3-pillow  python3-core"
-RDEPENDS:python3-ha-av-staticdev="python3-ha-av-dev (= 10.1.1-r0)"
+$ bitbake -c build python3-ha-av
 ```
 
 ### 2.2.3. python3-ha-ffmpeg
@@ -306,28 +239,7 @@ $ oe-pkgdata-util list-pkg-files python3-ha-ffmpeg
 
 ```bash
 $ bb-info python3-ha-ffmpeg
-
-python3-ha-ffmpeg                                   :3.1.0-r0
-
-./layers-scarthgap/meta-homeassistant/recipes-devtools/python/python3-ha-ffmpeg_3.1.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/h/ha-ffmpeg/ha-ffmpeg-3.1.0.tar.gz;downloadfilename=ha-ffmpeg-3.1.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-ffmpeg/3.1.0/ha-ffmpeg-3.1.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-ha-ffmpeg/3.1.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-ha-ffmpeg="     python3-async-timeout     ffmpeg  python3-core"
-RDEPENDS:python3-ha-ffmpeg-staticdev="python3-ha-ffmpeg-dev (= 3.1.0-r0)"
+$ bitbake -c build python3-ha-ffmpeg
 ```
 
 ## 2.3. Check Image
@@ -409,49 +321,7 @@ root@imx8mm-lpddr4-evk:~# reboot
 
 > 比較有無 meta-homeassistant 後的狀況，方便評估是否
 
-### 2.5.1. Usage of Disk / Memory
-
-```bash
-root@imx8mm-lpddr4-evk:~# free -h
-               total        used        free      shared  buff/cache   available
-Mem:           1.8Gi       567Mi       1.0Gi        10Mi       348Mi       1.3Gi
-Swap:             0B          0B          0B
-
-root@imx8mm-lpddr4-evk:~# df -h
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       3.1G  1.8G  1.2G  61% /
-devtmpfs        619M  4.0K  619M   1% /dev
-tmpfs           941M     0  941M   0% /dev/shm
-tmpfs           377M   10M  367M   3% /run
-tmpfs           941M     0  941M   0% /tmp
-tmpfs           941M   16K  941M   1% /var/volatile
-/dev/mmcblk2p1  333M   36M  297M  11% /run/media/boot-mmcblk2p1
-tmpfs           189M  4.0K  189M   1% /run/user/0
-
-root@imx8mm-lpddr4-evk:~# cat /proc/partitions
-major minor  #blocks  name
-
-  31        0      32768 mtdblock0
- 179        0   30535680 mmcblk2
- 179        1     340787 mmcblk2p1
- 179        2    3352394 mmcblk2p2
- 179       32       4096 mmcblk2boot0
- 179       64       4096 mmcblk2boot1
-
-root@imx8mm-lpddr4-evk:~# fdisk -l /dev/mmcblk2
-Disk /dev/mmcblk2: 29.12 GiB, 31268536320 bytes, 61071360 sectors
-Units: sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disklabel type: dos
-Disk identifier: 0x076c4a2a
-
-Device         Boot  Start     End Sectors   Size Id Type
-/dev/mmcblk2p1 *     16384  697957  681574 332.8M  c W95 FAT32 (LBA)
-/dev/mmcblk2p2      704512 7409299 6704788   3.2G 83 Linux
-```
-
-### 2.5.2. homeassistant.service
+### 2.5.1. homeassistant.service
 
 ```bash
 root@imx8mm-lpddr4-evk:/# ps -aux | grep home
@@ -477,7 +347,7 @@ root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
 ```
 
-### 2.5.3. /var/lib/homeassistant
+### 2.5.2. /var/lib/homeassistant
 
 ```bash
 root@imx8mm-lpddr4-evk:/var/lib/homeassistant# ls -al
@@ -514,7 +384,7 @@ drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:52 tts
 
 ```bash
 $ echo $PJ_YOCTO_LAYERS_DIR
-/yocto/cookerX-home/layers-scarthgap
+/yocto/cookerX-scarthgap/layers-scarthgap
 $ cd $PJ_YOCTO_LAYERS_DIR
 $ bitbake-layers create-layer meta-homeassistant-plus
 NOTE: Starting bitbake server...
@@ -542,7 +412,7 @@ $ bitbake -s | grep homeassistant-plus
 homeassistant-plus                                    :0.1-r0
 ```
 
-### 3.1.1. imx8mm-evk-scarthgap-home-menu.json
+### 3.1.1. update $PJ_COOKER_MENU
 
 > 其本上不用更動
 
@@ -581,7 +451,7 @@ $ bitbake -c build python3-homeassistant
 
 ```bash
 $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus
-/yocto/cookerX-home/layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus
+/yocto/cookerX-scarthgap/layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus
 ├── files
 │   ├── automations.yaml
 │   ├── configuration.yaml
@@ -632,31 +502,6 @@ http:
 $ bitbake -s | grep onvif-zeep
 # yocto 未內建 python3-onvif-zeep
 $ bb-info python3-onvif-zeep
-
-python3-onvif-zeep                                 :0.2.12-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-onvif-zeep_0.2.12.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/o/onvif-zeep/onvif_zeep-0.2.12.tar.gz"
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep/0.2.12/onvif_zeep-0.2.12"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep/0.2.12"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-onvif-zeep="      python3-zeep     python3-requests     python3-six     python3-lxml     python3-isodate  python3-core"
-RDEPENDS:python3-onvif-zeep-staticdev="python3-onvif-zeep-dev (= 0.2.12-r0)"
-```
-
-```bash
 $ bitbake -c build python3-onvif-zeep
 ```
 
@@ -670,31 +515,6 @@ $ bitbake -c build python3-onvif-zeep
 $ bitbake -s | onvif-zeep-async
 # yocto 未內建 python3-onvif-zeep-async，這邊採用舊版 3.1.13
 $ bb-info python3-onvif-zeep-async
-
-python3-onvif-zeep-async                            :4.0.1-r0                                     
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-onvif-zeep-async_4.0.1.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/o/onvif-zeep-async/onvif_zeep_async-4.0.1.tar.gz"
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep-async/4.0.1/onvif_zeep_async-4.0.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-onvif-zeep-async/4.0.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-onvif-zeep-async="      python3-aiohttp     python3-zeep     python3-xmltodict  python3-core"
-RDEPENDS:python3-onvif-zeep-async-staticdev="python3-onvif-zeep-async-dev (= 4.0.1-r0)"
-```
-
-```bash
 $ bitbake -c build python3-onvif-zeep-async
 ```
 
@@ -708,35 +528,6 @@ $ bitbake -c build python3-onvif-zeep-async
 $ bitbake -s | grep requests-file
 # yocto 已經內建 python3-requests-file
 $ bb-info python3-requests-file
-
-meta-python-image-ptest-python3-requests-file                   :1.0-r0                                                 
-python3-requests-file                               :1.5.1-r0
-
-./layers-scarthgap/meta-openembedded/meta-python/recipes-devtools/python/python3-requests-file_1.5.1.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/r/requests-file/requests-file-1.5.1.tar.gz;downloadfilename=requests-file-1.5.1.tar.gz           file://run-ptest "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-requests-file/1.5.1/requests-file-1.5.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-requests-file/1.5.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-requests-file="      python3-requests  python3-core"
-RDEPENDS:python3-requests-file-ptest=" python3-requests-file      python3-pytest     python3-unittest-automake-output "
-RDEPENDS:python3-requests-file-ptest:class-native=""
-RDEPENDS:python3-requests-file-ptest:class-nativesdk=""
-RDEPENDS:python3-requests-file-staticdev="python3-requests-file-dev (= 1.5.1-r0)"
-```
-
-```bash
 $ bitbake -c build python3-requests-file
 ```
 
@@ -750,30 +541,6 @@ $ bitbake -c build python3-requests-file
 $ bitbake -s | grep wsdiscovery
 # yocto 未內建 python3-onvif-zeep-async
 $ bb-info python3-wsdiscovery
-
-python3-wsdiscovery                                 :2.1.2-r0
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/W/WSDiscovery/WSDiscovery-2.1.2.tar.gz;downloadfilename=WSDiscovery-2.1.2.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-wsdiscovery/2.1.2/WSDiscovery-2.1.2"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-wsdiscovery/2.1.2"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-wsdiscovery="      python3-xml  python3-core"
-RDEPENDS:python3-wsdiscovery-staticdev="python3-wsdiscovery-dev (= 2.1.2-r0)"
-```
-
-```bash
 $ bitbake -c build python3-wsdiscovery
 ```
 
@@ -787,31 +554,6 @@ $ bitbake -c build python3-wsdiscovery
 $ bitbake -s | grep zeep
 # yocto 未內建 python3-zeep
 $ bb-info python3-zeep
-
-python3-zeep                                        :4.3.1-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-zeep_4.3.1.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/z/zeep/zeep-4.3.1.tar.gz;downloadfilename=zeep-4.3.1.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-zeep/4.3.1/zeep-4.3.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-zeep/4.3.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-zeep=" python3-core"
-RDEPENDS:python3-zeep-staticdev="python3-zeep-dev (= 4.3.1-r0)"
-```
-
-```bash
 $ bitbake -c build python3-zeep
 ```
 
@@ -831,30 +573,6 @@ $ bitbake -c build python3-zeep
 $ bitbake -s | grep aiohomekit
 # yocto 未內建 python3-aiohomekit，這邊採用舊版 3.2.7
 $ bb-info python3-aiohomekit
-
-python3-aiohomekit                                  :3.2.7-r0                                          
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/a/aiohomekit/aiohomekit-3.2.7.tar.gz;downloadfilename=aiohomekit-3.2.7.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7/aiohomekit-3.2.7"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-aiohomekit/3.2.7"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-hap-python python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-aiohomekit="      python3-zeroconf     python3-cryptography     python3-poetry-core  python3-core"
-RDEPENDS:python3-aiohomekit-staticdev="python3-aiohomekit-dev (= 3.2.7-r0)"
-```
-
-```bash
 # 清除 bitbake cache
 $ bitbake -p -f
 $ bitbake -c cleansstate python3-aiohomekit
@@ -872,30 +590,6 @@ $ bitbake -c build python3-aiohomekit
 $ bitbake -s | grep commentjson
 # yocto 未內建 python3-commentjson
 $ bb-info python3-commentjson
-
-python3-commentjson                                 :0.9.0-r0
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/c/commentjson/commentjson-0.9.0.tar.gz;downloadfilename=commentjson-0.9.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0/commentjson-0.9.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-commentjson/0.9.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-commentjson=" python3-core"
-RDEPENDS:python3-commentjson-staticdev="python3-commentjson-dev (= 0.9.0-r0)"
-```
-
-```bash
 $ bitbake -c build python3-commentjson
 ```
 
@@ -909,31 +603,6 @@ $ bitbake -c build python3-commentjson
 $ bitbake -s | grep hap
 # yocto 未內建 python3-hap-python
 $ bb-info python3-hap-python
-
-python3-hap-python                                  :4.9.1-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-hap-python_4.9.1.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/H/HAP-python/HAP-python-4.9.1.tar.gz;downloadfilename=HAP-python-4.9.1.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1/HAP-python-4.9.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-hap-python/4.9.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-hap-python="      python3-zeroconf     python3-cryptography  python3-core"
-RDEPENDS:python3-hap-python-staticdev="python3-hap-python-dev (= 4.9.1-r0)"
-```
-
-```bash
 # 清除 bitbake cache
 $ bitbake -p -f
 $ bitbake -c cleansstate python3-hap-python
@@ -951,31 +620,6 @@ $ bitbake -c build python3-hap-python
 $ bitbake -s | grep lark
 # yocto 未內建 python3-lark
 $ bb-info python3-lark
-
-python3-lark                                        :1.2.2-r0                                                 
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-lark_1.2.2.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/l/lark/lark-1.2.2.tar.gz;downloadfilename=lark-1.2.2.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2/lark-1.2.2"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-lark/1.2.2"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-lark=" python3-core"
-RDEPENDS:python3-lark-staticdev="python3-lark-dev (= 1.2.2-r0)"
-```
-
-```bash
 $ bitbake -c build python3-lark
 ```
 
@@ -991,33 +635,6 @@ $ bitbake -c build python3-lark
 $ bitbake -s | grep chacha20poly1305
 # yocto 未內建 python3-chacha20poly1305
 $ bb-info python3-chacha20poly1305
-
-python3-chacha20poly1305                            :0.0.3-r0                                                                                                                                     
-python3-chacha20poly1305-reuseable                 :0.13.2-r0                                                                                                                                     
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5_0.0.3.bb
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly130                                                                                  5-reuseable_0.13.2.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305/chacha20poly1305-0.0.3.tar.gz;downloa                                                                                  dfilename=chacha20poly1305-0.0.3.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly130                                                                                  5/0.0.3/chacha20poly1305-0.0.3"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20p                                                                                  oly1305/0.0.3"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools                                                                                  -native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-install                                                                                  er-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-chacha20poly1305=" python3-core"
-RDEPENDS:python3-chacha20poly1305-staticdev="python3-chacha20poly1305-dev (= 0.0.3-r0)"
-```
-
-```bash
 $ bitbake -c build python3-chacha20poly1305
 ```
 
@@ -1031,31 +648,6 @@ $ bitbake -c build python3-chacha20poly1305
 $ bitbake -s | grep chacha20poly1305
 # yocto 未內建 python3-chacha20poly1305_reuseable
 $ bb-info python3-chacha20poly1305-reuseable
-
-python3-chacha20poly1305-reuseable                 :0.13.2-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-chacha20poly1305-reuseable_0.13.2.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/c/chacha20poly1305_reuseable/chacha20poly1305_reuseable-0.13.2.tar.gz;downloadfilename=chacha20poly1305_reuseable-0.13.2.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2/chacha20poly1305_reuseable-0.13.2"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-chacha20poly1305-reuseable/0.13.2"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-chacha20poly1305-reuseable=" python3-core"
-RDEPENDS:python3-chacha20poly1305-reuseable-staticdev="python3-chacha20poly1305-reuseable-dev (= 0.13.2-r0)"
-```
-
-```bash
 $ bitbake -c build python3-chacha20poly1305-reuseable
 ```
 
@@ -1071,31 +663,6 @@ $ bitbake -c build python3-chacha20poly1305-reuseable
 $ bitbake -s | grep filetype
 # yocto 未內建 python3-filetype
 $ bb-info python3-filetype
-
-python3-filetype                                    :1.2.0-r0  
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-filetype_1.2.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/f/filetype/filetype-1.2.0.tar.gz;downloadfilename=filetype-1.2.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0/filetype-1.2.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-filetype/1.2.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-filetype=" python3-core"
-RDEPENDS:python3-filetype-staticdev="python3-filetype-dev (= 1.2.0-r0)"
-```
-
-```bash
 $ bitbake -c build python3-filetype
 ```
 
@@ -1109,31 +676,6 @@ $ bitbake -c build python3-filetype
 $ bitbake -s | grep mediafile
 # yocto 未內建 python3-mediafile
 $ bb-info python3-mediafile
-
-python3-mediafile                                  :0.13.0-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-mediafile_0.13.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/m/mediafile/mediafile-0.13.0.tar.gz;downloadfilename=mediafile-0.13.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0/mediafile-0.13.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-mediafile/0.13.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-mediafile=" python3-core"
-RDEPENDS:python3-mediafile-staticdev="python3-mediafile-dev (= 0.13.0-r0)"
-```
-
-```bash
 $ bitbake -c build python3-mediafile
 ```
 
@@ -1147,31 +689,6 @@ $ bitbake -c build python3-mediafile
 $ bitbake -s | grep pyatv
 # yocto 未內建 python3-pyatv，這邊採用舊版 0.14.5
 $ bb-info python3-pyatv
-
-python3-pyatv                                      :0.14.5-r0                                        
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pyatv_0.14.5.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/p/pyatv/pyatv-0.14.5.tar.gz;downloadfilename=pyatv-0.14.5.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5/pyatv-0.14.5"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-pytest-runner-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-pyatv="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools     python3-srptools     python3-chacha20poly1305-reuseable  python3-core"
-RDEPENDS:python3-pyatv-staticdev="python3-pyatv-dev (= 0.14.5-r0)"
-```
-
-```bash
 # 清除 bitbake cache
 $ bitbake -p -f
 $ bitbake -c cleansstate python3-pyatv
@@ -1195,30 +712,6 @@ $ bitbake -c build python3-pyatv
 $ bitbake -s | grep srptools
 # yocto 未內建 python3-tuya-iot-py-sdk
 $ bb-info python3-srptools
-
-python3-srptools                                    :1.0.1-r0
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/s/srptools/srptools-1.0.1.tar.gz;downloadfilename=srptools-1.0.1.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1/srptools-1.0.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-srptools/1.0.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-srptools=" python3-core"
-RDEPENDS:python3-srptools-staticdev="python3-srptools-dev (= 1.0.1-r0)"
-```
-
-```bash
 $ bitbake -c build python3-srptools
 ```
 
@@ -1234,41 +727,22 @@ $ bitbake -c build python3-srptools
 $ bitbake -s | grep py-synologydsm-api
 # yocto 未內建 python3-py-synologydsm-api
 $ bb-info python3-py-synologydsm-api
-
-python3-py-synologydsm-api                          :2.7.3-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-py-synologydsm-api_2.7.3.bb
-
-SRC_URI="file://py-synologydsm-api-2.7.3.tar.gz"
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3/py-synologydsm-api-2.7.3"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-py-synologydsm-api/2.7.3"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-setuptools-native  python3-build-native python3-installer-native python3-native python3 python3-native  python3"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-py-synologydsm-api="      python3-requests     python3-aiohttp  python3-core"
-RDEPENDS:python3-py-synologydsm-api-staticdev="python3-py-synologydsm-api-dev (= 2.7.3-r0)"
-```
-
-```bash
 $ bitbake -c build python3-py-synologydsm-api
 ```
 
 ## 3.6. Add recipes - tuya_iot
 
-#### tuya_iot
+> [tuya-smart-life](https://github.com/tuya/tuya-smart-life)
+>
+> This project has now officially been integrated into the Home Assistant official project core repository, corresponding to version 2024.2. This project will no longer continue to iterate. Subsequent iterations and support will be carried out under the Home Assistant official project.
+
+> [tuya-home-assistant](https://github.com/tuya/tuya-home-assistant)
+>
+> Tuya has developed a new HA integration called [Smart Life](https://github.com/tuya/tuya-smart-life), available for free to developers. Currently in beta testing, it eliminates the need to register a cloud development project on Tuya IoT platform and extend the Tuya cloud development IoT Core Service resources when expired. This significantly lowers the access barrier and enhances user experience.
+
+#### tuya-iot-py-sdk
 
 > pypi: [tuya-iot-py-sdk 0.6.6](https://pypi.org/project/tuya-iot-py-sdk)
->
-> pypi: [tuya-device-sharing-sdk 0.2.1](https://pypi.org/project/tuya-device-sharing-sdk/) (新版)
 >
 > A Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya officialA Python sdk for Tuya Open API, which provides IoT capabilities, maintained by Tuya official
 
@@ -1276,36 +750,39 @@ $ bitbake -c build python3-py-synologydsm-api
 $ bitbake -s | grep tuya
 # yocto 未內建 python3-tuya-iot-py-sdk
 $ bb-info python3-tuya-iot-py-sdk
-
-python3-tuya-iot-py-sdk                             :0.6.6-r0
-
-./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-tuya-iot-py-sdk_0.6.6.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/t/tuya-iot-py-sdk/tuya-iot-py-sdk-0.6.6.tar.gz;downloadfilename=tuya-iot-py-sdk-0.6.6.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6/tuya-iot-py-sdk-0.6.6"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-tuya-iot-py-sdk/0.6.6"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native      python3-requests-native     python3-pycryptodome-native     python3-paho-mqtt-native  python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-tuya-iot-py-sdk="      python3-requests     python3-pytz     python3-urllib3  python3-core"
-RDEPENDS:python3-tuya-iot-py-sdk-staticdev="python3-tuya-iot-py-sdk-dev (= 0.6.6-r0)"
-```
-
-```bash
 # 清除 bitbake cache
 $ bitbake -p -f
 $ bitbake -c cleansstate python3-tuya-iot-py-sdk
 $ bitbake -c cleanall python3-tuya-iot-py-sdk
 $ bitbake -c build python3-tuya-iot-py-sdk
+```
+
+#### tuya-device-sharing-sdk
+
+> pypi: [tuya-device-sharing-sdk 0.2.1](https://pypi.org/project/tuya-device-sharing-sdk/) (新版)
+>
+> A Python sdk for Tuya Open API, which provides basic IoT capabilities like device management capabilities, helping you create IoT solutions. With diversified devices and industries, Tuya IoT Development Platform opens basic IoT capabilities like device management, AI scenarios, and data analytics services, as well as industry capabilities, helping you create IoT solutions.
+
+```bash
+$ bitbake -s | grep tuya
+# yocto 未內建 python3-tuya-iot-py-sdk
+$ bb-info python3-tuya-device-sharing-sdk
+# 清除 bitbake cache
+$ bitbake -p -f
+$ bitbake -c cleansstate python3-tuya-device-sharing-sdk
+$ bitbake -c cleanall python3-tuya-device-sharing-sdk
+$ bitbake -c build python3-tuya-device-sharing-sdk
+```
+
+```bash
+$ devtool add python3-tuya-device-sharing-sdk \
+  https://files.pythonhosted.org/packages/b6/95/21737fb84c23571694a41518eef425d7a31d7d4e179be0927597754d713f/tuya-device-sharing-sdk-0.2.1.tar.gz
+$ ll ${PJ_YOCTO_BUILD_DIR}/workspace/recipes/python3-tuya-device-sharing-sdk/python3-tuya-device-sharing-sdk_0.2.1.bb
+-rw-rw-r-- 1 lanka lanka 1306 Aug 11 11:52 ./builds/build-imx8mm-evk-walnascar-rauc-home/workspace/recipes/python3-tuya-device-sharing-sdk/python3-tuya-device-sharing-sdk_0.2.1.bb
+.bb
+
+$ devtool build python3-tuya-device-sharing-sdk
+$ devtool reset python3-tuya-device-sharing-sdk
 ```
 
 ## 3.7. Add recipes - pysensibo
@@ -1320,30 +797,6 @@ $ bitbake -c build python3-tuya-iot-py-sdk
 $ bitbake -s | grep miniaudio
 # yocto 未內建 python3-miniaudio
 $ bb-info python3-miniaudio
-
-python3-miniaudio                                    :1.61-r0
-
-
-SRC_URI="https://files.pythonhosted.org/packages/source/m/miniaudio/miniaudio-1.61.tar.gz;downloadfilename=miniaudio-1.61.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61/miniaudio-1.61"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-miniaudio/1.61"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-pytest-runner-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-miniaudio="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools  python3-core"
-RDEPENDS:python3-miniaudio-staticdev="python3-miniaudio-dev (= 1.61-r0)"
-```
-
-```bash
 # 清除 bitbake cache
 $ bitbake -p -f
 $ bitbake -c cleansstate python3-miniaudio
@@ -1361,31 +814,6 @@ $ bitbake -c build python3-miniaudio
 $ bitbake -s | grep sensibo
 # yocto 未內建 python3-pysensibo
 $ bb-info python3-pysensibo
-
-python3-pysensibo                                   :1.2.1-r0
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pysensibo_1.2.1.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/p/pysensibo/pysensibo-1.2.1.tar.gz;downloadfilename=pysensibo-1.2.1.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1/pysensibo-1.2.1"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pysensibo/1.2.1"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native  python3-poetry-core-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-pysensibo="      python3-requests  python3-core"
-RDEPENDS:python3-pysensibo-staticdev="python3-pysensibo-dev (= 1.2.1-r0)"
-```
-
-```bash
 # 清除 bitbake cache
 $ bitbake -p -f
 $ bitbake -c cleansstate python3-pysensibo
@@ -1394,6 +822,19 @@ $ bitbake -c build python3-pysensibo
 ```
 
 ## 3.8. Add recipes - python_otbr_api
+
+#### bitstruct
+
+> pypi: [bitstruct 8.21.0](https://pypi.org/project/bitstruct/)
+>
+> This module is intended to have a similar interface as the python struct module, but working on bits instead of primitive data types (char, int, …).
+
+```bash
+$ bitbake -s | grep bitstruct
+# yocto 已經內建 python3-bitstruct
+$ bb-info python3-bitstruct
+$ bitbake -c build python3-bitstruct
+```
 
 #### python_otbr_api
 
@@ -1406,31 +847,6 @@ $ bitbake -s | grep otbr
 # yocto 未內建 python3-otbr-api
 # 因為採用 inherit pypi，檔案名就只能 python3-python-otbr-api
 $ bb-info python3-python-otbr-api
-
-python3-python-otbr-api                             :2.6.0-r0                            
-
-./meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-python-otbr-api_2.6.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/p/python-otbr-api/python-otbr-api-2.6.0.tar.gz;downloadfilename=python-otbr-api-2.6.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0/python-otbr-api-2.6.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-python-otbr-api/2.6.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-python-otbr-api="      python3-requests     python3-dbus     python3-typing-extensions  python3-core"
-RDEPENDS:python3-python-otbr-api-staticdev="python3-python-otbr-api-dev (= 2.6.0-r0)"
-```
-
-```bash
 # 清除 bitbake cache
 $ bitbake -p -f
 $ bitbake -c cleansstate python3-python-otbr-api
@@ -1444,7 +860,7 @@ $ bitbake -c build python3-python-otbr-api
 # 查看是否已經安裝至 yocto-rootfs 
 $ cd-rootfs
 $ pwd
-/yocto/cookerX-home/builds-lnk/imx8mm-evk-scarthgap-home-rootfs
+/yocto/cookerX-scarthgap/builds-lnk/imx8mm-evk-scarthgap-home-rootfs
 
 $ find123 pyasn1* pydantic* bitstruct* python_otbr_api* miniaudio* pysensibo* tuya_iot* srptools* chacha20poly1305* pyatv* mediafile* filetype* hap-python* aiohomekit* synology_dsm* commentjson* lark* zeep* onvif_zeep* onvif_zeep_async* requests_file* wsdiscovery*
 ```
@@ -1464,31 +880,6 @@ root@imx8mm-lpddr4-evk:/# cat /var/lib/homeassistant/home-assistant.log
 $ bitbake -s | grep pyasn1
 # yocto 已經內建 python3-pyasn1
 $ bb-info python3-pyasn1
-
-python3-pyatv                                      :0.14.5-r0                                              
-
-./layers-scarthgap/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus/python3-pyatv_0.14.5.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/p/pyatv/pyatv-0.14.5.tar.gz;downloadfilename=pyatv-0.14.5.tar.gz https://github.com/postlund/pyatv/releases/download/v0.14.5/pyatv-0.14.5.tar.gz"
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5/pyatv-0.14.5"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pyatv/0.14.5"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-pytest-runner-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-pyatv="      python3-aiohttp     python3-aiohttp-cors     python3-zeroconf     python3-protobuf     python3-typing-extensions     python3-cryptography     python3-setuptools  python3-core"
-RDEPENDS:python3-pyatv-staticdev="python3-pyatv-dev (= 0.14.5-r0)"
-```
-
-```bash
 $ bitbake -c build python3-pyasn1
 ```
 
@@ -1504,98 +895,661 @@ $ bitbake -c build python3-pyasn1
 $ bitbake -s | grep pydantic
 # yocto 已經內建 python3-pydantic
 $ bb-info python3-pydantic
-
-meta-python-image-ptest-python3-pydantic                   :1.0-r0
-meta-python-image-ptest-python3-pydantic-core                   :1.0-r0                                                
-python3-pydantic                                   :1.10.7-r0
-python3-pydantic-core                              :2.18.4-r0
-
-./layers-scarthgap/meta-homeassistant/recipes-devtools/python/python3-pydantic_1.10.7.bb
-./layers-scarthgap/meta-openembedded/meta-python/recipes-devtools/python/python3-pydantic-core_2.18.4.bb
-./layers-scarthgap/meta-openembedded/meta-python/recipes-devtools/python/python3-pydantic_2.7.4.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/p/pydantic/pydantic-1.10.7.tar.gz;downloadfilename=pydantic-1.10.7.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pydantic/1.10.7/pydantic-1.10.7"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-pydantic/1.10.7"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-pydantic="     python3-core     python3-datetime     python3-image     python3-io     python3-json     python3-logging     python3-netclient     python3-numbers     python3-profile     python3-typing-extensions  python3-core"
-RDEPENDS:python3-pydantic-staticdev="python3-pydantic-dev (= 1.10.7-r0)"
-```
-
-```bash
 $ bitbake -c build python3-pydantic
 ```
 
-#### bitstruct
+#### pytest-sugar
 
-> pypi: [bitstruct 8.21.0](https://pypi.org/project/bitstruct/)
+> pypi: [pytest-sugar 1.0.0](https://pypi.org/project/pytest-sugar)
 >
-> This module is intended to have a similar interface as the python struct module, but working on bits instead of primitive data types (char, int, …).
+> This plugin extends [pytest](http://pytest.org/) by showing failures and errors instantly, adding a progress bar, improving the test results, and making the output look better.
 
 ```bash
-$ bitbake -s | grep bitstruct
-# yocto 已經內建 python3-bitstruct
-$ bb-info python3-bitstruct
-
-python3-bitstruct                                  :8.19.0-r0
-
-./meta-openembedded/meta-python/recipes-devtools/python/python3-bitstruct_8.19.0.bb
-
-SRC_URI="https://files.pythonhosted.org/packages/source/b/bitstruct/bitstruct-8.19.0.tar.gz;downloadfilename=bitstruct-8.19.0.tar.gz "
-
-S="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-bitstruct/8.19.0/bitstruct-8.19.0"
-
-WORKDIR="/yocto/cookerX-home/builds/build-imx8mm-evk-scarthgap-home/tmp/work/armv8a-poky-linux/python3-bitstruct/8.19.0"
-
-DEPENDS="virtual/aarch64-poky-linux-gcc virtual/aarch64-poky-linux-compilerlibs virtual/libc  python3-setuptools-native python3-wheel-native python3-native python3 python3-native  python3 python3-build-native python3-installer-native"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:python3-bitstruct=" python3-core"
-RDEPENDS:python3-bitstruct-staticdev="python3-bitstruct-dev (= 8.19.0-r0)"
+$ bitbake -s | grep pytest-sugar
+# yocto 未內建 python3-pytest-sugar
+$ bb-info python3-pytest-sugar
+$ bitbake -c build python3-pytest-sugar
 ```
-
-```bash
-$ bitbake -c build python3-bitstruct
-```
-
-# 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Appendix
 
 # I. Study
 
 # II. Debug
+
+## II.1. linux (with RAUC)
+
+> 同樣使用 FSL i.MX8MM EVK board，在 RAUC 之上加入 Home Assistant，查看系統的變化 。
+>
+> 畢竟各家公司在開發自家產品時，參照公板後進行客製化，就可以在硬體評估時判斷是否可行。
+
+#### A. CPU
+
+> pass
+
+#### B. RAM
+
+```bash
+root@imx8mm-lpddr4-evk:~# free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.8Gi       567Mi       1.0Gi       9.0Mi       353Mi       1.3Gi
+Swap:             0B          0B          0B
+
+root@imx8mm-lpddr4-evk:~# cat /proc/meminfo
+MemTotal:        1925928 kB
+MemFree:         1090408 kB
+MemAvailable:    1345220 kB
+Buffers:           30456 kB
+Cached:           301328 kB
+SwapCached:            0 kB
+Active:            57492 kB
+Inactive:         554620 kB
+Active(anon):        672 kB
+Inactive(anon):   288884 kB
+Active(file):      56820 kB
+Inactive(file):   265736 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:        280364 kB
+Mapped:            89060 kB
+Shmem:              9212 kB
+KReclaimable:      29768 kB
+Slab:              59044 kB
+SReclaimable:      29768 kB
+SUnreclaim:        29276 kB
+KernelStack:        2640 kB
+PageTables:         2608 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:      962964 kB
+Committed_AS:     593776 kB
+VmallocTotal:   133141626880 kB
+VmallocUsed:        9452 kB
+VmallocChunk:          0 kB
+Percpu:             1168 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+CmaTotal:         655360 kB
+CmaFree:          519536 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+```
+
+#### C. DISK
+
+```bash
+root@imx8mm-lpddr4-evk:~# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root       2.3G  1.8G  374M  83% /
+devtmpfs        619M  4.0K  619M   1% /dev
+tmpfs           941M     0  941M   0% /dev/shm
+tmpfs           377M  9.0M  368M   3% /run
+tmpfs           941M  8.0K  941M   1% /tmp
+tmpfs           941M   12K  941M   1% /var/volatile
+/dev/mmcblk2p4  3.8G  1.1M  3.6G   1% /data
+/dev/mmcblk2p2  1.4G 1003M  283M  79% /run/media/mmcblk2p2
+/dev/mmcblk2p1  333M   37M  297M  11% /run/media/boot-mmcblk2p1
+tmpfs           189M  4.0K  189M   1% /run/user/0
+
+root@imx8mm-lpddr4-evk:~#  mount | grep '^/dev'
+/dev/mmcblk2p3 on / type ext4 (rw,relatime)
+/dev/mmcblk2p4 on /data type ext4 (rw,relatime)
+/dev/mmcblk2p2 on /run/media/mmcblk2p2 type ext4 (rw,relatime)
+/dev/mmcblk2p1 on /run/media/boot-mmcblk2p1 type vfat (rw,relatime,gid=6,fmask=0007,dmask=0007,allow_utime=0020,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro)
+
+```
+
+#### D. dmesg
+
+```bash
+root@imx8mm-lpddr4-evk:~# strings /proc/device-tree/model
+FSL i.MX8MM EVK board
+
+root@imx8mm-lpddr4-evk:~# dmesg
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 6.6.52-lts-next-ge0f9e2afd4cf (oe-user@oe-host) (aarch64-poky-linux-gcc (GCC) 13.3.0, GNU ld (GNU Binutils) 2.42.0.20240723) #1 SMP PREEMPT Tue Nov 19 23:01:49 UTC 2024
+[    0.000000] KASLR enabled
+[    0.000000] Machine model: FSL i.MX8MM EVK board
+[    0.000000] efi: UEFI not found.
+[    0.000000] Reserved memory: created CMA memory pool at 0x0000000096000000, size 640 MiB
+[    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
+[    0.000000] OF: reserved mem: 0x0000000096000000..0x00000000bdffffff (655360 KiB) map reusable linux,cma
+[    0.000000] OF: reserved mem: 0x00000000be000000..0x00000000bfdfffff (30720 KiB) nomap non-reusable optee_core@be000000
+[    0.000000] OF: reserved mem: 0x00000000bfe00000..0x00000000bfffffff (2048 KiB) nomap non-reusable optee_shm@bfe00000
+[    0.000000] NUMA: No NUMA configuration found
+[    0.000000] NUMA: Faking a node at [mem 0x0000000040000000-0x00000000bdffffff]
+[    0.000000] NUMA: NODE_DATA [mem 0x95bce6c0-0x95bd0fff]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000040000000-0x00000000bdffffff]
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000040000000-0x00000000bdffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000040000000-0x00000000bdffffff]
+[    0.000000] On node 0, zone DMA: 8192 pages in unavailable ranges
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: PSCIv1.1 detected in firmware.
+[    0.000000] psci: Using standard PSCI v0.2 function IDs
+[    0.000000] psci: Trusted OS migration not required
+[    0.000000] psci: SMC Calling Convention v1.4
+[    0.000000] percpu: Embedded 22 pages/cpu s50920 r8192 d31000 u90112
+[    0.000000] pcpu-alloc: s50920 r8192 d31000 u90112 alloc=22*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 [0] 2 [0] 3
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: detected: GIC system register CPU interface
+[    0.000000] CPU features: kernel page table isolation forced ON by KASLR
+[    0.000000] CPU features: detected: Kernel page table isolation (KPTI)
+[    0.000000] CPU features: detected: ARM erratum 845719
+[    0.000000] alternatives: applying boot alternatives
+[    0.000000] Kernel command line: console=ttymxc1,115200 root=/dev/mmcblk2p3 rootwait rw rauc.slot=B
+[    0.000000] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[    0.000000] Fallback order for Node 0: 0
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 508032
+[    0.000000] Policy zone: DMA
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] software IO TLB: area num 4.
+[    0.000000] software IO TLB: mapped [mem 0x000000008f800000-0x0000000093800000] (64MB)
+[    0.000000] Memory: 1266536K/2064384K available (21248K kernel code, 1646K rwdata, 7844K rodata, 4032K init, 643K bss, 142488K reserved, 655360K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=4, Nodes=1
+[    0.000000] rcu: Preemptible hierarchical RCU implementation.
+[    0.000000] rcu:     RCU event tracing is enabled.
+[    0.000000] rcu:     RCU restricting CPUs from NR_CPUS=256 to nr_cpu_ids=4.
+[    0.000000]  Trampoline variant of Tasks RCU enabled.
+[    0.000000]  Tracing variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 25 jiffies.
+[    0.000000] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=4
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] GICv3: GIC: Using split EOI/Deactivate mode
+[    0.000000] GICv3: 128 SPIs implemented
+[    0.000000] GICv3: 0 Extended SPIs implemented
+[    0.000000] Root IRQ handler: gic_handle_irq
+[    0.000000] GICv3: GICv3 features: 16 PPIs
+[    0.000000] GICv3: CPU0: found redistributor 0 region 0:0x0000000038880000
+[    0.000000] ITS: No ITS available, not enabling LPIs
+[    0.000000] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+[    0.000000] arch_timer: cp15 timer(s) running at 8.00MHz (phys).
+[    0.000000] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x1d854df40, max_idle_ns: 440795202120 ns
+[    0.000000] sched_clock: 56 bits at 8MHz, resolution 125ns, wraps every 2199023255500ns
+[    0.000444] Console: colour dummy device 80x25
+[    0.000510] Calibrating delay loop (skipped), value calculated using timer frequency.. 16.00 BogoMIPS (lpj=32000)
+[    0.000521] pid_max: default: 32768 minimum: 301
+[    0.000587] LSM: initializing lsm=capability,integrity
+[    0.000683] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.000695] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+[    0.002214] RCU Tasks: Setting shift to 2 and lim to 1 rcu_task_cb_adjust=1.
+[    0.002280] RCU Tasks Trace: Setting shift to 2 and lim to 1 rcu_task_cb_adjust=1.
+[    0.002459] rcu: Hierarchical SRCU implementation.
+[    0.002463] rcu:     Max phase no-delay instances is 1000.
+[    0.003650] EFI services will not be available.
+[    0.003856] smp: Bringing up secondary CPUs ...
+[    0.004395] Detected VIPT I-cache on CPU1
+[    0.004460] GICv3: CPU1: found redistributor 1 region 0:0x00000000388a0000
+[    0.004504] CPU1: Booted secondary processor 0x0000000001 [0x410fd034]
+[    0.005035] Detected VIPT I-cache on CPU2
+[    0.005078] GICv3: CPU2: found redistributor 2 region 0:0x00000000388c0000
+[    0.005102] CPU2: Booted secondary processor 0x0000000002 [0x410fd034]
+[    0.005575] Detected VIPT I-cache on CPU3
+[    0.005617] GICv3: CPU3: found redistributor 3 region 0:0x00000000388e0000
+[    0.005638] CPU3: Booted secondary processor 0x0000000003 [0x410fd034]
+[    0.005705] smp: Brought up 1 node, 4 CPUs
+[    0.005711] SMP: Total of 4 processors activated.
+[    0.005716] CPU features: detected: 32-bit EL0 Support
+[    0.005718] CPU features: detected: 32-bit EL1 Support
+[    0.005723] CPU features: detected: CRC32 instructions
+[    0.005788] CPU: All CPU(s) started at EL2
+[    0.005811] alternatives: applying system-wide alternatives
+[    0.007667] devtmpfs: initialized
+[    0.015020] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.015044] futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    0.033671] pinctrl core: initialized pinctrl subsystem
+[    0.035749] DMI not present or invalid.
+[    0.036393] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+[    0.037337] DMA: preallocated 256 KiB GFP_KERNEL pool for atomic allocations
+[    0.037437] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+[    0.037554] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+[    0.037615] audit: initializing netlink subsys (disabled)
+[    0.037780] audit: type=2000 audit(0.036:1): state=initialized audit_enabled=0 res=1
+[    0.038290] thermal_sys: Registered thermal governor 'step_wise'
+[    0.038294] thermal_sys: Registered thermal governor 'power_allocator'
+[    0.038330] cpuidle: using governor menu
+[    0.038546] hw-breakpoint: found 6 breakpoint and 4 watchpoint registers.
+[    0.038631] ASID allocator initialised with 32768 entries
+[    0.039569] Serial: AMBA PL011 UART driver
+[    0.039635] imx mu driver is registered.
+[    0.039655] imx rpmsg driver is registered.
+[    0.046281] platform soc@0: Fixed dependency cycle(s) with /soc@0/bus@30000000/efuse@30350000/unique-id@4
+[    0.049930] imx8mm-pinctrl 30330000.pinctrl: initialized IMX pinctrl driver
+[    0.050596] platform 30350000.efuse: Fixed dependency cycle(s) with /soc@0/bus@30000000/clock-controller@30380000
+[    0.051781] platform 30350000.efuse: Fixed dependency cycle(s) with /soc@0/bus@30000000/clock-controller@30380000
+[    0.058345] platform 32e00000.lcdif: Fixed dependency cycle(s) with /soc@0/bus@32c00000/mipi_dsi@32e10000
+[    0.058568] platform 32e00000.lcdif: Fixed dependency cycle(s) with /soc@0/bus@32c00000/mipi_dsi@32e10000
+[    0.058681] platform 32e10000.mipi_dsi: Fixed dependency cycle(s) with /soc@0/bus@30800000/i2c@30a30000/adv7535@3d
+[    0.058710] platform 32e10000.mipi_dsi: Fixed dependency cycle(s) with /soc@0/bus@32c00000/lcdif@32e00000
+[    0.058985] platform 32e20000.csi1_bridge: Fixed dependency cycle(s) with /soc@0/bus@32c00000/mipi_csi@32e30000
+[    0.059216] platform 32e20000.csi1_bridge: Fixed dependency cycle(s) with /soc@0/bus@32c00000/mipi_csi@32e30000
+[    0.059331] platform 32e30000.mipi_csi: Fixed dependency cycle(s) with /soc@0/bus@32c00000/csi1_bridge@32e20000
+[    0.059396] platform 32e30000.mipi_csi: Fixed dependency cycle(s) with /soc@0/bus@30800000/i2c@30a40000/ov5640_mipi@3c
+[    0.060044] platform 32e40000.usb: Fixed dependency cycle(s) with /soc@0/bus@30800000/i2c@30a30000/tcpc@50
+[    0.065723] Modules: 2G module region forced by RANDOMIZE_MODULE_REGION_FULL
+[    0.065751] Modules: 0 pages in range for non-PLT usage
+[    0.065754] Modules: 515376 pages in range for PLT usage
+[    0.066547] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+[    0.066554] HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
+[    0.066559] HugeTLB: registered 32.0 MiB page size, pre-allocated 0 pages
+[    0.066562] HugeTLB: 0 KiB vmemmap can be freed for a 32.0 MiB page
+[    0.066566] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+[    0.066571] HugeTLB: 0 KiB vmemmap can be freed for a 2.00 MiB page
+[    0.066575] HugeTLB: registered 64.0 KiB page size, pre-allocated 0 pages
+[    0.066581] HugeTLB: 0 KiB vmemmap can be freed for a 64.0 KiB page
+[    0.068511] ACPI: Interpreter disabled.
+[    0.069420] iommu: Default domain type: Translated
+[    0.069429] iommu: DMA domain TLB invalidation policy: strict mode
+[    0.069822] SCSI subsystem initialized
+[    0.069938] libata version 3.00 loaded.
+[    0.070128] usbcore: registered new interface driver usbfs
+[    0.070157] usbcore: registered new interface driver hub
+[    0.070183] usbcore: registered new device driver usb
+[    0.071296] mc: Linux media interface: v0.10
+[    0.071333] videodev: Linux video capture interface: v2.00
+[    0.071395] pps_core: LinuxPPS API ver. 1 registered
+[    0.071399] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.071416] PTP clock support registered
+[    0.071713] EDAC MC: Ver: 3.0.0
+[    0.072150] scmi_core: SCMI protocol bus registered
+[    0.072536] FPGA manager framework
+[    0.072613] Advanced Linux Sound Architecture Driver Initialized.
+[    0.073326] Bluetooth: Core ver 2.22
+[    0.073350] NET: Registered PF_BLUETOOTH protocol family
+[    0.073353] Bluetooth: HCI device and connection manager initialized
+[    0.073361] Bluetooth: HCI socket layer initialized
+[    0.073366] Bluetooth: L2CAP socket layer initialized
+[    0.073377] Bluetooth: SCO socket layer initialized
+[    0.073746] vgaarb: loaded
+[    0.074261] clocksource: Switched to clocksource arch_sys_counter
+[    0.074481] VFS: Disk quotas dquot_6.6.0
+[    0.074511] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.074677] pnp: PnP ACPI: disabled
+[    0.081443] NET: Registered PF_INET protocol family
+[    0.081595] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
+[    0.083146] tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
+[    0.083174] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.083187] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
+[    0.083335] TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
+[    0.083792] TCP: Hash tables configured (established 16384 bind 16384)
+[    0.083890] UDP hash table entries: 1024 (order: 3, 32768 bytes, linear)
+[    0.083936] UDP-Lite hash table entries: 1024 (order: 3, 32768 bytes, linear)
+[    0.084090] NET: Registered PF_UNIX/PF_LOCAL protocol family
+[    0.084500] RPC: Registered named UNIX socket transport module.
+[    0.084505] RPC: Registered udp transport module.
+[    0.084508] RPC: Registered tcp transport module.
+[    0.084510] RPC: Registered tcp-with-tls transport module.
+[    0.084513] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.085555] PCI: CLS 0 bytes, default 64
+[    0.085915] kvm [1]: IPA Size Limit: 40 bits
+[    0.087969] kvm [1]: GICv3: no GICV resource entry
+[    0.087975] kvm [1]: disabling GICv2 emulation
+[    0.087995] kvm [1]: GIC system register CPU interface enabled
+[    0.088020] kvm [1]: vgic interrupt IRQ9
+[    0.088041] kvm [1]: Hyp mode initialized successfully
+[    0.089243] Initialise system trusted keyrings
+[    0.089423] workingset: timestamp_bits=42 max_order=19 bucket_order=0
+[    0.089697] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.089916] NFS: Registering the id_resolver key type
+[    0.089942] Key type id_resolver registered
+[    0.089946] Key type id_legacy registered
+[    0.089963] nfs4filelayout_init: NFSv4 File Layout Driver Registering...
+[    0.089973] nfs4flexfilelayout_init: NFSv4 Flexfile Layout Driver Registering...
+[    0.089991] jffs2: version 2.2. (NAND) \xc2\xa9 2001-2006 Red Hat, Inc.
+[    0.090185] 9p: Installing v9fs 9p2000 file system support
+[    0.123742] NET: Registered PF_ALG protocol family
+[    0.123753] Key type asymmetric registered
+[    0.123757] Asymmetric key parser 'x509' registered
+[    0.123799] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 243)
+[    0.123805] io scheduler mq-deadline registered
+[    0.123809] io scheduler kyber registered
+[    0.123837] io scheduler bfq registered
+[    0.130993] EINJ: ACPI disabled.
+[    0.141946] imx-sdma 302c0000.dma-controller: Direct firmware load for imx/sdma/sdma-imx7d.bin failed with error -2
+[    0.141963] imx-sdma 302c0000.dma-controller: Falling back to sysfs fallback for: imx/sdma/sdma-imx7d.bin
+[    0.147981] mxs-dma 33000000.dma-controller: initialized
+[    0.149264] SoC: i.MX8MM revision 1.0
+[    0.149694] Bus freq driver module loaded
+[    0.162622] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+[    0.165713] 30860000.serial: ttymxc0 at MMIO 0x30860000 (irq = 18, base_baud = 5000000) is a IMX
+[    0.165842] serial serial0: tty port ttymxc0 registered
+[    0.166361] 30880000.serial: ttymxc2 at MMIO 0x30880000 (irq = 19, base_baud = 5000000) is a IMX
+[    0.167050] 30890000.serial: ttymxc1 at MMIO 0x30890000 (irq = 20, base_baud = 1500000) is a IMX
+[    0.167089] printk: console [ttymxc1] enabled
+[    1.470317] imx-drm display-subsystem: bound imx-lcdif-crtc.0 (ops lcdif_crtc_ops)
+[    1.478054] imx_sec_dsim_drv 32e10000.mipi_dsi: version number is 0x1060200
+[    1.485082] [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c00000/mipi_dsi@32e10000 to encoder DSI-34: -517
+[    1.496780] imx_sec_dsim_drv 32e10000.mipi_dsi: Failed to attach bridge: 32e10000.mipi_dsi
+[    1.505056] imx_sec_dsim_drv 32e10000.mipi_dsi: failed to bind sec dsim bridge: -517
+[    1.519392] loop: module loaded
+[    1.524248] megasas: 07.725.01.00-rc1
+[    1.533282] spi-nor spi0.0: n25q256ax1 (32768 Kbytes)
+[    1.542684] tun: Universal TUN/TAP device driver, 1.6
+[    1.548678] thunder_xcv, ver 1.0
+[    1.551950] thunder_bgx, ver 1.0
+[    1.555215] nicpf, ver 1.0
+[    1.560213] hns3: Hisilicon Ethernet Network Driver for Hip08 Family - version
+[    1.567448] hns3: Copyright (c) 2017 Huawei Corporation.
+[    1.572798] hclge is initializing
+[    1.576153] e1000: Intel(R) PRO/1000 Network Driver
+[    1.581038] e1000: Copyright (c) 1999-2006 Intel Corporation.
+[    1.586816] e1000e: Intel(R) PRO/1000 Network Driver
+[    1.591788] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[    1.597736] igb: Intel(R) Gigabit Ethernet Network Driver
+[    1.603183] igb: Copyright (c) 2007-2014 Intel Corporation.
+[    1.608795] igbvf: Intel(R) Gigabit Virtual Function Network Driver
+[    1.615073] igbvf: Copyright (c) 2009 - 2012 Intel Corporation.
+[    1.621171] sky2: driver version 1.30
+[    1.625442] usbcore: registered new device driver r8152-cfgselector
+[    1.631747] usbcore: registered new interface driver r8152
+[    1.637696] VFIO - User Level meta-driver version: 0.3
+[    1.645723] usbcore: registered new interface driver uas
+[    1.651084] usbcore: registered new interface driver usb-storage
+[    1.657164] usbcore: registered new interface driver usbserial_generic
+[    1.663723] usbserial: USB Serial support registered for generic
+[    1.669760] usbcore: registered new interface driver ftdi_sio
+[    1.675532] usbserial: USB Serial support registered for FTDI USB Serial Device
+[    1.682873] usbcore: registered new interface driver usb_serial_simple
+[    1.689428] usbserial: USB Serial support registered for carelink
+[    1.695545] usbserial: USB Serial support registered for flashloader
+[    1.701929] usbserial: USB Serial support registered for funsoft
+[    1.707965] usbserial: USB Serial support registered for google
+[    1.713917] usbserial: USB Serial support registered for hp4x
+[    1.719695] usbserial: USB Serial support registered for kaufmann
+[    1.725816] usbserial: USB Serial support registered for libtransistor
+[    1.732369] usbserial: USB Serial support registered for moto_modem
+[    1.738662] usbserial: USB Serial support registered for motorola_tetra
+[    1.745303] usbserial: USB Serial support registered for nokia
+[    1.751163] usbserial: USB Serial support registered for novatel_gps
+[    1.757544] usbserial: USB Serial support registered for siemens_mpi
+[    1.763925] usbserial: USB Serial support registered for suunto
+[    1.769872] usbserial: USB Serial support registered for vivopay
+[    1.775908] usbserial: USB Serial support registered for zio
+[    1.781603] usbcore: registered new interface driver usb_ehset_test
+[    1.791179] input: 30370000.snvs:snvs-powerkey as /devices/platform/soc@0/30000000.bus/30370000.snvs/30370000.snvs:snvs-powerkey/input/input0
+[    1.805946] snvs_rtc 30370000.snvs:snvs-rtc-lp: registered as rtc0
+[    1.812178] snvs_rtc 30370000.snvs:snvs-rtc-lp: setting system clock to 2025-08-04T01:59:29 UTC (1754272769)
+[    1.822164] i2c_dev: i2c /dev entries driver
+[    1.828390] mx6s-csi 32e20000.csi1_bridge: initialising
+[    1.834624] mxc_mipi-csi 32e30000.mipi_csi: supply mipi-phy not found, using dummy regulator
+[    1.843383] mxc_mipi-csi 32e30000.mipi_csi: mipi csi v4l2 device registered
+[    1.850359] CSI: Registered sensor subdevice: mxc_mipi-csi.0
+[    1.856046] mxc_mipi-csi 32e30000.mipi_csi: lanes: 2, hs_settle: 13, clk_settle: 2, wclk: 1, freq: 333000000
+[    1.870150] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: dm-devel@redhat.com
+[    1.878718] Bluetooth: HCI UART driver ver 2.3
+[    1.883185] Bluetooth: HCI UART protocol H4 registered
+[    1.888332] Bluetooth: HCI UART protocol BCSP registered
+[    1.893679] Bluetooth: HCI UART protocol LL registered
+[    1.898825] Bluetooth: HCI UART protocol ATH3K registered
+[    1.904251] Bluetooth: HCI UART protocol Three-wire (H5) registered
+[    1.910648] Bluetooth: HCI UART protocol Broadcom registered
+[    1.916339] Bluetooth: HCI UART protocol QCA registered
+[    1.923218] sdhci: Secure Digital Host Controller Interface driver
+[    1.929430] sdhci: Copyright(c) Pierre Ossman
+[    1.934392] Synopsys Designware Multimedia Card Interface Driver
+[    1.941093] sdhci-pltfm: SDHCI platform and OF driver helper
+[    1.949440] ledtrig-cpu: registered to indicate activity on CPUs
+[    1.957045] SMCCC: SOC_ID: ARCH_SOC_ID not implemented, skipping ....
+[    1.963976] usbcore: registered new interface driver usbhid
+[    1.969564] usbhid: USB HID core driver
+[    1.979435] mmc2: SDHCI controller on 30b60000.mmc [30b60000.mmc] using ADMA
+[    1.979556] hw perfevents: enabled with armv8_cortex_a53 PMU driver, 7 counters available
+[    1.997992]  cs_system_cfg: CoreSight Configuration manager initialised
+[    2.005724] platform soc@0: Fixed dependency cycle(s) with /soc@0/bus@30000000/efuse@30350000
+[    2.015400] optee: probing for conduit method.
+[    2.019886] optee: revision 4.4 (60beb308810f9561)
+[    2.020725] optee: dynamic shared memory is enabled
+[    2.030796] optee: initialized driver
+[    2.036805] hantrodec 0 : module inserted. Major = 509
+[    2.042528] hantrodec 1 : module inserted. Major = 509
+[    2.048631] hx280enc: module inserted. Major <508>
+[    2.058351] NET: Registered PF_LLC protocol family
+[    2.063253] u32 classifier
+[    2.064999] mmc2: new HS400 Enhanced strobe MMC card at address 0001
+[    2.065998]     input device check on
+[    2.073177] mmcblk2: mmc2:0001 DG4032 29.1 GiB
+[    2.075999]     Actions configured
+[    2.082759]  mmcblk2: p1 p2 p3 p4
+[    2.084198] NET: Registered PF_INET6 protocol family
+[    2.088668] mmcblk2boot0: mmc2:0001 DG4032 4.00 MiB
+[    2.094205] Segment Routing with IPv6
+[    2.098856] mmcblk2boot1: mmc2:0001 DG4032 4.00 MiB
+[    2.100771] In-situ OAM (IOAM) with IPv6
+[    2.107511] mmcblk2rpmb: mmc2:0001 DG4032 4.00 MiB, chardev (234:0)
+[    2.109609] NET: Registered PF_PACKET protocol family
+[    2.120890] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[    2.134933] Bluetooth: RFCOMM TTY layer initialized
+[    2.139834] Bluetooth: RFCOMM socket layer initialized
+[    2.144992] Bluetooth: RFCOMM ver 1.11
+[    2.148756] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[    2.154076] Bluetooth: BNEP filters: protocol multicast
+[    2.159314] Bluetooth: BNEP socket layer initialized
+[    2.164287] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[    2.170215] Bluetooth: HIDP socket layer initialized
+[    2.176250] 8021q: 802.1Q VLAN Support v1.8
+[    2.180469] lib80211: common routines for IEEE802.11 drivers
+[    2.186140] lib80211_crypt: registered algorithm 'NULL'
+[    2.186145] lib80211_crypt: registered algorithm 'WEP'
+[    2.186151] lib80211_crypt: registered algorithm 'CCMP'
+[    2.186156] lib80211_crypt: registered algorithm 'TKIP'
+[    2.186188] 9pnet: Installing 9P2000 support
+[    2.190633] Key type dns_resolver registered
+[    2.195674] NET: Registered PF_VSOCK protocol family
+[    2.223536] registered taskstats version 1
+[    2.228043] Loading compiled-in X.509 certificates
+[    2.255955] gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    2.266458] gpio gpiochip1: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    2.276903] gpio gpiochip2: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    2.287463] gpio gpiochip3: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    2.297926] gpio gpiochip4: Static allocation of GPIO base is deprecated, use dynamic allocation.
+[    2.311261] usb_phy_generic usbphynop1: dummy supplies not allowed for exclusive requests
+[    2.319745] usb_phy_generic usbphynop2: dummy supplies not allowed for exclusive requests
+[    2.329085] i2c i2c-0: IMX I2C adapter registered
+[    2.335568] adv7511 1-003d: supply avdd not found, using dummy regulator
+[    2.342440] adv7511 1-003d: supply dvdd not found, using dummy regulator
+[    2.344023] nxp-pca9450 0-0025: pca9450a probed.
+[    2.349201] adv7511 1-003d: supply pvdd not found, using dummy regulator
+[    2.360527] adv7511 1-003d: supply a2vdd not found, using dummy regulator
+[    2.367357] adv7511 1-003d: supply v3p3 not found, using dummy regulator
+[    2.374102] adv7511 1-003d: supply v1p2 not found, using dummy regulator
+[    2.381638] adv7511 1-003d: Probe failed. Remote port 'mipi_dsi@32e10000' disabled
+[    2.389461] platform 32e40000.usb: Fixed dependency cycle(s) with /soc@0/bus@30800000/i2c@30a30000/tcpc@50
+[    2.399261] i2c 1-0050: Fixed dependency cycle(s) with /soc@0/bus@32c00000/usb@32e40000
+[    2.410237] i2c i2c-1: IMX I2C adapter registered
+[    2.416796] pca953x 2-0020: using no AI
+[    2.424914] ov5640_mipi 2-003c: No sensor reset pin available
+[    2.430743] ov5640_mipi 2-003c: supply DOVDD not found, using dummy regulator
+[    2.437999] ov5640_mipi 2-003c: supply DVDD not found, using dummy regulator
+[    2.445113] ov5640_mipi 2-003c: supply AVDD not found, using dummy regulator
+[    2.462871] ov5640_mipi 2-003c: Read reg error: reg=300a
+[    2.468197] ov5640_mipi 2-003c: Camera is not found
+[    2.473384] i2c i2c-2: IMX I2C adapter registered
+[    2.481225] imx6q-pcie 33800000.pcie: host bridge /soc@0/pcie@33800000 ranges:
+[    2.484151] imx-drm display-subsystem: bound imx-lcdif-crtc.0 (ops lcdif_crtc_ops)
+[    2.488528] imx6q-pcie 33800000.pcie:       IO 0x001ff80000..0x001ff8ffff -> 0x0000000000
+[    2.496230] imx_sec_dsim_drv 32e10000.mipi_dsi: version number is 0x1060200
+[    2.504259] imx6q-pcie 33800000.pcie:      MEM 0x0018000000..0x001fefffff -> 0x0018000000
+[    2.511253] [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c00000/mipi_dsi@32e10000 to encoder DSI-34: -19
+[    2.531011] imx_sec_dsim_drv 32e10000.mipi_dsi: Failed to attach bridge: 32e10000.mipi_dsi
+[    2.539289] imx_sec_dsim_drv 32e10000.mipi_dsi: failed to bind sec dsim bridge: -19
+[    2.546958] imx-drm display-subsystem: bound 32e10000.mipi_dsi (ops imx_sec_dsim_ops)
+[    2.555425] [drm] Initialized imx-drm 1.0.0 20120507 for display-subsystem on minor 0
+[    2.563306] imx-drm display-subsystem: [drm] Cannot find any crtc or sizes
+[    2.574585] pps pps0: new PPS source ptp0
+[    2.690703] mdio_bus 30be0000.ethernet-1:00: Fixed dependency cycle(s) with /soc@0/bus@30800000/ethernet@30be0000/mdio/ethernet-phy@0/vddio-regulator
+[    2.734759] imx6q-pcie 33800000.pcie: iATU: unroll T, 4 ob, 4 ib, align 64K, limit 4G
+[    2.790693] vddio: Bringing 1500000uV into 1800000-1800000uV
+[    2.798356] fec 30be0000.ethernet eth0: registered PHC device 0
+[    2.811172] imx-cpufreq-dt imx-cpufreq-dt: cpu speed grade 3 mkt segment 0 supported-hw 0x8 0x1
+[    2.825525] galcore: clk_get vg clock failed, disable vg!
+[    2.825530] sdhci-esdhc-imx 30b50000.mmc: Got CD GPIO
+[    2.836609] Galcore version 6.4.11.p2.745085
+[    2.854283] mmc0: SDHCI controller on 30b40000.mmc [30b40000.mmc] using ADMA
+[    2.854560] mmc1: SDHCI controller on 30b50000.mmc [30b50000.mmc] using ADMA
+[    2.885600] [drm] Initialized vivante 1.0.0 20170808 for 38000000.gpu on minor 1
+[    2.898207] OF: graph: no port node found in /soc@0/bus@30800000/i2c@30a30000/tcpc@50/connector
+[    2.906993] OF: graph: no port node found in /soc@0/bus@30800000/i2c@30a30000/tcpc@50/connector
+[    2.915722] OF: graph: no port node found in /soc@0/bus@30800000/i2c@30a30000/tcpc@50/connector
+[    2.919965] mmc0: new ultra high speed SDR104 SDIO card at address 0001
+[    2.950312] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    2.960078] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    2.966364] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    2.973646] clk: Disabling unused clocks
+[    2.977643] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[    2.980559] ALSA device list:
+[    2.986267] platform regulatory.0: Falling back to sysfs fallback for: regulatory.db
+[    2.989250]   No soundcards found.
+[    3.744596] imx6q-pcie 33800000.pcie: Phy link never came up
+[    4.003650] ddrc freq set to low bus mode
+[    4.756332] imx6q-pcie 33800000.pcie: Phy link never came up
+[    4.765502] imx6q-pcie 33800000.pcie: PCI host bridge to bus 0000:00
+[    4.772510] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    4.778083] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    4.784312] pci_bus 0000:00: root bus resource [mem 0x18000000-0x1fefffff]
+[    4.791418] pci 0000:00:00.0: [16c3:abcd] type 01 class 0x060400
+[    4.797559] pci 0000:00:00.0: reg 0x10: [mem 0x00000000-0x000fffff]
+[    4.804145] pci 0000:00:00.0: reg 0x38: [mem 0x00000000-0x0000ffff pref]
+[    4.811086] pci 0000:00:00.0: supports D1
+[    4.815127] pci 0000:00:00.0: PME# supported from D0 D1 D3hot D3cold
+[    4.825696] pci 0000:00:00.0: BAR 0: assigned [mem 0x18000000-0x180fffff]
+[    4.832617] pci 0000:00:00.0: BAR 6: assigned [mem 0x18100000-0x1810ffff pref]
+[    4.839877] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
+[    4.848283] pcieport 0000:00:00.0: PME: Signaling with IRQ 221
+[    4.861054] ddrc freq set to high bus mode
+[    4.889965] EXT4-fs (mmcblk2p3): mounted filesystem edb0b809-343a-4c76-a5ef-e5b7f5c707a0 r/w with ordered data mode. Quota mode: none.
+[    4.902165] VFS: Mounted root (ext4 filesystem) on device 179:3.
+[    4.908934] devtmpfs: mounted
+[    4.913079] Freeing unused kernel memory: 4032K
+[    4.917733] Run /sbin/init as init process
+[    4.921837]   with arguments:
+[    4.921839]     /sbin/init
+[    4.921842]   with environment:
+[    4.921844]     HOME=/
+[    4.921846]     TERM=linux
+[    5.052074] systemd[1]: systemd 255.4^ running in system mode (+PAM -AUDIT -SELINUX -APPARMOR +IMA -SMACK +SECCOMP -GCRYPT -GNUTLS -OPENSSL +ACL +BLKID -CURL -ELFUTILS -FIDO2 -IDN2 -IDN -IPTC +KMOD -LIBCRYPTSETUP +LIBFDISK -PCRE2 -PWQUALITY -P11KIT -QRENCODE -TPM2 -BZIP2 -LZ4 -XZ -ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
+[    5.083965] systemd[1]: Detected architecture arm64.
+[    5.106945] systemd[1]: Hostname set to <imx8mm-lpddr4-evk>.
+[    5.200449] systemd-sysv-generator[132]: SysV service '/etc/init.d/rc.local' lacks a native systemd unit file. ~ Automatically generating a unit file for compatibility. Please update package to include a native systemd unit file, in order to make it safe, robust and future-proof. ! This compatibility logic is deprecated, expect removal soon. !
+[    5.525643] systemd[1]: Queued start job for default target Graphical Interface.
+[    5.554524] systemd[1]: Created slice Slice /system/getty.
+[    5.576702] systemd[1]: Created slice Slice /system/modprobe.
+[    5.600662] systemd[1]: Created slice Slice /system/serial-getty.
+[    5.624676] systemd[1]: Created slice Slice /system/systemd-fsck.
+[    5.648143] systemd[1]: Created slice User and Session Slice.
+[    5.670740] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
+[    5.698668] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
+[    5.722468] systemd[1]: Expecting device /dev/mmcblk2p4...
+[    5.742639] systemd[1]: Reached target Path Units.
+[    5.762395] systemd[1]: Reached target Remote File Systems.
+[    5.782428] systemd[1]: Reached target Slice Units.
+[    5.802409] systemd[1]: Reached target Swaps.
+[    5.852333] systemd[1]: Listening on RPCbind Server Activation Socket.
+[    5.878532] systemd[1]: Reached target RPC Port Mapper.
+[    5.899181] systemd[1]: Listening on Syslog Socket.
+[    5.918959] systemd[1]: Listening on initctl Compatibility Named Pipe.
+[    5.943963] systemd[1]: Listening on Journal Audit Socket.
+[    5.962938] systemd[1]: Listening on Journal Socket (/dev/log).
+[    5.983126] systemd[1]: Listening on Journal Socket.
+[    6.003130] systemd[1]: Listening on Network Service Netlink Socket.
+[    6.030129] systemd[1]: Listening on udev Control Socket.
+[    6.051210] systemd[1]: Listening on udev Kernel Socket.
+[    6.071076] systemd[1]: Listening on User Database Manager Socket.
+[    6.127235] systemd[1]: Mounting Huge Pages File System...
+[    6.155362] systemd[1]: Mounting POSIX Message Queue File System...
+[    6.182304] systemd[1]: Mounting Kernel Debug File System...
+[    6.202752] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
+[    6.220724] systemd[1]: Mounting Temporary Directory /tmp...
+[    6.260852] systemd[1]: Starting Create List of Static Device Nodes...
+[    6.285958] systemd[1]: Starting Load Kernel Module configfs...
+[    6.310500] systemd[1]: Starting Load Kernel Module drm...
+[    6.333899] systemd[1]: Starting Load Kernel Module fuse...
+[    6.363896] systemd[1]: Starting RPC Bind...
+[    6.369635] fuse: init (API version 7.39)
+[    6.390957] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
+[    6.410310] systemd[1]: Starting Journal Service...
+[    6.432320] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
+[    6.446139] systemd[1]: Starting Generate network units from Kernel command line...
+[    6.478544] systemd[1]: Starting Remount Root and Kernel File Systems...
+[    6.502354] systemd[1]: Starting Apply Kernel Variables...
+[    6.502938] systemd-journald[148]: Collecting audit messages is enabled.
+[    6.534142] systemd[1]: Starting Coldplug All udev Devices...
+[    6.540458] EXT4-fs (mmcblk2p3): re-mounted edb0b809-343a-4c76-a5ef-e5b7f5c707a0 r/w. Quota mode: none.
+[    6.554477] systemd[1]: Starting Virtual Console Setup...
+[    6.581508] systemd[1]: Started RPC Bind.
+[    6.599270] systemd[1]: Mounted Huge Pages File System.
+[    6.619222] systemd[1]: Started Journal Service.
+[    6.762332] systemd-journald[148]: Received client request to flush runtime journal.
+[    6.960775] audit: type=1334 audit(1754272774.644:2): prog-id=6 op=LOAD
+[    6.967512] audit: type=1334 audit(1754272774.652:3): prog-id=7 op=LOAD
+[    7.063969] audit: type=1334 audit(1754272774.748:4): prog-id=8 op=LOAD
+[    7.071010] audit: type=1334 audit(1754272774.756:5): prog-id=9 op=LOAD
+[    7.078197] audit: type=1334 audit(1754272774.760:6): prog-id=10 op=LOAD
+[    8.350558] Registered IR keymap rc-empty
+[    8.355657] rc rc0: gpio_ir_recv as /devices/platform/ir-receiver/rc/rc0
+[    8.365349] input: gpio_ir_recv as /devices/platform/ir-receiver/rc/rc0/input1
+[    8.433629] debugfs: File 'Playback' in directory 'dapm' already present!
+[    8.441742] debugfs: File 'Capture' in directory 'dapm' already present!
+[    8.452343] EXT4-fs (mmcblk2p4): mounted filesystem 130d59ae-6f2f-45bf-b247-8efb2a1726a6 r/w with ordered data mode. Quota mode: none.
+[    8.519559] caam-snvs 30370000.caam-snvs: ipid matched - 0x3e
+[    8.530982] caam-snvs 30370000.caam-snvs: violation handlers armed - non-secure state
+[    8.593501] caam 30900000.crypto: device ID = 0x0a16040100000000 (Era 9)
+[    8.600453] caam 30900000.crypto: job rings = 1, qi = 0
+[    8.847177] EXT4-fs (mmcblk2p2): mounted filesystem 98ed423a-dee0-4be7-b332-3da98b714ea7 r/w with ordered data mode. Quota mode: none.
+[    8.950859] caam algorithms registered in /proc/crypto
+[    8.956456] caam 30900000.crypto: caam pkc algorithms registered in /proc/crypto
+[    8.966846] caam 30900000.crypto: rng crypto API alg registered prng-caam
+[    8.973970] caam 30900000.crypto: registering rng-caam
+[    8.983330] random: crng init done
+[    8.989935] Device caam-keygen registered
+[    9.192467] audit: type=1334 audit(1754272776.876:7): prog-id=11 op=LOAD
+[    9.238960] audit: type=1334 audit(1754272776.924:8): prog-id=12 op=LOAD
+[   10.024154] imx-sdma 30bd0000.dma-controller: firmware found.
+[   10.024154] imx-sdma 302b0000.dma-controller: firmware found.
+[   10.024331] imx-sdma 30bd0000.dma-controller: loaded firmware 4.6
+[   10.042365] imx-sdma 302c0000.dma-controller: firmware found.
+[   10.137697] audit: type=1334 audit(1754272777.820:9): prog-id=13 op=LOAD
+[   10.144545] audit: type=1334 audit(1754272777.828:10): prog-id=14 op=LOAD
+[   10.151494] audit: type=1334 audit(1754272777.836:11): prog-id=15 op=LOAD
+[   10.742978] Qualcomm Atheros AR8031/AR8033 30be0000.ethernet-1:00: attached PHY driver (mii_bus:phy_addr=30be0000.ethernet-1:00, irq=POLL)
+[   14.851485] fec 30be0000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
+[   14.937117] kauditd_printk_skb: 19 callbacks suppressed
+[   14.937128] audit: type=1334 audit(1754272782.620:19): prog-id=19 op=LOAD
+[   14.949440] audit: type=1334 audit(1754272782.628:20): prog-id=20 op=LOAD
+[   14.956933] audit: type=1334 audit(1754272782.632:21): prog-id=21 op=LOAD
+[   19.172831] platform backlight: deferred probe pending
+[   19.178035] platform sound-ak4458: deferred probe pending
+[   32.616967] audit: type=1006 audit(1754272800.383:22): pid=649 uid=0 old-auid=4294967295 auid=0 tty=(none) old-ses=4294967295 ses=3 res=1
+[   32.630374] audit: type=1300 audit(1754272800.383:22): arch=c00000b7 syscall=64 success=yes exit=1 a0=8 a1=ffffdaa14e20 a2=1 a3=1 items=0 ppid=1 pid=649 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=3 comm="(systemd)" exe="/usr/lib/systemd/systemd-executor" key=(null)
+[   32.657126] audit: type=1327 audit(1754272800.383:22): proctitle="(systemd)"
+[   32.679922] audit: type=1334 audit(1754272800.448:23): prog-id=22 op=LOAD
+[   32.686804] audit: type=1300 audit(1754272800.448:23): arch=c00000b7 syscall=280 success=yes exit=8 a0=5 a1=ffffc5406188 a2=90 a3=0 items=0 ppid=1 pid=649 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=3 comm="systemd" exe="/usr/lib/systemd/systemd" key=(null)
+[   32.713360] audit: type=1327 audit(1754272800.448:23): proctitle="(systemd)"
+[   32.721128] audit: type=1334 audit(1754272800.448:24): prog-id=22 op=UNLOAD
+[   32.728838] audit: type=1300 audit(1754272800.448:24): arch=c00000b7 syscall=57 success=yes exit=0 a0=8 a1=1 a2=0 a3=ffffb2867e60 items=0 ppid=1 pid=649 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=3 comm="systemd" exe="/usr/lib/systemd/systemd" key=(null)
+[   32.755089] audit: type=1327 audit(1754272800.448:24): proctitle="(systemd)"
+[   32.762886] audit: type=1334 audit(1754272800.448:25): prog-id=23 op=LOAD
+
+```
 
 # III. Glossary
 

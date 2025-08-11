@@ -713,7 +713,7 @@ $ devtool finish python3-commentjson ./layers-scarthgap/meta-homeassistant-plus/
 #### F. reset
 
 ```bash
-# 將 python-zeep*.bb 安裝到指定的目錄
+# 還原 python3-commentjson
 $ devtool reset python3-commentjson
 ```
 
@@ -892,6 +892,13 @@ Fail:
 
 Ok:
 ,"IMAGE_INSTALL:append = ' example'"
+```
+
+## II.5. /bin/sh: cert-to-efi-sig-list: command not found
+
+```bash
+$ sudo apt update
+$ sudo apt install efitools
 ```
 
 # III. Glossary

@@ -17,6 +17,8 @@ UBOOT_ENV_SUFFIX = "scr"
 UBOOT_ENV = "boot"
 
 do_deploy:append() {
-    install -d ${DEPLOYDIR}
-    install -m 0644 ${WORKDIR}/${UBOOT_ENV_BINARY} ${DEPLOYDIR}
+    if ${@bb.utils.contains('DISTRO_FEATURES','rauc','true','false',d)}; then
+        install -d ${DEPLOYDIR}
+        install -m 0644 ${WORKDIR}/${UBOOT_ENV_BINARY} ${DEPLOYDIR}
+    fi
 }

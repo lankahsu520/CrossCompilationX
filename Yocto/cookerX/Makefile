@@ -16,7 +16,7 @@ BB_TASKS=listtasks configure clean cleanall fetch compile build install package_
 
 .DEFAULT_GOAL = all
 
-# .cook-build -> cook-patched -> .cook-update -> .cook-init
+# cook-build -> .cook-patched -> .cook-update -> .cook-init
 .PHONY: all distclean cook-clean cook-target-clean cook-lnk cook-dry-run cook-build cook-bundle cook-rebuild cook
 all: cook-build cook-bundle lnk-generate
 
@@ -62,6 +62,11 @@ cook:
 	touch $@
 
 .cook-patched: .cook-generate
+	#@for item in $(PJ_YOCTO_LAYERS_PATH_PATCH); do \
+	#	if [ -d "patches/$$item" ]; then \
+	#		cp -avr patches/$$item/* $(PJ_YOCTO_LAYERS_PATH); \
+	#	fi; \
+	#done
 	@if [ -d patches/$(PJ_YOCTO_LAYERS_PATH) ]; then \
 		cp -avr patches/$(PJ_YOCTO_LAYERS_PATH)/* $(PJ_YOCTO_LAYERS_PATH); \
 	fi
@@ -88,8 +93,8 @@ toolchain-pure:
 bundle:
 	bitbake $(PJ_YOCTO_BUNDLE)
 
-image:
-	bitbake $(PJ_YOCTO_IMAGE)
+image: cook-build
+	#bitbake $(PJ_YOCTO_IMAGE)
 
 rootfs:
 	bitbake -f $(PJ_YOCTO_IMAGE) -c rootfs

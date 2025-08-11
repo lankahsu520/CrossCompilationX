@@ -54,9 +54,25 @@
 
 ## 3.1. Official steps
 
-> [i.MX Repo Manifest README](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-scarthgap/README.md)
+> [i.MX Repo Manifest](https://github.com/nxp-imx/imx-manifest)
+>
+> This repo is used to download manifests for i.MX BSP releases.
+>
+> Specific instructions reside in READMEs in each branch.
+>
+> The branch name is based on the release type, Linux or Android, and the Yocto Project release name, with manifests in each branch tied to the base BSP release.
+>
+> For example, for i.MX Linux BSP releases based on Yocto Project `Walnascar`, the branch is `imx-linux-walnascar`.
 
-> [imx-manifest](https://github.com/nxp-imx/imx-manifest) / [imx-6.6.52-2.2.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-scarthgap/imx-6.6.52-2.2.0.xml)
+| Branch               | Yocto | Files                                                        |
+| -------------------- | ----- | ------------------------------------------------------------ |
+| imx-linux-walnascar  | 5.2   | [imx-6.12.20-2.0.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-walnascar/imx-6.12.20-2.0.0.xml) |
+| imx-linux-styhead    | 5.1   | [imx-6.12.3-1.0.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-styhead/imx-6.12.3-1.0.0.xml) |
+| imt-linux-scarthgap  | 5.0   | [imx-6.6.52-2.2.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-scarthgap/imx-6.6.52-2.2.0.xml) |
+| imx-linux-nanbield   | 4.3   | [imx-6.6.3-1.0.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-nanbield/imx-6.6.3-1.0.0.xml) |
+| imx-linux-mickledore | 4.2   | [imx-6.1.55-2.2.2.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-mickledore/imx-6.1.55-2.2.2.xml) |
+| imx-linux-langdale   | 4.1   | [imx-6.1.1-1.0.1.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-langdale/imx-6.1.1-1.0.1.xml) |
+| imx-linux-kirkstone  | 4.0   | [imx-5.15.71-2.2.2.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-kirkstone/imx-5.15.71-2.2.2.xml) |
 
 ### 3.1.1. Configuration
 
@@ -92,14 +108,17 @@
 
 > 共用 DL_DIR 和 SSTATE_DIR。
 
-```bash
-# Download the Yocto Project BSP
-$ mkdir -p 8MMINILPD4-EVK; cd 8MMINILPD4-EVK
-$ repo init -u https://github.com/nxp-imx/imx-manifest \
- -b imx-linux-scarthgap \
- -m imx-6.6.52-2.2.0.xml
-$ repo sync
+#### A. walnascar (5.2)
 
+```bash
+# for walnascar
+$ repo init -u https://github.com/nxp-imx/imx-manifest \
+ -b imx-linux-walnascar \
+ -m imx-6.12.20-2.0.0.xml
+$ repo sync
+```
+
+```bash
 $ vi setup-environment
 # 修改
 # DL_DIR = "/yocto-cache/downloads/"
@@ -114,7 +133,7 @@ $ MACHINE=imx8mm-lpddr4-evk \
 $ cat conf/local.conf
 MACHINE ??= 'imx8mm-lpddr4-evk'
 DISTRO ?= 'fsl-imx-wayland'
-EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
+EXTRA_IMAGE_FEATURES ?= "allow-empty-password empty-root-password allow-root-login"
 USER_CLASSES ?= "buildstats"
 PATCHRESOLVE = "noop"
 BB_DISKMON_DIRS ??= "\
@@ -142,13 +161,51 @@ EXTRA_IMAGE_FEATURES += "package-management"
 $ bitbake imx-image-core
 ```
 
+#### B. scarthgap (5.0)
+
+```bash
+# Download the Yocto Project BSP
+# for scarthgap
+$ mkdir -p 8MMINILPD4-EVK; cd 8MMINILPD4-EVK
+$ repo init -u https://github.com/nxp-imx/imx-manifest \
+ -b imx-linux-scarthgap \
+ -m imx-6.6.52-2.2.0.xml
+$ repo sync
+```
+
 ## 3.2. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/helper_cookerX.md)
 
 ### 3.2.1. Configuration
 
-#### A.  imx8mm-evk-scarthgap-menu.json
+> 這邊參考 [i.MX Repo Manifest](https://github.com/nxp-imx/imx-manifest) 進行整合。
 
-> 這邊參考 [imx-manifest](https://github.com/nxp-imx/imx-manifest) / [imx-6.6.52-2.2.0.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-scarthgap/imx-6.6.52-2.2.0.xml) 進行整合。
+> <font color="red">Yocto 的更新很快，i.MX 的更新腳步還算快的，這是一個很好的考量項目。</font>
+>
+> 曾經有遇過客戶凡事都要追求最新的版本，對於有些晶片廠就不太會花這時間去維復（發哥，說的就是你！），公司在後續開發就有問題。
+>
+> Yocto 不見得向下相容，編譯時間很久，佔用空間很大；但是支援度廣！
+
+#### A.  walnascar (5.2)
+
+> imx8mm-evk-walnascar-rauc-home2025.5.1-menu.json
+
+| CONF                                    | lanka | RAUC | Home Assistant |
+| --------------------------------------- | ----- | ---- | -------------- |
+| imx8mm-walnascar-rauc-home2025.5.1.conf | v     | v    | v              |
+| imx8mm-walnascar-home2025.5.1.conf      | v     |      | v              |
+| imx8mm-walnascar-rauc.conf              | v     | v    |                |
+| imx8mm-walnascar-core.conf              | v     |      |                |
+
+#### B. scarthgap (5.0)
+
+> imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json
+
+| CONF                                     | lanka | RAUC | Home Assistant |
+| ---------------------------------------- | ----- | ---- | -------------- |
+| imx8mm-scarthgap-rauc-home2023.12.0.conf | v     | v    | v              |
+| imx8mm-scarthgap-home2023.12.0.conf      | v     |      | v              |
+| imx8mm-scarthgap-rauc.conf               | v     | v    |                |
+| imx8mm-scarthgap-core.conf               | v     |      |                |
 
 ### 3.2.2. build imx-image-xxx
 
@@ -165,10 +222,10 @@ Please check sstate-dir (PJ_YOCTO_SSTATE_DIR=/yocto-cache/sstate-cache) !!!
 
 $ make
 # or 
-cooker  -v init cooker-menu/imx8mm-evk-scarthgap-menu.json
+cooker  -v init cooker-menu/imx8mm-evk-walnascar-rauc-home2025.5.1-menu.json
 cooker update
 cooker generate
-cooker  -v build imx8mm-evk-scarthgap
+cooker  -v build imx8mm-evk-walnascar-core
 ```
 ## 3.3. List of Images
 
@@ -180,13 +237,51 @@ cooker  -v build imx8mm-evk-scarthgap
 
 ```bash
 $ bitbake -s | grep imx-image
+imx-image-core                                        :1.0-r0
+imx-image-full                                        :1.0-r0
+imx-image-full-dev                                    :1.0-r0
+imx-image-multimedia                                  :1.0-r0
+
 $ bitbake -e imx-image-core | grep ^DESCRIPTION=
+DESCRIPTION="This is the basic core image with minimal tests"
 ```
 
 ## 3.4. List of Layers
 
 ```bash
 $ bitbake-layers show-layers
+NOTE: Starting bitbake server...
+layer                 path                                                                    priority
+========================================================================================================
+meta-arm              /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-arm/meta-arm  5
+arm-toolchain         /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-arm/meta-arm-toolchain  5
+clang-layer           /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-clang  7
+freescale-layer       /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-freescale  5
+freescale-3rdparty    /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-freescale-3rdparty  4
+freescale-distro      /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-freescale-distro  4
+homeassistant         /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-homeassistant-2025.5.1  10
+fsl-bsp-release       /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-bsp  8
+imx-machine-learning  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-ml  8
+fsl-sdk-release       /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-sdk  8
+v2x-imx               /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-v2x  9
+meta-lanka            /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-lanka  6
+nxp-matter-baseline   /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-nxp-connectivity/meta-nxp-matter-baseline  7
+nxp-openthread        /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-nxp-connectivity/meta-nxp-openthread  7
+imx-demo              /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-nxp-demo-experience  7
+filesystems-layer     /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-filesystems  5
+gnome-layer           /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-gnome  5
+multimedia-layer      /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-multimedia  5
+networking-layer      /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-networking  5
+openembedded-layer    /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-oe  5
+meta-python           /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-python  5
+qt6-layer             /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-qt6  5
+rauc                  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-rauc  6
+meta-rauc-plus        /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-rauc-plus  6
+parsec-layer          /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-security/meta-parsec  5
+tpm-layer             /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-security/meta-tpm  6
+virtualization-layer  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-virtualization  8
+core                  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/poky/meta  5
+yocto                 /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/poky/meta-poky  5
 ```
 
 # 4. Outputs
@@ -241,20 +336,27 @@ $ echo $PJ_YOCTO_IMAGE
 imx-image-core
 
 # 強制執行 do_rootfs
+$ make rootfs
+# or
 $ bitbake -f $PJ_YOCTO_IMAGE -c rootfs
 ```
 
 ## 4.2. images-lnk
 
 ```bash
-$ ll images-lnk/
-total 10200
-drwxrwxr-x  2 lanka lanka    4096 Jul  9 16:06 ./
-drwxrwxr-x 10 lanka lanka    4096 Jul  9 15:21 ../
--rw-rw-r--  1 lanka lanka 5956776 Jul  9 16:06 environment.txt
-lrwxrwxrwx  1 lanka lanka     153 Jul  9 16:05 imx-image-core-imx8mm-lpddr4-evk.rootfs.manifest -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-image-core-imx8mm-lpddr4-evk.rootfs-20250709015459.manifest
-lrwxrwxrwx  1 lanka lanka     152 Jul  9 16:05 imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-image-core-imx8mm-lpddr4-evk.rootfs-20250709015459.wic.zst
--rw-rw-r--  1 lanka lanka    7791 Jul  9 16:06 pn-buildlist
+$ ll images-lnk/$ tree -L 4 images-lnk
+images-lnk
+├── environment.txt
+├── imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk
+├── imx-image-core-imx8mm-lpddr4-evk.rootfs.ext4 -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-image-core-imx8mm-lpddr4-evk.rootfs-20250806025824.ext4
+├── imx-image-core-imx8mm-lpddr4-evk.rootfs.manifest -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-image-core-imx8mm-lpddr4-evk.rootfs-20250806025824.manifest
+├── imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-image-core-imx8mm-lpddr4-evk.rootfs-20250806025824.wic.zst
+├── pn-buildlist
+├── task-depends.dot
+├── u-boot-imx-initial-env-sd -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk/u-boot-imx-initial-env-imx8mm-lpddr4-evk-sd-2025.04-r0
+└── update-bundle-imx8mm-lpddr4-evk.raucb -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk/update-bundle-imx8mm-lpddr4-evk-20250806030925.raucb
+
+0 directories, 9 files
 ```
 
 ### 4.2.1. Info of wic
@@ -262,23 +364,22 @@ lrwxrwxrwx  1 lanka lanka     152 Jul  9 16:05 imx-image-core-imx8mm-lpddr4-evk.
 > 不管是用 Official or cookerX 都會產出 imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst。
 
 ```bash
-$ ll images-lnk/$PJ_YOCTO_IMAGE_WIC
-lrwxrwxrwx 1 lanka lanka 152 Jul  9 16:05 images-lnk/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-image-core-imx8mm-lpddr4-evk.rootfs-20250709015459.wic.zst
-
-$ cp images-lnk/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst ./
-
-# unpack
+# install zstd
 $ sudo apt-get install zstd
 
-$ unzstd imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
-imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst: 2411107328 bytes
-$ ll imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
--rw-r--r-- 1 lanka lanka 2411107328 Jul  7 08:45 imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
+$ cd-root
+$ ll images-lnk/$PJ_YOCTO_IMAGE_WIC
 
+# check *.wic.zst
+$ cp images-lnk/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst ./
+$ unzstd imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
+$ ll imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
 $ wic ls imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
 Num     Start        End          Size      Fstype
  1       8388608    357354495    348965888  fat16
- 2     360710144   2411107327   2050397184  ext4
+ 2     360710144   5944167423   5583457280  ext4
+ 3    5947523072  11530980351   5583457280  ext4
+ 4   11534336000  15829303295   4294967296  ext4
 ```
 
 ### 4.2.2. Build History
@@ -299,14 +400,14 @@ $ oe-pkgdata-util list-pkgs
 ## 4.3. builds-lnk
 
 ```bash
-$ ll builds-lnk
-total 24
-drwxrwxr-x 2 lanka lanka 4096 Jul  8 08:04 ./
-drwxrwxr-x 9 lanka lanka 4096 Jul  9 10:29 ../
-lrwxrwxrwx 1 lanka lanka  117 Jul  8 08:04 imx8mm-evk-scarthgap-core-rootfs -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/work/imx8mm_lpddr4_evk-poky-linux/imx-image-core/1.0/rootfs/
-lrwxrwxrwx 1 lanka lanka   68 Jul  8 08:04 imx8mm-evk-scarthgap-core-rpm -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/deploy/rpm/
-lrwxrwxrwx 1 lanka lanka   89 Jul  8 08:04 imx8mm-lpddr4-evk -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/deploy/images/imx8mm-lpddr4-evk/
-lrwxrwxrwx 1 lanka lanka   68 Jul  8 08:04 sdk -> /yocto/cookerX/builds/build-imx8mm-evk-scarthgap-core/tmp/deploy/sdk
+$ tree -L 4 builds-lnk
+builds-lnk
+├── imx8mm-evk-walnascar-core-rootfs -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/work/imx8mm_lpddr4_evk-poky-linux/imx-image-core/1.0/rootfs
+├── imx8mm-evk-walnascar-core-rpm -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/rpm
+├── imx8mm-lpddr4-evk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk
+└── sdk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/sdk
+
+2 directories, 2 files
 ```
 
 ## 4.4. bb-lnk
@@ -710,7 +811,6 @@ CPU architecture: 8
 CPU variant     : 0x0
 CPU part        : 0xd03
 CPU revision    : 4
-
 ```
 
 #### B. RAM
@@ -773,7 +873,6 @@ HugePages_Rsvd:        0
 HugePages_Surp:        0
 Hugepagesize:       2048 kB
 Hugetlb:               0 kB
-
 ```
 
 #### C. DISK
@@ -863,7 +962,6 @@ configfs on /sys/kernel/config type configfs (rw,nosuid,nodev,noexec,relatime)
 tmpfs on /var/volatile type tmpfs (rw,relatime)
 tmpfs on /run/user/0 type tmpfs (rw,nosuid,nodev,relatime,size=192604k,nr_inodes=48151,mode=700)
 /dev/mmcblk2p1 on /run/media/boot-mmcblk2p1 type vfat (rw,relatime,gid=6,fmask=0007,dmask=0007,allow_utime=0020,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro)
-
 ```
 
 #### D. dmesg

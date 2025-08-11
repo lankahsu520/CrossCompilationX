@@ -1,0 +1,223 @@
+{
+  "notes": [
+    "Yocto Project build for NXP i.MX 8M Mini LPDDR4 EVK",
+    "Converted from imx-6.6.52-2.2.0.xml",
+    "Scarthgap-based BSP"
+  ],
+  "sources": [
+    {
+      "url": "https://git.yoctoproject.org/poky",
+      "branch": "scarthgap",
+      "dir": "poky",
+      "rev": "200d12b6a58ad961d60a7774ca0f7a9d29498724"
+    },
+    {
+      "url": "https://github.com/rauc/meta-rauc.git",
+      "branch": "scarthgap",
+      "dir": "meta-rauc",
+      "rev": "a0f4a8b9986954239850b9d4256c003c91e6b931"
+    },
+    {
+      "url": "https://github.com/meta-homeassistant/meta-homeassistant",
+      "branch": "main",
+      "dir": "meta-homeassistant-2023.12.0",
+      "rev": "5ee63318c53bec1bfc2e56221783c23c61b32a1e"
+    },
+    {
+      "url": "https://github.com/openembedded/meta-openembedded",
+      "branch": "scarthgap",
+      "dir": "meta-openembedded",
+      "rev": "72018ca1b1a471226917e8246e8bbf9a374ccf97"
+    },
+    {
+      "url": "https://github.com/kraj/meta-clang",
+      "branch": "scarthgap",
+      "dir": "meta-clang",
+      "rev": "2b7433611d80f6d0ee1b04156fa91fc73d3c2665"
+    },
+    {
+      "url": "https://github.com/Freescale/fsl-community-bsp-base",
+      "branch": "scarthgap",
+      "dir": "base",
+      "rev": "84df0b1ff416c6739472f7f7eadff04fa90d38f6"
+    },
+    {
+      "url": "https://github.com/Freescale/meta-freescale",
+      "branch": "scarthgap",
+      "dir": "meta-freescale",
+      "rev": "0627128b341cfb2bef7a0832ce8cac0ce1127f13"
+    },
+    {
+      "url": "https://github.com/Freescale/meta-freescale-3rdparty",
+      "branch": "scarthgap",
+      "dir": "meta-freescale-3rdparty",
+      "rev": "6c063450d464eb2f380443c7d9af1b94ce9b9d75"
+    },
+    {
+      "url": "https://github.com/Freescale/meta-freescale-distro",
+      "branch": "scarthgap",
+      "dir": "meta-freescale-distro",
+      "rev": "b9d6a5d9931922558046d230c1f5f4ef6ee72345"
+    },
+    {
+      "url": "https://git.yoctoproject.org/meta-arm",
+      "branch": "scarthgap",
+      "dir": "meta-arm",
+      "rev": "950a4afce46a359def2958bd9ae33fc08ff9bb0d"
+    },
+    {
+      "url": "https://github.com/YoeDistro/meta-qt6",
+      "branch": "6.8",
+      "dir": "meta-qt6",
+      "rev": "586a6cb5aec755803a3be3cec359baafe89d6432"
+    },
+    {
+      "url": "https://github.com/OSSystems/meta-browser",
+      "branch": "master",
+      "dir": "meta-browser",
+      "rev": "dc31889c0899971def535dc1c040edf18bc16691"
+    },
+    {
+      "url": "https://git.yoctoproject.org/meta-security",
+      "branch": "scarthgap",
+      "dir": "meta-security",
+      "rev": "459d837338ca230254baa2994f870bf6eb9d0139"
+    },
+    {
+      "url": "https://github.com/TimesysGit/meta-timesys",
+      "branch": "scarthgap",
+      "dir": "meta-timesys",
+      "rev": "4dc3f4bdfde4a86904b6e1a3d58df4696e7a63fa"
+    },
+    {
+      "url": "https://git.yoctoproject.org/meta-virtualization",
+      "branch": "scarthgap",
+      "dir": "meta-virtualization",
+      "rev": "6f3c1d8f90947408a6587be222fec575a1ca5195"
+    },
+    {
+      "url": "https://github.com/nxp-imx/meta-imx",
+      "branch": "scarthgap-6.6.52-2.2.0",
+      "dir": "meta-imx",
+      "rev": "refs/tags/rel_imx_6.6.52_2.2.0"
+    },
+    {
+      "url": "https://github.com/nxp-imx/meta-nxp-connectivity",
+      "branch": "imx_matter_2024_q3-post",
+      "dir": "meta-nxp-connectivity",
+      "rev": "refs/tags/rel_imx_6.6.52_2.2.0"
+    },
+    {
+      "url": "https://github.com/nxp-imx-support/meta-nxp-demo-experience",
+      "branch": "scarthgap-6.6.52-2.2.0",
+      "dir": "meta-nxp-demo-experience",
+      "rev": "refs/tags/rel_imx_6.6.52_2.2.0"
+    }
+  ],
+  "layers": [
+    "poky/meta",
+    "poky/meta-poky",
+    "meta-lanka",
+    "meta-rauc",
+    "meta-rauc-plus",
+    "meta-homeassistant-2023.12.0",
+    "meta-homeassistant-plus-2023.12.0",
+    "meta-openembedded/meta-oe",
+    "meta-openembedded/meta-networking",
+    "meta-openembedded/meta-python",
+    "meta-openembedded/meta-multimedia",
+    "meta-openembedded/meta-gnome",
+    "meta-openembedded/meta-filesystems",
+    "meta-freescale",
+    "meta-freescale-3rdparty",
+    "meta-freescale-distro",
+    "meta-imx/meta-imx-bsp",
+    "meta-imx/meta-imx-sdk",
+    "meta-imx/meta-imx-ml",
+    "meta-imx/meta-imx-v2x",
+    "meta-clang",
+    "meta-arm/meta-arm",
+    "meta-arm/meta-arm-toolchain",
+    "meta-qt6",
+    "meta-security/meta-parsec",
+    "meta-security/meta-tpm",
+    "meta-virtualization",
+    "meta-nxp-connectivity/meta-nxp-matter-baseline",
+    "meta-nxp-connectivity/meta-nxp-openthread",
+    "meta-nxp-demo-experience"
+  ],
+  "builds": {
+    "imx8mm-evk-scarthgap-rauc-home": {
+      "target": "imx-image-core",
+      "local.conf": [
+        "MACHINE = 'imx8mm-lpddr4-evk'",
+        "DISTRO = 'fsl-imx-wayland'",
+        "CONF_VERSION = '2'",
+        "ACCEPT_FSL_EULA = '1'",
+        "DISTRO_FEATURES:append = ' rauc'",
+        "EXTRA_IMAGE_FEATURES = 'debug-tweaks package-management'",
+        "PATCHRESOLVE = 'noop'",
+        "PACKAGECONFIG:append:pn-qemu-system-native = 'sdl'",
+        "IMAGE_FSTYPES += ' wic.zst ext4'",
+        "IMAGE_INSTALL:append = ' rauc libubootenv-bin python3-homeassistant tree net-tools helloworld123'",
+        "PACKAGE_CLASSES = 'package_rpm'",
+        "USER_CLASSES = 'buildstats'",
+        "WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'",
+        "LICENSE_FLAGS_ACCEPTED +=' commercial'",
+      ]
+    },
+    "imx8mm-evk-scarthgap-rauc": {
+      "target": "imx-image-core",
+      "local.conf": [
+        "MACHINE = 'imx8mm-lpddr4-evk'",
+        "DISTRO = 'fsl-imx-wayland'",
+        "CONF_VERSION = '2'",
+        "ACCEPT_FSL_EULA = '1'",
+        "DISTRO_FEATURES:append = ' rauc'",
+        "EXTRA_IMAGE_FEATURES = 'debug-tweaks package-management'",
+        "PATCHRESOLVE = 'noop'",
+        "PACKAGECONFIG:append:pn-qemu-system-native = 'sdl'",
+        "IMAGE_FSTYPES += ' wic.zst ext4'",
+        "IMAGE_INSTALL:append = ' rauc libubootenv-bin tree net-tools helloworld123'",
+        "PACKAGE_CLASSES = 'package_rpm'",
+        "USER_CLASSES = 'buildstats'",
+        "WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'",
+      ]
+    },
+    "imx8mm-evk-scarthgap-home": {
+      "target": "imx-image-core",
+      "local.conf": [
+        "MACHINE = 'imx8mm-lpddr4-evk'",
+        "DISTRO = 'fsl-imx-wayland'",
+        "CONF_VERSION = '2'",
+        "ACCEPT_FSL_EULA = '1'",
+        "EXTRA_IMAGE_FEATURES = 'debug-tweaks package-management'",
+        "PATCHRESOLVE = 'noop'",
+        "PACKAGECONFIG:append:pn-qemu-system-native = 'sdl'",
+        "IMAGE_FSTYPES += ' wic.zst ext4'",
+        "IMAGE_INSTALL:append = ' python3-homeassistant tree net-tools helloworld123'",
+        "PACKAGE_CLASSES = 'package_rpm'",
+        "USER_CLASSES = 'buildstats'",
+        "WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'",
+        "LICENSE_FLAGS_ACCEPTED +=' commercial'",
+      ]
+    },
+    "imx8mm-evk-scarthgap-core": {
+      "target": "imx-image-core",
+      "local.conf": [
+        "MACHINE = 'imx8mm-lpddr4-evk'",
+        "DISTRO = 'fsl-imx-wayland'",
+        "CONF_VERSION = '2'",
+        "ACCEPT_FSL_EULA = '1'",
+        "EXTRA_IMAGE_FEATURES = 'debug-tweaks package-management'",
+        "PATCHRESOLVE = 'noop'",
+        "PACKAGECONFIG:append:pn-qemu-system-native = 'sdl'",
+        "IMAGE_FSTYPES += ' wic.zst ext4'",
+        "IMAGE_INSTALL:append = ' tree net-tools helloworld123'",
+        "PACKAGE_CLASSES = 'package_rpm'",
+        "USER_CLASSES = 'buildstats'",
+        "WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'",
+      ]
+    }
+  }
+}

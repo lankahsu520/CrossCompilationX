@@ -14,8 +14,10 @@ addtask display_banner before do_build
 
 LIC_FILES_CHKSUM = "file://Makefile;md5=7740947326d14f13a56b127b79e3cda2"
 
-SRC_URI = "file://helloworld123.c \
-           file://Makefile"
+SRC_URI = " \
+    file://helloworld123.c \
+    file://Makefile \
+"
 
 S = "${WORKDIR}"
 

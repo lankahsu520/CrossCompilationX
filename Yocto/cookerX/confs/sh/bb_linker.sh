@@ -1,7 +1,7 @@
 #!/bin/sh
 
-mkdir -p bb-lnk
-cd bb-lnk
+mkdir -p ${PJ_YOCTO_ROOT}/bb-lnk
+cd ${PJ_YOCTO_ROOT}/bb-lnk
 
 datetime_fn()
 {
@@ -41,8 +41,8 @@ exit_fn()
 main_fn()
 {
 	#create_lnk_fn "apache2"
-	rm *.bb
-	create_lnk_fn "avahi"
+	rm -f *.bb
+	create_lnk_fn "avahi_"
 
 	#create_lnk_fn "bluez5"
 	#create_lnk_fn "busybox_"

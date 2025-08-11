@@ -1,5 +1,5 @@
 {
-    "menu": "/yocto/cookerX/cooker-menu/imx8mm-evk-scarthgap-menu.json",
+    "menu": "/yocto/cookerX/cooker-menu/imx8mm-evk-scarthgap-emmc-menu.json",
     "layer-dir": "layers-scarthgap",
     "build-dir": "builds",
     "dl-dir": "/yocto-cache/downloads",
