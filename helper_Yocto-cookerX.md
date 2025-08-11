@@ -47,8 +47,8 @@ $ cooker --version
 ## 3.1. Quick Start
 
 > 請特別注意 `PJ_YOCTO_DOWNLOADS_DIR` 和 `PJ_YOCTO_SSTATE_DIR`，因為編譯真的很漫長，所以特別保留 downloads 和 sstate-cache 放在另一顆硬碟存放。
->
-> 如完全採用 make ，而沒有呼叫 cooker_123.sh，在編譯過程會失敗。
+
+> 這個有個設計，Ｍakefile（已執行 oe-init-build-env）後呼叫 cooker_123.sh，然後才會去執行 bitbake 等命令。
 
 | meta              | branch             | rev        |
 | ----------------- | ------------------ | ---------- |
