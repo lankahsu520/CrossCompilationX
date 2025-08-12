@@ -24,6 +24,6 @@ part / --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs.a --align 81
 part / --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs.b --align 8192 --size 4096M
 
 #part /data --ondisk mmcblk --fstype=ext4 --label data --align 8192 --source empty --size 0
-part /data --ondisk mmcblk --fstype=ext4 --label data --align 8192 --size 4096M
+part /root --ondisk mmcblk --fstype=ext4 --label home --align 8192 --size 4096M
 
 bootloader --ptable msdos

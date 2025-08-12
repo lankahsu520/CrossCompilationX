@@ -6,7 +6,24 @@ alias l="ls -CF"
 alias ls-type="ls  | xargs -n 1 file"
 alias free-mem="free -hwt"
 
+alias PATH-ROOT="PATH=/root:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
+
 alias echo-ln="echo"
+
+#******************************************************************************
+#** 20. Shell Scripts **
+#******************************************************************************
+function eval-it()
+{
+	DO_COMMAND="$*"
+	[ ! -z "${ECHO_COMMAND}" ] && echo "[${DO_COMMAND}]"
+	eval "${DO_COMMAND}"
+}
+
+function eval-do()
+{
+	eval-it "${DO_COMMAND}"
+}
 
 #******************************************************************************
 #** 1. File Handler **
@@ -145,3 +162,27 @@ function find-locate()
 		echo $HINT
 	fi
 }
+
+#******************************************************************************
+#** 4. String Handler **
+#******************************************************************************
+#** String Handler **
+#alias gr="grep --exclude-dir='.svn' --exclude-dir='.git' -nrs"
+function grep-helper()
+{
+	HINT="Usage: ${FUNCNAME[0]} <string>"
+	STRING1="$*"
+
+	if [ ! -z "${STRING1}" ]; then
+		for ITEM in ${STRING1}; do
+		(
+			DO_COMMAND="(grep -nrs '${ITEM}' *)"
+			eval-it "$DO_COMMAND"
+		)
+		done
+	else
+		echo $HINT
+	fi
+}
+
+alias gr123="grep-helper"

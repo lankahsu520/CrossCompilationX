@@ -1,13 +1,18 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
-SRC_URI += "file://automations.yaml \
-            file://configuration.yaml \
-            file://scenes.yaml \
-            file://scripts.yaml \
-            file://secrets.yaml \
+SRC_URI += " \
+     file://homeassistant.service \
 "
 
-HOMEASSISTANT_CONFIG_DIR ?= "${localstatedir}/lib/homeassistant"
+#SRC_URI += "file://automations.yaml \
+#            file://configuration.yaml \
+#            file://scenes.yaml \
+#            file://scripts.yaml \
+#            file://secrets.yaml \
+#"
+
+#HOMEASSISTANT_CONFIG_DIR ?= "${localstatedir}/lib/homeassistant"
+HOMEASSISTANT_CONFIG_DIR= "/root/.homeassistant"
 
 RDEPENDS:${PN} += " \
     python3-onvif-zeep-async \
@@ -21,8 +26,8 @@ RDEPENDS:${PN} += " \
 "
 
 do_install:append() {
-    install -d ${D}${HOMEASSISTANT_CONFIG_DIR}
-    install -m 0644 ${UNPACKDIR}/*.yaml ${D}${HOMEASSISTANT_CONFIG_DIR}/
+    #install -d ${D}${HOMEASSISTANT_CONFIG_DIR}
+    #install -m 0644 ${UNPACKDIR}/*.yaml ${D}${HOMEASSISTANT_CONFIG_DIR}/
+    rm -rf ${D}/root
 }
-
 
