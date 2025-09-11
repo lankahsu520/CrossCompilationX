@@ -27,48 +27,48 @@ cook-clean:
 	rm -f .cook-*
 
 cook-target-clean:
-	$(PJ_ROOT)/confs/sh/cooker_123.sh clean
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh clean
 
 cook-lnk:
-	$(PJ_ROOT)/confs/sh/cooker_123.sh lnk
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh lnk
 
 cook-dry-run:
-	$(PJ_ROOT)/confs/sh/cooker_123.sh dry-run
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh dry-run
 
 cook-build: .cook-patched
-	$(PJ_ROOT)/confs/sh/cooker_123.sh build
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh build
 
 cook-rebuild: cook-clean cook-target-clean cook-build
 
 cook-bundle:
 ifneq ("$(PJ_YOCTO_BUNDLE)", "")
-	$(PJ_ROOT)/confs/sh/cooker_123.sh bundle
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh bundle
 endif
 
 cook:
-	$(PJ_ROOT)/confs/sh/cooker_123.sh cook
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh cook
 
 .cook-init:
 	# please use cooker_123.sh, dont call "cooker init xxx/xxx.json"
-	$(PJ_ROOT)/confs/sh/cooker_123.sh init
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh init
 	touch $@
 
 .cook-update: .cook-init
-	$(PJ_ROOT)/confs/sh/cooker_123.sh update
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh update
 	touch $@
 
 .cook-generate: .cook-update 
-	$(PJ_ROOT)/confs/sh/cooker_123.sh generate
+	$(PJ_ROOT_DIR)/confs/sh/cooker_123.sh generate
 	touch $@
 
 .cook-patched: .cook-generate
-	#@for item in $(PJ_YOCTO_LAYERS_PATH_PATCH); do \
+	#@for item in $(PJ_YOCTO_LAYERS_PATCH_FOLDER); do \
 	#	if [ -d "patches/$$item" ]; then \
-	#		cp -avr patches/$$item/* $(PJ_YOCTO_LAYERS_PATH); \
+	#		cp -avr patches/$$item/* $(PJ_YOCTO_LAYERS_FOLDER); \
 	#	fi; \
 	#done
-	@if [ -d patches/$(PJ_YOCTO_LAYERS_PATH) ]; then \
-		cp -avr patches/$(PJ_YOCTO_LAYERS_PATH)/* $(PJ_YOCTO_LAYERS_PATH); \
+	@if [ -d patches/$(PJ_YOCTO_LAYERS_FOLDER) ]; then \
+		cp -avr patches/$(PJ_YOCTO_LAYERS_FOLDER)/* $(PJ_YOCTO_LAYERS_FOLDER); \
 	fi
 	touch $@
 
@@ -78,7 +78,7 @@ builds-history:
 	&& buildhistory-collect-srcrevs -a
 
 bb-linker:
-	$(PJ_ROOT)/confs/sh/bb_linker.sh
+	$(PJ_ROOT_DIR)/confs/sh/bb_linker.sh
 
 lnk-generate: cook-lnk bb-linker
 

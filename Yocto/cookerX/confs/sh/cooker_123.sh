@@ -25,7 +25,7 @@ TEE_ARG=""
 
 INTERACTIVE=""
 
-COOKER_MENU="$PJ_COOKER_MENU_PATH/$PJ_COOKER_MENU"
+COOKER_MENU="$PJ_COOKER_MENU_FOLDER/$PJ_COOKER_MENU"
 COOKER_VERBOSE="-v"
 #COOKER_DRY="-n"
 
@@ -118,7 +118,7 @@ cfg_fn()
 
 	export PJ_YOCTO_DOWNLOADS_DIR=`realpath $PJ_YOCTO_DOWNLOADS_DIR`
 	export PJ_YOCTO_SSTATE_DIR=`realpath $PJ_YOCTO_SSTATE_DIR`
-	jq . .cookerconfig_bak | jq ".menu=\"`pwd`/$PJ_COOKER_MENU_PATH/$PJ_COOKER_MENU\"" | jq ".[\"layer-dir\"]=\"$PJ_YOCTO_LAYERS_PATH\"" | jq ".[\"build-dir\"]=\"$PJ_YOCTO_BUILDS_PATH\"" | jq ".[\"sstate-dir\"]=\"$PJ_YOCTO_SSTATE_DIR\"" | jq ".[\"dl-dir\"]=\"$PJ_YOCTO_DOWNLOADS_DIR\"" | jq -c . > .cookerconfig
+	jq . .cookerconfig_bak | jq ".menu=\"`pwd`/$PJ_COOKER_MENU_FOLDER/$PJ_COOKER_MENU\"" | jq ".[\"layer-dir\"]=\"$PJ_YOCTO_LAYERS_FOLDER\"" | jq ".[\"build-dir\"]=\"$PJ_YOCTO_BUILDS_FOLDER\"" | jq ".[\"sstate-dir\"]=\"$PJ_YOCTO_SSTATE_DIR\"" | jq ".[\"dl-dir\"]=\"$PJ_YOCTO_DOWNLOADS_DIR\"" | jq -c . > .cookerconfig
 
 	return 0
 }

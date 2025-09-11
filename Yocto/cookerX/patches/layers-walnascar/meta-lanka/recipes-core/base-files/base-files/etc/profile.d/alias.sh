@@ -10,6 +10,10 @@ alias PATH-ROOT="PATH=/root:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sb
 
 alias echo-ln="echo"
 
+alias tree-1="tree -L 1"
+alias tree-2="tree -L 2"
+alias tree-3="tree -L 3"
+
 #******************************************************************************
 #** 20. Shell Scripts **
 #******************************************************************************
@@ -24,6 +28,7 @@ function eval-do()
 {
 	eval-it "${DO_COMMAND}"
 }
+
 
 #******************************************************************************
 #** 1. File Handler **
@@ -45,13 +50,14 @@ function diffX()
 }
 
 #** 1.6. Finder (find - search for files in a directory hierarchy) **
-export FIND_PATH="."
-export FIND_PRUNE_ARG="-name lost+found -prune -o"
+export FIND_DIR="."
+#export FIND_PRUNE_ARG="-name lost+found -prune -o"
+export FIND_PRUNE_ARG="\( -name lost+found -o -name .svn -o -name .git -o -name .venv \) -prune -o"
 export FIND_PRINT_ARG="-print"
 
 function find-environment()
 {
-	echo "FIND_PATH=${FIND_PATH}"
+	echo "FIND_DIR=${FIND_DIR}"
 	echo "FIND_PRUNE_ARG=${FIND_PRUNE_ARG}"
 	echo "FIND_PRINT_ARG=${FIND_PRINT_ARG}"
 }
@@ -62,7 +68,7 @@ function find-min()
 	MMIN1=$1
 
 	if [ ! -z "${MMIN1}" ]; then
-		DO_COMMAND="(find ${FIND_PATH} ${FIND_PRUNE_ARG} -mmin -${MMIN1} ${FIND_PRINT_ARG};)"
+		DO_COMMAND="(find ${FIND_DIR} ${FIND_PRUNE_ARG} -mmin -${MMIN1} ${FIND_PRINT_ARG};)"
 		eval-it "$DO_COMMAND"
 	else
 		echo $HINT
@@ -75,7 +81,7 @@ function find-day()
 	MTIME1=$1
 
 	if [ ! -z "${MTIME1}" ]; then
-		DO_COMMAND="(find ${FIND_PATH} ${FIND_PRUNE_ARG} -mtime -${MTIME1} ${FIND_PRINT_ARG};)"
+		DO_COMMAND="(find ${FIND_DIR} ${FIND_PRUNE_ARG} -mtime -${MTIME1} ${FIND_PRINT_ARG};)"
 		eval-it "$DO_COMMAND"
 	else
 		echo $HINT
@@ -88,7 +94,7 @@ function find-size()
 	SIZE1=$1
 
 	if [ ! -z "${SIZE1}" ]; then
-		DO_COMMAND="(find ${FIND_PATH} ${FIND_PRUNE_ARG} -type f -size ${SIZE1} ${FIND_PRINT_ARG};)"
+		DO_COMMAND="(find ${FIND_DIR} ${FIND_PRUNE_ARG} -type f -size ${SIZE1} ${FIND_PRINT_ARG};)"
 		eval-it "$DO_COMMAND"
 	else
 		echo $HINT
@@ -103,7 +109,7 @@ function find-name()
 	if [ ! -z "${FILE1}" ]; then
 		for ITEM in ${FILE1}; do
 		(
-			DO_COMMAND="(find ${FIND_PATH} ${FIND_PRUNE_ARG} -name ${ITEM} ${FIND_PRINT_ARG};)"
+			DO_COMMAND="(find ${FIND_DIR} ${FIND_PRUNE_ARG} -name ${ITEM} ${FIND_PRINT_ARG};)"
 			eval-it "$DO_COMMAND"
 		)
 		done
@@ -126,13 +132,13 @@ function find-bash_aliases()
 
 function find-type()
 {
-	DO_COMMAND="(find ${FIND_PATH} ${FIND_PRUNE_ARG} -type f ${FIND_PRINT_ARG} | xargs -n 1 file;)"
+	DO_COMMAND="(find ${FIND_DIR} ${FIND_PRUNE_ARG} -type f ${FIND_PRINT_ARG} | xargs -n 1 file;)"
 	eval-it "$DO_COMMAND"
 }
 
 function find-dup()
 {
-	DO_COMMAND="(find ${FIND_PATH} ${FIND_PRUNE_ARG} -type f -printf '%p -> %f\n' | sort -k2 | uniq -f1 --all-repeated=separate)"
+	DO_COMMAND="(find ${FIND_DIR} ${FIND_PRUNE_ARG} -type f -printf '%p -> %f\n' | sort -k2 | uniq -f1 --all-repeated=separate)"
 	eval-it "$DO_COMMAND"
 }
 
@@ -143,7 +149,7 @@ function find-path()
 	FILE2=$2
 
 	if [ ! -z "${PATH1}" ] && [ ! -z "${FILE2}" ]; then
-		DO_COMMAND="(cd ${PATH1}; find ${FIND_PATH} ${FIND_PRUNE_ARG} -name ${FILE2} ${FIND_PRINT_ARG}; cd - >/dev/null)"
+		DO_COMMAND="(cd ${PATH1}; find ${FIND_DIR} ${FIND_PRUNE_ARG} -name ${FILE2} ${FIND_PRINT_ARG}; cd - >/dev/null)"
 		eval-it "$DO_COMMAND"
 	else
 		echo $HINT
@@ -176,7 +182,7 @@ function grep-helper()
 	if [ ! -z "${STRING1}" ]; then
 		for ITEM in ${STRING1}; do
 		(
-			DO_COMMAND="(grep -nrs '${ITEM}' *)"
+			DO_COMMAND="(grep --exclude-dir='.svn' --exclude-dir='.git' -nrs '${ITEM}' *)"
 			eval-it "$DO_COMMAND"
 		)
 		done
