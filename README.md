@@ -36,7 +36,7 @@
 
 ```mermaid
 mindmap
-	Target Platform
+	root((Target Platform))
 		Loader
 			BIOS
 			Bootloader
@@ -70,7 +70,7 @@ mindmap
 
 ```mermaid
 mindmap
-	Development Platform
+	root((Development Platform))
 		Build tools
 			make
 			cmake
