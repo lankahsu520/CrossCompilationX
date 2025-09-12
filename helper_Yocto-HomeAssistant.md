@@ -715,7 +715,7 @@ $ bb-info python3-srptools
 $ bitbake -c build python3-srptools
 ```
 
-## 3.5. Add recipes - synologydsm
+## 3.5. Add recipes - synology
 
 #### py-synologydsm-api
 
@@ -730,7 +730,9 @@ $ bb-info python3-py-synologydsm-api
 $ bitbake -c build python3-py-synologydsm-api
 ```
 
-## 3.6. Add recipes - tuya_iot
+## 3.6. Add recipes - tuya
+
+> github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[tuya](https://github.com/home-assistant/core/tree/dev/tests/components/tuya)
 
 > [tuya-smart-life](https://github.com/tuya/tuya-smart-life)
 >
@@ -785,7 +787,9 @@ $ devtool build python3-tuya-device-sharing-sdk
 $ devtool reset python3-tuya-device-sharing-sdk
 ```
 
-## 3.7. Add recipes - pysensibo
+## 3.7. Add recipes - sensibo
+
+> github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[sensibo](https://github.com/home-assistant/core/tree/dev/tests/components/sensibo)
 
 #### miniaudio
 
@@ -821,7 +825,7 @@ $ bitbake -c cleanall python3-pysensibo
 $ bitbake -c build python3-pysensibo
 ```
 
-## 3.8. Add recipes - python_otbr_api
+## 3.8. Add recipes - OTBR
 
 #### bitstruct
 
@@ -854,7 +858,31 @@ $ bitbake -c cleanall python3-python-otbr-api
 $ bitbake -c build python3-python-otbr-api
 ```
 
-## 3.9. Add recipes - No module named 'xxxx'
+## 3.9. Add recipes - Xiaomi miio
+
+```bash
+$ pip install micloud
+$ pip install python-miio
+```
+
+#### micloud
+
+> pypi: [micloud 0.6](https://pypi.org/project/micloud)
+
+#### python-miio
+
+> pypi: [python-miio 0.5.12](https://pypi.org/project/python-miio)
+>
+> This library (and its accompanying cli tool) can be used to interface with devices using Xiaomi’s [miIO](https://github.com/OpenMiHome/mihome-binary-protocol/blob/master/doc/PROTOCOL.md) and MIoT protocols.
+
+```bash
+$ bitbake -s | grep python-miio
+# yocto 未內建 python3-python-miio
+$ bb-info python3-python-miio
+$ bitbake -c build python3-python-miio
+```
+
+## 3.10. Add recipes - No module named `xxxx`
 
 ```bash
 # 查看是否已經安裝至 yocto-rootfs 
