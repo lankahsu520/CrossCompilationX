@@ -20,6 +20,10 @@
 
 > 一套 Firmware 升級系統。有支援 `Dual Image`。
 
+> 網路上的範例和討論都很陽春，不只介紹殘缺，更是錯誤百出。
+>
+> 如果要花大把的時間去研讀官方文件，可能你的工作已經沒了。
+
 > [ChatGPT] meta-rauc 的功用
 >
 > `meta-rauc` 是一個專門為 **RAUC（Robust Auto-Update Controller）** 提供 Yocto 整合的 **Layer**，用途是讓你能輕鬆地在 Yocto 系統裡啟用、設定並建構 RAUC OTA 更新功能。
@@ -87,8 +91,6 @@ root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.rauc
 ```
 
 # 2. [meta-rauc](https://github.com/rauc/meta-rauc.git)
-
-> 網路上的範例和討論都很陽春，如果要花大把的時間去研讀官方文件，可能你的工作已經沒了。
 
 ## 2.1. Add layer
 
@@ -339,10 +341,10 @@ type=ext4
 bootname=B
 #mountpoint=/
 
-[slot.data.0]
+[slot.root.0]
 device=/dev/mmcblk2p4
 type=ext4
-#mountpoint=/data
+#mountpoint=/root
 ```
 
 ### 3.2.3. rauc-conf.bbappend
@@ -402,7 +404,9 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/base-files
 >
 > /: 分割兩塊 rootfs
 >
-> data: 保留使用者區塊
+> ~~data: 保留使用者區塊~~
+>
+> root: 保留使用者區塊，直接對應到 home
 
 | Default            | Default Size                  | New Size                       | New                                           |
 | ------------------ | ----------------------------- | ------------------------------ | --------------------------------------------- |
@@ -411,7 +415,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/base-files
 | mmcblk2p1 (boot)   | 348,965,888<br>(~332.8 MB)    | 348,965,888<br/>(~332.8 MB)    | mmcblk2p1 (boot)<br>/run/media/boot-mmcblk2p1 |
 | mmcblk2p2 (rootfs) | 1,898,146,816<br>(~1.8 GB)    | 5,583,457,280<br>(~5.2 GB)     | mmcblk2p2 (rootfs A)                          |
 |                    |                               | 5,583,457,280<br/>(~5.2 GB)    | mmcblk2p3 (rootfs B)                          |
-|                    |                               | 4,294,967,296<br>(~4 GB)       | mmcblk2p4 (data)<br/>/data                    |
+|                    |                               | 4,294,967,296<br>(~4 GB)       | mmcblk2p4 (root)<br/>/root                    |
 | mmcblk2boot0       | 4,194,304                     |                                |                                               |
 | mmcblk2boot1       | 4,194,304                     |                                |                                               |
 
@@ -445,14 +449,14 @@ part / --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs.a --align 81
 part / --source rootfs --ondisk mmcblk --fstype=ext4 --label rootfs.b --align 8192 --size 4096M
 
 #part /data --ondisk mmcblk --fstype=ext4 --label data --align 8192 --source empty --size 0
-part /data --ondisk mmcblk --fstype=ext4 --label data --align 8192 --size 4096M
+part /root --ondisk mmcblk --fstype=ext4 --label root --align 8192 --size 4096M
 
 bootloader --ptable msdos
 ```
 
 ### 3.3.2. fstab
 
-> 開機自動掛載 /dev/mmcblk2p4 -> /data
+> 開機自動掛載 /dev/mmcblk2p4 -> /root
 
 ```bash
 # stock fstab - you probably want to override this with a machine specific one
@@ -466,7 +470,7 @@ tmpfs                /var/volatile        tmpfs      defaults              0  0
 # uncomment this if your device has a SD/MMC/Transflash slot
 #/dev/mmcblk0p1       /media/card          auto       defaults,sync,noauto  0  0
 
-/dev/mmcblk2p4 /data auto defaults 0 2
+/dev/mmcblk2p4 /root auto defaults 0 2
 ```
 
 ### 3.3.3. base-files_%.bbappend
