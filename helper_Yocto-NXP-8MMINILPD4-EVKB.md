@@ -458,19 +458,7 @@ $ ll bb-lnk/
 
 # 5. Burn Your Image
 
-## 5.1. uuu (Universal Update Utility)
-
-> [nxp-imx](https://github.com/nxp-imx)/**[mfgtools](https://github.com/nxp-imx/mfgtools)**
->
-> UUU is a tool designed for deploying images on Freescale/NXP I.MX chips.
-
-> 安裝 uuu；手邊是用win10。將 uuu.exe 複製到 C:\Windows\System32
-
-### 5.1.1. Boot Switch Setup
-
-> 請記得設定 Download Mode
-
-> 請參考 1. Overview 的圖示接上 UUU (Type-C) 接口。
+## 5.1. Boot Switch Setup
 
 | Switch                | `SW1101` [D1-D10] | `SW1102` [D1-D10] |
 | :-------------------- | :---------------- | :---------------- |
@@ -479,11 +467,26 @@ $ ll bb-lnk/
 | QSPI NOR Flash        | 0110xxxxxx        | 00000x0010        |
 | Serial Download Mode  | 1010xxxxxx        | xxxxxxxxx0        |
 
-### 5.1.2. Check USB
+## 5.2. Burn over uuu
+
+### 5.2.1. switch to `Download Mode`
+
+> 請記得先切換至 `Download Mode`（切換時記得要關機）
+
+> 請參考 1. Overview 的圖示接上 UUU (Type-C) 接口。
+
+### 5.2.2. uuu (Universal Update Utility)
+
+> [nxp-imx](https://github.com/nxp-imx)/**[mfgtools](https://github.com/nxp-imx/mfgtools)**
+>
+> UUU is a tool designed for deploying images on Freescale/NXP I.MX chips.
+
+> 安裝 uuu；手邊是用win10。將 uuu.exe 複製到 C:\Windows\System32
 
 ```bash
 $ cd /drives/d/WINAPPS/Worker/uuu
 
+# Check USB
 $ uuu -lsusb
 uuu (Universal Update Utility) for nxp imx chips -- libuuu_1.4.165-0-ge10b026
 
@@ -494,7 +497,7 @@ Connected Known USB Devices
         1:2      MX8MM   SDP:    0x1FC9 0x0134   0x0101
 ```
 
-### 5.1.3. Burn to eMMC
+### 5.2.3. Burn to eMMC
 
 #### A. NXP - android
 
@@ -626,7 +629,17 @@ $ uuu -b emmc_all \
  ./evkb/imx-image-core-imx8mm-lpddr4-evk.rootfs.wic
 ```
 
-## 5.2.  Burn by u-boot
+### 5.2.4. switch to `eMMC/SDHC3`
+
+> 請切換至 `eMMC/SDHC3`（切換時記得要關機），然後重新開機
+
+## 5.3.  Burn by u-boot
+
+### 5.3.1. switch to `eMMC/SDHC3`
+
+> 請切換至 `eMMC/SDHC3`（切換時記得要關機），然後重新開機
+
+### 5.3.2. u-boot mode
 
 #### A. rootfs
 
@@ -681,6 +694,29 @@ $ setexpr blkcnt ${filesize} + 0x1FF
 $ setexpr blkcnt ${blkcnt} / 0x200
 $ mmc write ${loadaddr} 0x2 ${blkcnt}
 ```
+
+## 5.4. Create bootable MicroSD drives
+
+### 5.4.1. switch to `MicroSD/SDHC2`
+
+> 請切換至 `MicroSD/SDHC2`（切換時記得要關機），然後重新開機
+
+### 5.4.2. Install Rufus on Windows
+
+> [Rufus](https://rufus.ie/en)
+
+### 5.4.3. Burn to MicroSD
+
+```bash
+$ unzstd imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
+$ mv imx-image-core-imx8mm-lpddr4-evk.rootfs.img
+```
+
+<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-rufus.png" alt="Yocto-NXP-8MMINILPD4-EVKB-rufus" style="zoom:50%;" />
+
+### 5.4.4. Boot from MicroSD
+
+> 插入 MicroSD 後開機
 
 # 6. Toolchain
 
