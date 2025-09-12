@@ -320,7 +320,7 @@ yocto                 /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar
 
 # 4. Outputs
 
-> 本篇都會採用 cookerX 進行解說
+> 本篇都會採用 cookerX 進行解說，下面章節的目錄介紹都是便於以後查看
 
 ```bash
 $ make lnk-generate
@@ -330,6 +330,8 @@ $ ./confs/sh/bb_linker.sh
 ```
 
 ## 4.1. rootfs
+
+> 此目錄將會是燒錄板子後的 rootfs
 
 ```bash
 $ echo builds-lnk/$PJ_YOCTO_BUILD-rootfs
@@ -361,7 +363,7 @@ drwxr-xr-x  9 lanka lanka 4096 Mar  9  2018 var/
 
 ### 4.1.1. rebuild rootfs
 
-> 在roofs 進行刪除後，進行還原
+> 重新建立 rootfs
 
 ```bash
 # ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs $PJ_YOCTO_BUILD-rootfs
@@ -377,8 +379,10 @@ $ bitbake -f $PJ_YOCTO_IMAGE -c rootfs
 
 ## 4.2. images-lnk
 
+>  images 會整理在此目錄底下
+
 ```bash
-$ ll images-lnk/$ tree -L 4 images-lnk
+$ tree -L 4 images-lnk
 images-lnk
 ├── environment.txt
 ├── imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk/imx-boot-imx8mm-lpddr4-evk-sd.bin-flash_evk
@@ -396,6 +400,8 @@ images-lnk
 ### 4.2.1. Info of wic
 
 > 不管是用 Official or cookerX 都會產出 imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst。
+>
+> *.wic 和 .img 是相同的，只是副檔名不同而已。
 
 ```bash
 # install zstd
@@ -418,6 +424,8 @@ Num     Start        End          Size      Fstype
 
 ### 4.2.2. Build History
 
+> 將存下編譯過程，方便追蹤。
+
 ```bash
 $ cat images-lnk/pn-buildlist
 $ cat images-lnk/task-depends.dot
@@ -426,6 +434,8 @@ $ cat images-lnk/$PJ_YOCTO_IMAGE_MANIFEST
 ```
 
 ### 4.2.3. List of Packages
+
+> 
 
 ```bash
 $ oe-pkgdata-util list-pkgs
@@ -447,18 +457,26 @@ builds-lnk
 ## 4.4. bb-lnk
 
 > 這邊是方便查看相關的 bb ，將它們進行連結
+>
+> 如果有比較長用的，可以編輯 ./confs/sh/bb_linker.sh
 
 ```bash
 $ ./confs/sh/bb_linker.sh
-```
 
-```bash
-$ ll bb-lnk/
+$ tree -L 1 bb-lnk/
+bb-lnk/
+└── avahi_0.8.bb -> ../layers-walnascar/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
+
+0 directories, 1 file
 ```
 
 # 5. Burn Your Image
 
 ## 5.1. Boot Switch Setup
+
+> 此公板提供了4種開機模式。
+>
+> 此處有用到 `eMMC/uSDHC3`、`MicroSD/SDHC2` 和 `Serial Download Mode`。
 
 | Switch                | `SW1101` [D1-D10] | `SW1102` [D1-D10] |
 | :-------------------- | :---------------- | :---------------- |
@@ -706,6 +724,8 @@ $ mmc write ${loadaddr} 0x2 ${blkcnt}
 > [Rufus](https://rufus.ie/en)
 
 ### 5.4.3. Burn to MicroSD
+
+> *.wic 和 .img 是相同的，只是副檔名不同而已。
 
 ```bash
 $ unzstd imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
