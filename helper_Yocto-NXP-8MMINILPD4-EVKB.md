@@ -1,6 +1,6 @@
 # [Yocto](https://www.yoctoproject.org) [NXP i.MX 8M Mini LPDDR4 EVKB](https://www.nxp.com/design/design-center/development-boards-and-designs/8MMINILPD4-EVK)
 
-# (8MMINILPD4‑EVKB)
+# (8MMINILPD4-EVKB)
 
 [![](https://img.shields.io/badge/Powered%20by-lankahsu%20-brightgreen.svg)](https://github.com/lankahsu520/HelperX)
 [![GitHub license][license-image]][license-url]
@@ -52,7 +52,27 @@
 
 # 3. Building
 
-## 3.1. Official steps
+## 3.1. DL_DIR and SSTATE_DIR
+
+> yocto 在編譯時會下載大量的檔案，建議安排特定的硬碟去存放，可以加速編輯
+>
+> DL_DIR = "/yocto-cache/downloads/"
+> SSTATE_DIR = "/yocto-cache/sstate-cache"
+>
+> 以下的存放方式是個人喜好，
+
+```bash
+├── yocto
+│   ├── 8MMINILPD4-EVKB-scarthgap
+│   ├── 8MMINILPD4-EVKB-walnascar
+│   ├── cookerX-scarthgap
+│   └── cookerX-walnascar
+└── yocto-cache
+    ├── downloads
+    └── sstate-cache
+```
+
+## 3.2. Official steps
 
 > [i.MX Repo Manifest](https://github.com/nxp-imx/imx-manifest)
 >
@@ -74,7 +94,7 @@
 | imx-linux-langdale   | 4.1   | [imx-6.1.1-1.0.1.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-langdale/imx-6.1.1-1.0.1.xml) |
 | imx-linux-kirkstone  | 4.0   | [imx-5.15.71-2.2.2.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-kirkstone/imx-5.15.71-2.2.2.xml) |
 
-### 3.1.1. Configuration
+### 3.2.1. Configuration
 
 #### A. MACHINE
 
@@ -104,14 +124,22 @@
 | meta-imx       |      | https://github.com/nxp-imx/meta-imx         | NXP 官方                   |
 | meta-freescale |      | https://github.com/Freescale/meta-freescale | 社群（Freescale/NXP 社群） |
 
-### 3.1.3. build imx-image-xxx
+### 3.2.3. Setup Yocto Project BSP
 
-> 共用 DL_DIR 和 SSTATE_DIR。
+```bash
+$ mkdir ~/bin
+$ curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+$ chmod a+x ~/bin/repo
+$ export PATH=~/bin:$PATH
+```
 
 #### A. walnascar (5.2)
 
 ```bash
-# for walnascar
+$ pwd
+/yocto
+$ mkdir -p 8MMINILPD4-EVKB-walnascar; cd /yocto/8MMINILPD4-EVKB-walnascar
+
 $ repo init -u https://github.com/nxp-imx/imx-manifest \
  -b imx-linux-walnascar \
  -m imx-6.12.20-2.0.0.xml
@@ -119,71 +147,77 @@ $ repo sync
 ```
 
 ```bash
-$ vi setup-environment
-# 修改
-# DL_DIR = "/yocto-cache/downloads/"
-# 新增
-# SSTATE_DIR = "/yocto-cache/sstate-cache"
-
 # Setup the build folder for a BSP release
 $ MACHINE=imx8mm-lpddr4-evk \
  DISTRO=fsl-imx-wayland \
  source ./imx-setup-release.sh -b build-wayland
 
-$ cat conf/local.conf
-MACHINE ??= 'imx8mm-lpddr4-evk'
-DISTRO ?= 'fsl-imx-wayland'
-EXTRA_IMAGE_FEATURES ?= "allow-empty-password empty-root-password allow-root-login"
-USER_CLASSES ?= "buildstats"
-PATCHRESOLVE = "noop"
-BB_DISKMON_DIRS ??= "\
-    STOPTASKS,${TMPDIR},1G,100K \
-    STOPTASKS,${DL_DIR},1G,100K \
-    STOPTASKS,${SSTATE_DIR},1G,100K \
-    STOPTASKS,/tmp,100M,100K \
-    HALT,${TMPDIR},100M,1K \
-    HALT,${DL_DIR},100M,1K \
-    HALT,${SSTATE_DIR},100M,1K \
-    HALT,/tmp,10M,1K"
-PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
-CONF_VERSION = "2"
-
+$ vi conf/local.conf
 DL_DIR = "/yocto-cache/downloads/"
 SSTATE_DIR = "/yocto-cache/sstate-cache"
-ACCEPT_FSL_EULA = "1"
 
-# Switch to Debian packaging and include package-management in the image
+# 如果不安裝 homeassistant 可跳過以下修改
 PACKAGE_CLASSES = "package_deb"
-EXTRA_IMAGE_FEATURES += "package-management"
-
-#$ bitbake core-image-minimal
-#$ bitbake imx-image-full
-$ bitbake imx-image-core
+LICENSE_FLAGS_ACCEPTED +=' commercial'
+IMAGE_INSTALL:append = ' python3-homeassistant tree'
 ```
 
 #### B. scarthgap (5.0)
 
 ```bash
-# Download the Yocto Project BSP
-# for scarthgap
-$ mkdir -p 8MMINILPD4-EVK; cd 8MMINILPD4-EVK
+$ pwd
+/yocto
+$ mkdir -p 8MMINILPD4-EVKB-scarthgap; cd /yocto/8MMINILPD4-EVKB-scarthgap
+
 $ repo init -u https://github.com/nxp-imx/imx-manifest \
  -b imx-linux-scarthgap \
  -m imx-6.6.52-2.2.0.xml
 $ repo sync
 ```
 
-## 3.2. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/helper_cookerX.md)
+```bash
+# Setup the build folder for a BSP release
+$ MACHINE=imx8mm-lpddr4-evk \
+ DISTRO=fsl-imx-wayland \
+ source ./imx-setup-release.sh -b build-wayland
 
-### 3.2.1. Configuration
+# 修改
+# DL_DIR = "/yocto-cache/downloads/"
+# SSTATE_DIR = "/yocto-cache/sstate-cache"
+$ vi conf/local.conf
+DL_DIR = "/yocto-cache/downloads/"
+SSTATE_DIR = "/yocto-cache/sstate-cache"
+
+# 如果不安裝 homeassistant 可跳過以下修改
+# package_deb 在編譯 python3-bluetooth-adapters 時會失敗
+PACKAGE_CLASSES = "package_rpm"
+LICENSE_FLAGS_ACCEPTED +=' commercial'
+IMAGE_INSTALL:append = ' python3-homeassistant tree'
+```
+
+### 3.2.4. Build imx-image-xxx
+
+```bash
+# 如果 Ｈost 主機重新開機或是重新登入時
+$ cd /yocto/8MMINILPD4-EVKB-walnascar
+$ . setup-environment build-wayland
+
+#$ bitbake core-image-minimal
+#$ bitbake imx-image-full
+$ bitbake imx-image-core
+```
+
+## 3.3. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/helper_cookerX.md)
+
+### 3.3.1. Configuration
 
 > 這邊參考 [i.MX Repo Manifest](https://github.com/nxp-imx/imx-manifest) 進行整合。
 
 > <font color="red">Yocto 的更新很快，i.MX 的更新腳步還算快的，這是一個很好的考量項目。</font>
 >
-> 曾經有遇過客戶凡事都要追求最新的版本，對於有些晶片廠就不太會花這時間去維復（發哥，說的就是你！），公司在後續開發就有問題。
+> 曾經有遇過客戶凡事都要追求最新的版本，而有些晶片廠不會花太多時間進行維復（發哥，說的就是你！），於後期的開發就會有問題，這是在選擇晶片時要考慮的項目。
 >
-> Yocto 不見得向下相容，編譯時間很久，佔用空間很大；但是支援度廣！
+> Yocto 不見得都會向下相容，編譯時間很久，佔用空間很大，這也是考量點！不過因為支援度廣，不失一個選擇。
 
 #### A.  walnascar (5.2)
 
@@ -207,7 +241,7 @@ $ repo sync
 | imx8mm-scarthgap-rauc.conf               | v     | v    |                |
 | imx8mm-scarthgap-core.conf               | v     |      |                |
 
-### 3.2.2. build imx-image-xxx
+### 3.3.2. build imx-image-xxx
 
 ```bash
 $ python -V
@@ -227,7 +261,7 @@ cooker update
 cooker generate
 cooker  -v build imx8mm-evk-walnascar-core
 ```
-## 3.3. List of Images
+## 3.4. List of Images
 
 | IMAGE                | DESC                                                         |
 | -------------------- | ------------------------------------------------------------ |
@@ -246,7 +280,7 @@ $ bitbake -e imx-image-core | grep ^DESCRIPTION=
 DESCRIPTION="This is the basic core image with minimal tests"
 ```
 
-## 3.4. List of Layers
+## 3.5. List of Layers
 
 ```bash
 $ bitbake-layers show-layers
