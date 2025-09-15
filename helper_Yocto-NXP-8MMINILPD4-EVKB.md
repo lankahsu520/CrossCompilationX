@@ -459,7 +459,7 @@ builds-lnk
 
 > 這邊是方便查看相關的 bb ，將它們進行連結
 >
-> 如果有比較長用的，可以編輯 ./confs/sh/bb_linker.sh
+> 如果有比較常用的，可以編輯 ./confs/sh/bb_linker.sh
 
 ```bash
 $ ./confs/sh/bb_linker.sh
@@ -776,7 +776,7 @@ Each time you wish to use the SDK in a new shell session, you need to source the
 ```bash
 $ make toolchain-pure
 # or
-bitbake meta-toolchain
+$ bitbake meta-toolchain
 ```
 
 ## 6.2. Helloworld.c
