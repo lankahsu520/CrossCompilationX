@@ -183,6 +183,17 @@ Num     Start        End          Size      Fstype
  2      58720256    233202687    174482432  ext4
 ```
 
+#### A. mount wic
+
+```bash
+$ sudo mkdir -p /tmp/wic
+# 58720256=114688*512
+$ sudo mount -o loop,offset=$((114688 * 512)) imx-image-core-imx8mm-lpddr4-evk.rootfs.wic /tmp/wic
+$ tree -L 1 /tmp/wic/
+
+$ sudo umount /tmp/wic
+```
+
 ### 4.2.2. Build History
 
 ```bash

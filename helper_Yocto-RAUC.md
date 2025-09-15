@@ -987,8 +987,11 @@ Num     Start        End          Size      Fstype
  4   11534336000  15829303295   4294967296  ext4
 ```
 
+#### A. mount wic
+
 ```bash
 $ sudo mkdir -p /tmp/wic
+# 8388608=16384*512
 $ sudo mount -o loop,offset=$((16384 * 512)) imx-image-core-imx8mm-lpddr4-evk.rootfs.wic /tmp/wic
 
 # 看看有沒有 boot.scr
