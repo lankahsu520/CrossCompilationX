@@ -57,6 +57,7 @@
 > yocto 在編譯時會下載大量的檔案，建議安排特定的硬碟去存放，可以加速編輯
 >
 > DL_DIR = "/yocto-cache/downloads/"
+>
 > SSTATE_DIR = "/yocto-cache/sstate-cache"
 >
 > 以下的存放方式是個人喜好，
