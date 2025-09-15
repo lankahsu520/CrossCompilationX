@@ -729,7 +729,7 @@ $ mmc write ${loadaddr} 0x2 ${blkcnt}
 
 ```bash
 $ unzstd imx-image-core-imx8mm-lpddr4-evk.rootfs.wic.zst
-$ mv imx-image-core-imx8mm-lpddr4-evk.rootfs.img
+$ mv imx-image-core-imx8mm-lpddr4-evk.rootfs.wic imx-image-core-imx8mm-lpddr4-evk.rootfs.img
 ```
 
 <img src="./images/Yocto-NXP-8MMINILPD4-EVKB-rufus.png" alt="Yocto-NXP-8MMINILPD4-EVKB-rufus" style="zoom:50%;" />
