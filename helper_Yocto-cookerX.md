@@ -285,15 +285,29 @@ lrwxrwxrwx  1 lanka lanka   61 Jul  9 11:51 zlib_1.3.1.bb -> ../layers-scarthgap
 
 # 5. Burn Your Image
 
-## 5.1. Image flasher
+## 5.1. Create bootable MicroSD drives
 
 > 樹莓派是採用 SD-CARD 為儲取媒介，所以可以使用工具進行燒錄
+>
+> *.wic 和 .img 是相同的，只是副檔名不同而已。
+
+```bash
+$ mv core-image-base-raspberrypi3.wic core-image-base-raspberrypi3.img
+```
 
 #### A. [balenaEtcher](https://www.balena.io/etcher/)
 
 #### B. [win32diskimager](https://sourceforge.net/projects/win32diskimager/)
 
 #### C. [rpi-imager](https://github.com/raspberrypi/rpi-imager)
+
+#### D. [Rufus](https://rufus.ie/en)
+
+<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-rufus.png" alt="Yocto-NXP-8MMINILPD4-EVKB-rufus" style="zoom:50%;" />
+
+## 5.2. Boot from MicroSD
+
+> 插入 MicroSD 後開機
 
 # 6. Toolchain
 
