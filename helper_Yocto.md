@@ -119,10 +119,10 @@
 ## 2.1. version
 
 ```bash
-$ bitbake -e virtual/kernel | grep "^PN"
+$ bitbake -e virtual/kernel | grep "^PN="
 PN="linux-raspberrypi"
 
-$ bitbake -e virtual/kernel | grep "^PV"
+$ bitbake -e virtual/kernel | grep "^PV="
 PV="5.15.56+gitAUTOINC+3b1dc2f1fc_a90998a3e5"
 
 $ cat ./$PJ_YOCTO_LAYERS/poky/meta-poky/conf/distro/poky.conf | grep DISTRO_VERSION
@@ -456,5 +456,5 @@ $ rm builds/*/bitbake.lock
 
 # License
 
-> [HelperX](https://github.com/lankahsu520/HelperX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
+> [CrossCompilationX](https://github.com/lankahsu520/CrossCompilationX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
 
