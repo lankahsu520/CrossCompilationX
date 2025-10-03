@@ -90,11 +90,13 @@ $ uuu -b emmc_all \
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
 
-# 2. [meta-rauc](https://github.com/rauc/meta-rauc.git)
+# 3. Layers
 
-## 2.1. Add layer
+## 3.1. [meta-rauc](https://github.com/rauc/meta-rauc.git)
 
-### 2.1.1. update $PJ_COOKER_MENU
+### 3.1.1. Add layer
+
+#### A. update $PJ_COOKER_MENU
 
 >  DISTRO_FEATURES: rauc
 >
@@ -168,13 +170,13 @@ LAYERSERIES_COMPAT_rauc = "nanbield scarthgap"
 INHERIT += "sanity-meta-rauc"
 ```
 
-## 2.2. Nothing
+### 3.1.2. Nothing
 
 > 如果只是加入 meta-rauc 是沒有任何功用的。
 
-# 3. meta-rauc-plus
+## 3.2. meta-rauc-plus
 
-## 3.1. create-layer
+### 3.2.1. create-layer
 
 ```bash
 $ echo $PJ_YOCTO_LAYERS_DIR
@@ -200,7 +202,7 @@ $ cd-root
 $ make cook-clean
 ```
 
-### 3.1.1. update $PJ_COOKER_MENU
+#### A. update $PJ_COOKER_MENU
 
 ```bash
 $ echo $PJ_COOKER_MENU
@@ -243,7 +245,7 @@ $ vi cooker-menu/$PJ_COOKER_MENU
   }
 ```
 
-## 3.2. RAUC system configuration & verification keyring
+### 3.2.2. RAUC system configuration & verification keyring
 
 > [Bundle Formats](https://rauc.readthedocs.io/en/latest/reference.html#id9): plain, verity and crypt
 >
@@ -266,7 +268,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/rauc
 1 directory, 3 files
 ```
 
-### 3.2.1. Generate Testing Certificate
+#### A. Generate Testing Certificate
 
 > 建議使用 meta-rauc/scripts/openssl-ca.sh，加解密的處理，有時候只是差個空格都會失敗
 
@@ -314,7 +316,7 @@ $ tree -L 4 ${PJ_YOCTO_ROOT}/rauc-keys
 0 directories, 4 files
 ```
 
-### 3.2.2. system.cnf
+#### B. system.cnf
 
 > 使用  RAUC 進行系統更新時，會透過 D-Bus 與 rauc.service 溝通。而 service 將會參照  system.conf。
 
@@ -347,7 +349,7 @@ type=ext4
 #mountpoint=/root
 ```
 
-### 3.2.3. rauc-conf.bbappend
+#### C. rauc-conf.bbappend
 
 ```bbappend
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
@@ -366,7 +368,7 @@ do_install:append() {
 }
 ```
 
-## 3.3. Disk Partition
+### 3.2.3. Disk Partition
 
 > RAUC 實現了 `Dual Image`，於是 Disk 的配置也要改變。
 
@@ -396,7 +398,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/base-files
 2 directories, 2 files
 ```
 
-### 3.3.1. OpenEmbedded Kickstart (wks)
+#### A. OpenEmbedded Kickstart (wks)
 
 > 這邊有幾個重點，官網提供的設定只能測試用，而且錯誤很多
 >
@@ -435,7 +437,8 @@ Device         Boot    Start      End  Sectors   Size Id Type
 /dev/mmcblk2p4      22528000 30916607  8388608     4G 83 Linux
 ```
 
-#### A. imx-imx-boot-bootpart-lanka520.wks.in
+##### A.1. imx-imx-boot-bootpart-lanka520.wks.in
+
 
 ```bash
 part u-boot --source rawcopy --sourceparams="file=imx-boot.tagged" --ondisk mmcblk --no-table --align 33
@@ -454,7 +457,7 @@ part /root --ondisk mmcblk --fstype=ext4 --label root --align 8192 --size 4096M
 bootloader --ptable msdos
 ```
 
-### 3.3.2. fstab
+#### B. fstab
 
 > 開機自動掛載 /dev/mmcblk2p4 -> /root
 
@@ -473,7 +476,7 @@ tmpfs                /var/volatile        tmpfs      defaults              0  0
 /dev/mmcblk2p4 /root auto defaults 0 2
 ```
 
-### 3.3.3. base-files_%.bbappend
+#### C. base-files_%.bbappend
 
 ```bbappend
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
@@ -487,11 +490,11 @@ do_install:append() {
 }
 ```
 
-## 3.4. u-boot
+### 3.2.4. u-boot
 
 > 這邊主要因為要使用 fw_printenv
 
-### 3.4.1. u-boot-imx
+#### A. u-boot-imx
 
 > 網路上沒有一篇是對的，大多是複製貼上，就連官網也是。這邊讓大家知道如何查詢
 >
@@ -548,7 +551,7 @@ $ bitbake -c cleansstate u-boot-imx
 $ bitbake u-boot-imx
 ```
 
-### 3.4.2. libubootenv
+#### B. libubootenv
 
 > In Yocto Project 3.1, `u-boot-fw-utils`: functionally replaced by `libubootenv`
 >
@@ -594,7 +597,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-bsp/u-boot
 1 directory, 4 files
 ```
 
-#### A. fw_env.config
+##### B.1. fw_env.config
 
 > fw_printenv 操作時，需要使用 /etc/fw_env.config
 >
@@ -617,7 +620,7 @@ Cannot read environment, using default
 Cannot read default environment from file
 ```
 
-#### B. libubootenv_%.bbappend
+##### B.2. libubootenv_%.bbappend
 
 ```bbappend
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
@@ -631,7 +634,7 @@ do_install:append() {
 }
 ```
 
-### 3.4.3. RAUC Bundle
+#### C. RAUC Bundle
 
 > 這邊就是要產生 *.raucb
 
@@ -644,7 +647,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/images
 0 directories, 2 files
 ```
 
-#### A. update-bundle.bb
+##### C.1. update-bundle.bb
 
 > RAUC bundle generator
 
@@ -671,7 +674,7 @@ RAUC_CERT_FILE = "${COOKER_LAYER_DIR}/../rauc-keys/development-1.cert.pem"
 #RAUC_CASYNC_BUNDLE = "1"
 ```
 
-### 3.4.4. U-boot boot script
+#### D. U-boot boot script
 
 > u-boot-imx_%.bbappend : boot.cmd -> boot.scr
 > imx-image-core.bbappend : boot.scr -> IMAGE_BOOT_FILES
@@ -700,7 +703,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-core/images
 0 directories, 2 files
 ```
 
-#### A. boot.cmd
+##### D.1. boot.cmd
 
 ```cmd
 test -n "${BOOT_ORDER}" || setenv BOOT_ORDER "A B"
@@ -755,7 +758,7 @@ booti ${loadaddr} - ${fdt_addr_r}
 
 ```
 
-#### B. u-boot-imx_%.bbappend
+##### D.2. u-boot-imx_%.bbappend
 
 ```bbappend
 FILESEXTRAPATHS:append := "${THISDIR}/files:"
@@ -785,7 +788,7 @@ do_deploy:append() {
 
 ```
 
-#### C. imx-image-core.bbappend
+##### D.3. imx-image-core.bbappend
 
 ```bbappend
 
@@ -795,9 +798,9 @@ IMAGE_BOOT_FILES += " \
 
 ```
 
-## 3.5. kernel
+### 3.2.5. kernel
 
-### 3.5.1. linux-imx
+#### A. linux-imx
 
 ```bash
 $ bb-info linux-imx
@@ -830,7 +833,7 @@ RDEPENDS:kernel-image:imx8qxp-mek=""
 RDEPENDS:linux-imx-staticdev="linux-imx-dev (= 6.6.52+git-r0)"
 ```
 
-### 3.5.2. dm-verity.ko
+#### B. dm-verity.ko
 
 > 解決 LastError: Failed mounting bundle: Failed to load dm table: Invalid argument, check DM_VERITY, DM_CRYPT or CRYPTO_AES kernel options.
 
@@ -846,7 +849,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipes-kernel/linux
 1 directory, 2 files
 ```
 
-#### A. dm-verity.cfg
+##### B.1. dm-verity.cfg
 
 ```bash
 CONFIG_DM_VERITY=m
@@ -863,7 +866,7 @@ CONFIG_CRYPTO_USER_API_SKCIPHER=y
 
 ```
 
-#### B. linux-imx_%.bbappend
+##### B.2. linux-imx_%.bbappend
 
 > 有幾種可以設定 Kernel 的方式
 >
@@ -883,7 +886,7 @@ DELTA_KERNEL_DEFCONFIG:append = " dm-verity.cfg"
 
 ```
 
-#### C. menuconfig
+##### B.3. menuconfig
 
 ```bash
 # Device Drivers  ---> Multiple devices driver support (RAID and LVM)  ---> Verity target support
@@ -892,7 +895,7 @@ DELTA_KERNEL_DEFCONFIG:append = " dm-verity.cfg"
 $ bitbake -c menuconfig virtual/kernel
 ```
 
-#### D. .config
+##### B.4. .config
 
 ```bash
 $ vi $PJ_YOCTO_BUILD_DIR/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build/.config
@@ -901,7 +904,7 @@ $ vi $PJ_YOCTO_BUILD_DIR/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+
 $ cd $PJ_YOCTO_BUILD_DIR/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.6.52+git/build
 ```
 
-### 3.5.3. Build & Check
+#### C. Build & Check
 
 > 燒錄很花時間，所以請先驗證。
 >
@@ -1157,10 +1160,9 @@ drwxrwx--- 2 root disk     8192 Apr  5  2011 mcore-demos
 -rwxrwx--- 1 root disk   599952 Apr  5  2011 tee.bin
 
 root@imx8mm-lpddr4-evk:/mnt# cat /mnt/boot.scr
-
 ```
 
-# 5. Update raucb and Testing
+# 5. Showtime
 
 ```bash
 $ cp -avr images-lnk/*.raucb /tmp/
@@ -1169,7 +1171,7 @@ $ cp -avr images-lnk/*.raucb /tmp/
 root@imx8mm-lpddr4-evk:~# scp lanka@192.168.50.72:/tmp/update-bundle-imx8mm-lpddr4-evk.raucb /tmp
 ```
 
-## 5.1. Step by Step
+## 5.1. Update raucb and Testing
 
 #### A. A->B
 

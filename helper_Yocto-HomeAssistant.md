@@ -95,7 +95,9 @@ $ uuu -b emmc_all \
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
 
-# 2. [meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)
+# 3. Layers
+
+## 3.1. [meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)
 
 > 當初一開始接觸時是使用 2023.12.0，花了很長的時間，結果發現無法支援 HACS。
 >
@@ -116,11 +118,11 @@ root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.rauc
 | v     | nanbield (4.3),<br>scarthgap (5.0) | 2023.12.0             | 2024/03/20 05:10:32 | 5ee63318c53bec1bfc2e56221783c23c61b32a1e |
 |       | nanbield (4.3)                     | 2023.12.0             | 2024/02/25 05:56:17 | 863a92980349b6a80d03843ba2958b4d1deb131a |
 
-## 2.1. Add layer
+### 3.1.1. Add layer
 
 > 因為 homeassistant 相依很多套件，這邊就不列出所有的。
 
-### 2.1.1. update $PJ_COOKER_MENU
+#### A. update $PJ_COOKER_MENU
 
 >  IMAGE_INSTALL: python3-homeassistant
 >
@@ -185,9 +187,9 @@ $ cat $PJ_YOCTO_LAYERS_DIR/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1
 LICENSE_FLAGS = "commercial"
 ```
 
-## 2.2. Recipes
+### 3.1.2. Recipes
 
-### 2.2.1. python3-homeassistant
+#### A. python3-homeassistant
 
 ```bash
 $ oe-pkgdata-util list-pkg-files python3-homeassistant
@@ -198,7 +200,7 @@ $ bb-info python3-homeassistant
 $ bitbake -c build python3-homeassistant
 ```
 
-#### A. homeassistant.service
+##### A.1. homeassistant.service
 
 > HOMEASSISTANT_CONFIG_DIR : /var/lib/homeassistant
 
@@ -220,7 +222,7 @@ WantedBy=multi-user.target
 $ vi builds-lnk/$PJ_YOCTO_BUILD-rootfs/usr/lib/systemd/system/homeassistant.service
 ```
 
-### 2.2.2. python3-ha-av
+#### B. python3-ha-av
 
 ```bash
 $ oe-pkgdata-util list-pkg-files python3-ha-av
@@ -231,7 +233,7 @@ $ bb-info python3-ha-av
 $ bitbake -c build python3-ha-av
 ```
 
-### 2.2.3. python3-ha-ffmpeg
+#### C. python3-ha-ffmpeg
 
 ```bash
 $ oe-pkgdata-util list-pkg-files python3-ha-ffmpeg
@@ -242,137 +244,7 @@ $ bb-info python3-ha-ffmpeg
 $ bitbake -c build python3-ha-ffmpeg
 ```
 
-## 2.3. Check Image
-
-> 請先編譯出 image
-
-```bash
-# 編譯
-$ make
-# or
-$ bitbake imx-image-core
-```
-
-```bash
-$ cd-rootfs
-$ find123 ffmpeg pyav hass haffmpeg
-```
-
-## 2.4. Showtime
-
-> You should now be able to access Home Assistant via web browser usually under the address: 
->
-> http://<ip>:8123
->
-> 預設的 Port: 8123
-
-> 因為本篇不是研究 homeassistant，而是讓 homeassistant 在 NXP 8MMINILPD4‑EVKB 上執行。
-
-> http://192.168.31.62:8123
-
-<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-hass.png" alt="Yocto-NXP-8MMINILPD4-EVKB-hass" style="zoom:33%;" />
-
-### 2.4.1. Change listen port
-
-> 這邊是 run time 就進行修改
->
-> change default:8123 -> 12345
-
-> http://192.168.31.62:12345
-
-```bash
-root@imx8mm-lpddr4-evk:~# ps -aux | grep hass
-homeass+     400 50.3 13.6 2709920 262844 ?      Ssl  02:20   0:32 python3 /usr/bin/hass --skip-pip -c /var/lib/homeassistant
-root         600  0.0  0.0   3508  1280 ttymxc1  S+   02:21   0:00 grep hass
-
-root@imx8mm-lpddr4-evk:~# ls -al /var/lib/homeassistant
-total 1008
-drwxr-xr-x  7 homeassistant homeassistant   4096 Jul 14 02:20 .
-drwxr-xr-x 15 root          root            4096 Feb 27  2024 ..
--rw-r--r--  1 homeassistant homeassistant      9 Feb 27  2024 .HA_VERSION
-drwxr-xr-x  2 homeassistant homeassistant   4096 Jul 11 08:10 .cloud
-drwxr-xr-x  2 homeassistant homeassistant   4096 Jul 14 02:20 .storage
--rw-r--r--  1 homeassistant homeassistant      2 Feb 27  2024 automations.yaml
-drwxr-xr-x  4 homeassistant homeassistant   4096 Feb 27  2024 blueprints
--rw-r--r--  1 homeassistant homeassistant    295 Jul 14 02:20 configuration.yaml
-drwxr-xr-x  2 homeassistant homeassistant   4096 Feb 27  2024 deps
--rw-r--r--  1 homeassistant homeassistant  18980 Jul 14 02:21 home-assistant.log
--rw-r--r--  1 homeassistant homeassistant  42081 Jul 14 02:19 home-assistant.log.1
--rw-r--r--  1 homeassistant homeassistant      0 Jul 14 02:20 home-assistant.log.fault
--rw-r--r--  1 homeassistant homeassistant 679936 Jul 14 02:20 home-assistant_v2.db
--rw-r--r--  1 homeassistant homeassistant  32768 Jul 14 02:21 home-assistant_v2.db-shm
--rw-r--r--  1 homeassistant homeassistant 206032 Jul 14 02:21 home-assistant_v2.db-wal
--rw-r--r--  1 homeassistant homeassistant      0 Feb 27  2024 scenes.yaml
--rw-r--r--  1 homeassistant homeassistant      0 Feb 27  2024 scripts.yaml
--rw-r--r--  1 homeassistant homeassistant    161 Feb 27  2024 secrets.yaml
-drwxr-xr-x  2 homeassistant homeassistant   4096 Feb 27  2024 tts
-
-root@imx8mm-lpddr4-evk:~# vi /var/lib/homeassistant/configuration.yaml
-# 新增下面的設定
-http:
-  server_port: 12345
-
-root@imx8mm-lpddr4-evk:/# systemctl restart homeassistant.service
-# or
-root@imx8mm-lpddr4-evk:~# reboot
-```
-
-## 2.5. Debug
-
-> 比較有無 meta-homeassistant 後的狀況，方便評估是否
-
-### 2.5.1. homeassistant.service
-
-```bash
-root@imx8mm-lpddr4-evk:/# ps -aux | grep home
-homeass+     429  3.4 13.8 2771104 266664 ?      Ssl  07:38   0:46 python3 /usr/bin/hass --skip-pip -c /var/lib/homeassistant
-root         657  0.0  0.0   3508  1280 ttymxc1  S+   08:00   0:00 grep home
-
-root@imx8mm-lpddr4-evk:~# vi /usr/lib/systemd/system/homeassistant.service
-[Unit]
-Description=Home Assistant
-After=network.target
-
-[Service]
-Type=simple
-User=homeassistant
-ExecStart=/usr/bin/hass --skip-pip -c "/var/lib/homeassistant"
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-
-root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
-root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
-root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
-```
-
-### 2.5.2. /var/lib/homeassistant
-
-```bash
-root@imx8mm-lpddr4-evk:/var/lib/homeassistant# ls -al
-total 1432
-drwxr-xr-x  6 homeassistant homeassistant    4096 Jul 23 02:52 .
-drwxr-xr-x 15 root          root             4096 Jul 23 02:51 ..
--rw-r--r--  1 homeassistant homeassistant       9 Feb 27  2024 .HA_VERSION
-drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:51 .cloud
-drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 03:22 .storage
--rw-r--r--  1 root          root                2 Mar  9  2018 automations.yaml
-drwxr-xr-x  4 homeassistant homeassistant    4096 Jul 23 02:52 blueprints
--rw-r--r--  1 root          root              294 Mar  9  2018 configuration.yaml
--rw-r--r--  1 homeassistant homeassistant     796 Jul 23 03:08 home-assistant.log
--rw-r--r--  1 homeassistant homeassistant       0 Feb 27  2024 home-assistant.log.1
--rw-r--r--  1 homeassistant homeassistant       0 Feb 27  2024 home-assistant.log.fault
--rw-r--r--  1 homeassistant homeassistant    4096 Jul 23 02:51 home-assistant_v2.db
--rw-r--r--  1 homeassistant homeassistant   32768 Jul 23 03:31 home-assistant_v2.db-shm
--rw-r--r--  1 homeassistant homeassistant 1384352 Jul 23 03:31 home-assistant_v2.db-wal
--rw-r--r--  1 root          root                0 Mar  9  2018 scenes.yaml
--rw-r--r--  1 root          root                0 Mar  9  2018 scripts.yaml
--rw-r--r--  1 root          root              161 Mar  9  2018 secrets.yaml
-drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:52 tts
-```
-
-# 3. meta-homeassistant-plus
+## 3.2. meta-homeassistant-plus
 
 > 這邊要先有一個重要的認知，homeassistant 算是整合各家的 IoT 系統，當要整入 embedded 時，就有可能會有`缺失`，而這`缺失`是不是剛好是自己需要的，而之後將是個很大的考驗。
 >
@@ -380,7 +252,7 @@ drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:52 tts
 >
 > 問題是不是這樣，這邊不多解釋，但是 embedded engineer 必須了解。
 
-## 3.1. create-layer
+### 3.2.1. create-layer
 
 ```bash
 $ echo $PJ_YOCTO_LAYERS_DIR
@@ -412,11 +284,11 @@ $ bitbake -s | grep homeassistant-plus
 homeassistant-plus                                    :0.1-r0
 ```
 
-### 3.1.1. update $PJ_COOKER_MENU
+#### A. update $PJ_COOKER_MENU
 
 > 其本上不用更動
 
-### 3.1.2 show-recipes
+#### B. show-recipes
 
 ```bash
 $ bitbake-layers show-recipes homeassistant-plus
@@ -434,7 +306,7 @@ homeassistant-plus:
   meta-homeassistant-plus 0.1
 ```
 
-### 3.1.3. python3-homeassistant_%.bbappend
+#### C. python3-homeassistant_%.bbappend
 
 > 儘量不要去更改 python3-homeassistant.bb，而使用 *.bbappend
 
@@ -447,7 +319,7 @@ $ bitbake-layers show-appends | grep homeassistant
 $ bitbake -c build python3-homeassistant
 ```
 
-### 3.1.4. Files
+#### D. Files
 
 ```bash
 $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-homeassistant-plus/recipes-homeassistant-plus/homeassistant-plus
@@ -464,7 +336,7 @@ $ tree -L 4 ${PJ_YOCTO_LAYERS_DIR}/meta-homeassistant-plus/recipes-homeassistant
 1 directory, 7 files
 ```
 
-#### A. configuration.yaml
+##### D.1. configuration.yaml
 
 > 這邊是 compile time 就進行修改
 >
@@ -490,7 +362,7 @@ http:
 
 ```
 
-## 3.2. Add recipes - ONVIF
+### 3.2.2. Add recipes - ONVIF
 
 #### onvif-zeep
 
@@ -557,7 +429,7 @@ $ bb-info python3-zeep
 $ bitbake -c build python3-zeep
 ```
 
-## 3.3. Add recipes - Homekit
+### 3.2.3. Add recipes - Homekit
 
 #### aiohomekit
 
@@ -623,7 +495,7 @@ $ bb-info python3-lark
 $ bitbake -c build python3-lark
 ```
 
-## 3.4. Add recipes - Apple TV
+### 3.2.4. Add recipes - Apple TV
 
 #### chacha20poly1305
 
@@ -715,7 +587,7 @@ $ bb-info python3-srptools
 $ bitbake -c build python3-srptools
 ```
 
-## 3.5. Add recipes - synology
+### 3.2.5. Add recipes - synology
 
 #### py-synologydsm-api
 
@@ -730,7 +602,7 @@ $ bb-info python3-py-synologydsm-api
 $ bitbake -c build python3-py-synologydsm-api
 ```
 
-## 3.6. Add recipes - tuya
+### 3.2.6. Add recipes - tuya
 
 > github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[tuya](https://github.com/home-assistant/core/tree/dev/tests/components/tuya)
 
@@ -787,7 +659,7 @@ $ devtool build python3-tuya-device-sharing-sdk
 $ devtool reset python3-tuya-device-sharing-sdk
 ```
 
-## 3.7. Add recipes - sensibo
+### 3.2.7. Add recipes - sensibo
 
 > github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[sensibo](https://github.com/home-assistant/core/tree/dev/tests/components/sensibo)
 
@@ -825,7 +697,7 @@ $ bitbake -c cleanall python3-pysensibo
 $ bitbake -c build python3-pysensibo
 ```
 
-## 3.8. Add recipes - OTBR
+### 3.2.8. Add recipes - OTBR
 
 #### bitstruct
 
@@ -858,7 +730,7 @@ $ bitbake -c cleanall python3-python-otbr-api
 $ bitbake -c build python3-python-otbr-api
 ```
 
-## 3.9. Add recipes - Xiaomi miio
+### 3.2.9. Add recipes - Xiaomi miio
 
 ```bash
 $ pip install micloud
@@ -882,7 +754,7 @@ $ bb-info python3-python-miio
 $ bitbake -c build python3-python-miio
 ```
 
-## 3.10. Add recipes - No module named `xxxx`
+### 3.2.10. Add recipes - No module named `xxxx`
 
 ```bash
 # 查看是否已經安裝至 yocto-rootfs 
@@ -937,6 +809,158 @@ $ bitbake -s | grep pytest-sugar
 # yocto 未內建 python3-pytest-sugar
 $ bb-info python3-pytest-sugar
 $ bitbake -c build python3-pytest-sugar
+```
+
+# 4. Check
+
+## 4.1. Build
+
+### 4.1.1. Image
+
+```bash
+$ bitbake -e $(PJ_YOCTO_IMAGE) | grep ^IMAGE_FSTYPES=
+IMAGE_FSTYPES="  wic.zst ext4"
+
+# 編譯
+$ make image
+# or
+# bitbake $(PJ_YOCTO_IMAGE)
+$ bitbake imx-image-core
+```
+
+### 4.1.2. bundle
+
+```bash
+# 編譯
+$ make bundle
+# or
+# bitbake $(PJ_YOCTO_BUNDLE)
+$ bitbake imx-bundle
+```
+
+## 4.2. Check Image
+
+### 4.2.1. rootfs
+
+```bash
+$ cd-rootfs
+$ find123 ffmpeg pyav hass haffmpeg
+```
+
+# 5. Showtime
+
+## 5.1. Homepage
+
+> You should now be able to access Home Assistant via web browser usually under the address: 
+>
+> http://<ip>:8123
+>
+> 預設的 Port: 8123
+
+> 因為本篇不是研究 homeassistant，而是讓 homeassistant 在 NXP 8MMINILPD4‑EVKB 上執行。
+
+> http://192.168.31.62:8123
+
+<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-hass.png" alt="Yocto-NXP-8MMINILPD4-EVKB-hass" style="zoom:33%;" />
+
+## 5.2. Special listen port
+
+> 這邊是 run time 就進行修改
+>
+> change default:8123 -> 12345
+
+> http://192.168.31.62:12345
+
+```bash
+root@imx8mm-lpddr4-evk:~# ps -aux | grep hass
+homeass+     400 50.3 13.6 2709920 262844 ?      Ssl  02:20   0:32 python3 /usr/bin/hass --skip-pip -c /var/lib/homeassistant
+root         600  0.0  0.0   3508  1280 ttymxc1  S+   02:21   0:00 grep hass
+
+root@imx8mm-lpddr4-evk:~# ls -al /var/lib/homeassistant
+total 1008
+drwxr-xr-x  7 homeassistant homeassistant   4096 Jul 14 02:20 .
+drwxr-xr-x 15 root          root            4096 Feb 27  2024 ..
+-rw-r--r--  1 homeassistant homeassistant      9 Feb 27  2024 .HA_VERSION
+drwxr-xr-x  2 homeassistant homeassistant   4096 Jul 11 08:10 .cloud
+drwxr-xr-x  2 homeassistant homeassistant   4096 Jul 14 02:20 .storage
+-rw-r--r--  1 homeassistant homeassistant      2 Feb 27  2024 automations.yaml
+drwxr-xr-x  4 homeassistant homeassistant   4096 Feb 27  2024 blueprints
+-rw-r--r--  1 homeassistant homeassistant    295 Jul 14 02:20 configuration.yaml
+drwxr-xr-x  2 homeassistant homeassistant   4096 Feb 27  2024 deps
+-rw-r--r--  1 homeassistant homeassistant  18980 Jul 14 02:21 home-assistant.log
+-rw-r--r--  1 homeassistant homeassistant  42081 Jul 14 02:19 home-assistant.log.1
+-rw-r--r--  1 homeassistant homeassistant      0 Jul 14 02:20 home-assistant.log.fault
+-rw-r--r--  1 homeassistant homeassistant 679936 Jul 14 02:20 home-assistant_v2.db
+-rw-r--r--  1 homeassistant homeassistant  32768 Jul 14 02:21 home-assistant_v2.db-shm
+-rw-r--r--  1 homeassistant homeassistant 206032 Jul 14 02:21 home-assistant_v2.db-wal
+-rw-r--r--  1 homeassistant homeassistant      0 Feb 27  2024 scenes.yaml
+-rw-r--r--  1 homeassistant homeassistant      0 Feb 27  2024 scripts.yaml
+-rw-r--r--  1 homeassistant homeassistant    161 Feb 27  2024 secrets.yaml
+drwxr-xr-x  2 homeassistant homeassistant   4096 Feb 27  2024 tts
+
+root@imx8mm-lpddr4-evk:~# vi /var/lib/homeassistant/configuration.yaml
+# 新增下面的設定
+http:
+  server_port: 12345
+
+root@imx8mm-lpddr4-evk:/# systemctl restart homeassistant.service
+# or
+root@imx8mm-lpddr4-evk:~# reboot
+```
+
+# 6. Debug
+
+> 比較有無 meta-homeassistant 後的狀況，方便評估是否
+
+## 6.1. homeassistant.service
+
+```bash
+root@imx8mm-lpddr4-evk:/# ps -aux | grep home
+homeass+     429  3.4 13.8 2771104 266664 ?      Ssl  07:38   0:46 python3 /usr/bin/hass --skip-pip -c /var/lib/homeassistant
+root         657  0.0  0.0   3508  1280 ttymxc1  S+   08:00   0:00 grep home
+
+root@imx8mm-lpddr4-evk:~# vi /usr/lib/systemd/system/homeassistant.service
+[Unit]
+Description=Home Assistant
+After=network.target
+
+[Service]
+Type=simple
+User=homeassistant
+ExecStart=/usr/bin/hass --skip-pip -c "/var/lib/homeassistant"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
+root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
+root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
+```
+
+## 6.2. /var/lib/homeassistant
+
+```bash
+root@imx8mm-lpddr4-evk:/var/lib/homeassistant# ls -al
+total 1432
+drwxr-xr-x  6 homeassistant homeassistant    4096 Jul 23 02:52 .
+drwxr-xr-x 15 root          root             4096 Jul 23 02:51 ..
+-rw-r--r--  1 homeassistant homeassistant       9 Feb 27  2024 .HA_VERSION
+drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:51 .cloud
+drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 03:22 .storage
+-rw-r--r--  1 root          root                2 Mar  9  2018 automations.yaml
+drwxr-xr-x  4 homeassistant homeassistant    4096 Jul 23 02:52 blueprints
+-rw-r--r--  1 root          root              294 Mar  9  2018 configuration.yaml
+-rw-r--r--  1 homeassistant homeassistant     796 Jul 23 03:08 home-assistant.log
+-rw-r--r--  1 homeassistant homeassistant       0 Feb 27  2024 home-assistant.log.1
+-rw-r--r--  1 homeassistant homeassistant       0 Feb 27  2024 home-assistant.log.fault
+-rw-r--r--  1 homeassistant homeassistant    4096 Jul 23 02:51 home-assistant_v2.db
+-rw-r--r--  1 homeassistant homeassistant   32768 Jul 23 03:31 home-assistant_v2.db-shm
+-rw-r--r--  1 homeassistant homeassistant 1384352 Jul 23 03:31 home-assistant_v2.db-wal
+-rw-r--r--  1 root          root                0 Mar  9  2018 scenes.yaml
+-rw-r--r--  1 root          root                0 Mar  9  2018 scripts.yaml
+-rw-r--r--  1 root          root              161 Mar  9  2018 secrets.yaml
+drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:52 tts
 ```
 
 # Appendix
