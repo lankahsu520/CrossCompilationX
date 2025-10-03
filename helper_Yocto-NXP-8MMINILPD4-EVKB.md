@@ -28,27 +28,131 @@
 
 ![iMX8MMINIEVKLPDR4_TOP-LR-HR1](./images/iMX8MMINIEVKLPDR4_TOP-LR-HR1.jpg)
 
-# 2. Product Details
+# 2. Yocto and Platform
 
-| HW   | [NXP 8MMINILPD4-EVKB](https://www.nxp.com/design/design-center/development-boards-and-designs/8MMINILPD4-EVK) |
+## 2.1. Platform
+
+### 2.1.1. [i.MX 8M Mini EVK](https://www.nxp.com/design/design-center/development-boards-and-designs/8MMINILPD4-EVK)
+
+> 本篇的開發板
+
+> The i.MX 8M Mini EVK provides a platform for comprehensive evaluation of the i.MX 8M Mini and i.MX 8M Mini Lite applications processors.
+
+| HW   | [i.MX 8M Mini EVK](https://www.nxp.com/design/design-center/development-boards-and-designs/8MMINILPD4-EVK) |
 | ---- | ------------------------------------------------------------ |
-| CPU  | 4× Cortex-A53 @1.8 GHz<br/>1× Cortex‑M4 @400 MHz             |
+| CPU  | i.MX 8M Mini Quad applications processor<br>4x Cortex-A53 @ 1.8 GHz<br>1x Cortex-M4 @ 400 MHz |
 | RAM  | 2GB 32-bit LPDDR4                                            |
 | eMMC | 16/32 GB                                                     |
 
-## 2.1. [8MMINILPD4-EVK](https://www.nxp.com/design/design-center/development-boards-and-designs/8MMINILPD4-EVK)
+### 2.1.2. [i.MX 8M Nano EVK](https://www.nxp.com/design/design-center/development-boards-and-designs/8MNANOD4-EVK)
 
-> - ### Processor
->
->   - i.MX 8M Mini Quad applications processor
->   - 4x Cortex-A53 @ 1.8 GHz
->   - 1x Cortex-M4 @ 400 MHz
->
->   ### Memory
->
->   - 2GB 32-bit LPDDR4
->   - 16GB eMMC 5.1
->   - SD/MMC connector
+> The i.MX 8M Nano EVK provides a platform for comprehensive evaluation of the i.MX 8M Nano and i.MX 8M Nano Lite applications processors.
+
+| HW   | [i.MX 8M Nano EVK](https://www.nxp.com/design/design-center/development-boards-and-designs/8MNANOD4-EVK) |
+| ---- | ------------------------------------------------------------ |
+| CPU  | i.MX 8M Nano Quad applications processor<br>4x Cortex-A53 @ 1.5 GHz<br>1x Cortex-M7 @ 750 MHz |
+| RAM  | LPDDR4 x16 w/2 GB                                            |
+| eMMC | eMMC 5.0/5.1 w/16 32 GB                                      |
+
+## 2.2. Configuration
+
+### 2.2.1. MACHINE
+
+> 選擇硬體平台
+
+| MACHINE           | SoC          | EVK Board               | DESC                                                 |
+| ----------------- | ------------ | ----------------------- | ---------------------------------------------------- |
+| imx8mm-lpddr4-evk | i.MX 8M Mini | i.MX 8M Mini LPDDR4 EVK | 有 GPU、VPU、多媒體處理器。                          |
+| imx8mnevk         | i.MX 8M Nano | i.MX 8M Nano EVK        | 低功耗版本，**無 GPU、VPU**，適合 IoT/簡化顯示應用。 |
+
+#### A. imx8mm-lpddr4-evk.conf
+
+```bash
+$ ls ./sources/meta-freescale/conf/machine/imx8m*.conf | xargs -n 1 basename
+#or
+$ ls $PJ_YOCTO_LAYERS_DIR/meta-freescale/conf/machine/imx8m*.conf | xargs -n 1 basename
+imx8mm-ddr4-evk.conf
+imx8mm-lpddr4-evk.conf
+imx8mn-ddr4-evk.conf
+imx8mn-lpddr4-evk.conf
+imx8mnul-ddr3l-evk.conf
+imx8mp-ddr4-evk.conf
+imx8mp-lpddr4-evk.conf
+imx8mq-evk.conf
+imx8mq-lpddr4-wevk.conf
+
+# 如果採用matter 
+$ ls ./sources/meta-nxp-connectivity/meta-nxp-matter-advanced/conf/machine/imx8m*.conf | xargs -n 1 basename
+#or
+$ ls $PJ_YOCTO_LAYERS_DIR/meta-nxp-connectivity/meta-nxp-matter-advanced/conf/machine/imx8m*.conf | xargs -n 1 basename
+
+imx8mmevk-matter.conf
+imx8mnddr3levk-matter.conf
+imx8mnevk-matter.conf
+imx8mpevk-matter.conf
+```
+
+#### B. imx8mm-evk.inc
+
+```bash
+$ ll ./sources/meta-freescale/conf/machine/include/imx8mm-evk.inc
+#or
+$ ls $PJ_YOCTO_LAYERS_DIR/meta-freescale/conf/machine/include/imx8mm-evk.inc
+```
+
+#### C. DTS and DTB
+
+```bash
+# 如果採用 matter
+# find *.dts
+$ ls ./sources/meta-nxp-connectivity/meta-nxp-otbr/recipes-kernel/linux/files/dts/*.dts | xargs -n 1 basename
+#
+$ ls $PJ_YOCTO_LAYERS_DIR/meta-nxp-connectivity/meta-nxp-otbr/recipes-kernel/linux/files/dts/*.dts | xargs -n 1 basename
+
+# find *.dtb
+$ ls ./sources/bld-xwayland-imx8mm/tmp/work/imx8mmevk_matter-poky-linux/linux-imx/6.12.20+git/build/arch/arm64/boot/dts/freescale/*.dtb | xargs -n 1 basename
+#or
+$ ls $PJ_YOCTO_BUILD_DIR/tmp/work/imx8mmevk_matter-poky-linux/linux-imx/6.12.20+git/build/arch/arm64/boot/dts/freescale/*.dtb | xargs -n 1 basename
+```
+
+### 2.2.2. DISTRO
+
+| DISTRO           | DESC                                       |
+| ---------------- | ------------------------------------------ |
+| fsl-imx-xwayland | NXP 提供，支援 X + Wayland                 |
+| fsl-imx-wayland  | NXP 提供，純 Wayland 支援（推薦用於 i.MX） |
+| fsl-imx-fb       | NXP 提供，僅 Framebuffer，無 GUI           |
+
+```bash
+$ ls ./sources/meta-freescale-distro/conf/distro/*.conf | xargs -n 1 basename
+#or
+$ ls $PJ_YOCTO_LAYERS_DIR/meta-freescale-distro/conf/distro/*.conf | xargs -n 1 basename
+
+fslc-framebuffer.conf
+fslc-wayland.conf
+fslc-x11.conf
+fslc-xwayland.conf
+fsl-framebuffer.conf
+fsl-wayland.conf
+fsl-xwayland.conf
+
+
+$ ls ./sources/meta-imx/meta-imx-sdk/conf/distro/*.conf | xargs -n 1 basename
+#or
+$ ls $PJ_YOCTO_LAYERS_DIR/meta-imx/meta-imx-sdk/conf/distro/*.conf | xargs -n 1 basename
+
+fsl-imx-fb.conf
+fsl-imx-wayland.conf
+fsl-imx-x11.conf
+fsl-imx-xwayland.conf
+```
+
+### 2.2.3. BSP（Board Support Package）layer
+
+| BSP            |      | REPO                                        | DESC                       |
+| -------------- | ---- | ------------------------------------------- | -------------------------- |
+| meta-imx       |      | https://github.com/nxp-imx/meta-imx         | NXP 官方                   |
+| meta-freescale |      | https://github.com/Freescale/meta-freescale | 社群（Freescale/NXP 社群） |
 
 # 3. Building
 
@@ -95,37 +199,7 @@
 | imx-linux-langdale   | 4.1   | [imx-6.1.1-1.0.1.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-langdale/imx-6.1.1-1.0.1.xml) |
 | imx-linux-kirkstone  | 4.0   | [imx-5.15.71-2.2.2.xml](https://github.com/nxp-imx/imx-manifest/blob/imx-linux-kirkstone/imx-5.15.71-2.2.2.xml) |
 
-### 3.2.1. Configuration
-
-#### A. MACHINE
-
-> 選擇硬體平台
->
-> ./sources/meta-nxp-connectivity/meta-nxp-otbr/recipes-kernel/linux/files/dts/*.dts
-
-| MACHINE           | SoC          | EVK Board               | DESC                                                 |
-| ----------------- | ------------ | ----------------------- | ---------------------------------------------------- |
-| imx8mm-lpddr4-evk | i.MX 8M Mini | i.MX 8M Mini LPDDR4 EVK | 有 GPU、VPU、多媒體處理器。                          |
-| imx8mnevk         | i.MX 8M Nano | i.MX 8M Nano EVK        | 低功耗版本，**無 GPU、VPU**，適合 IoT/簡化顯示應用。 |
-
-#### B. DISTRO
-
-> ./sources/meta-freescale-distro/conf/distro/*.conf
-
-| DISTRO           | DESC                                       |
-| ---------------- | ------------------------------------------ |
-| fsl-imx-xwayland | NXP 提供，支援 X + Wayland                 |
-| fsl-imx-wayland  | NXP 提供，純 Wayland 支援（推薦用於 i.MX） |
-| fsl-imx-fb       | NXP 提供，僅 Framebuffer，無 GUI           |
-
-#### C. BSP（Board Support Package）layer
-
-| BSP            |      | REPO                                        | DESC                       |
-| -------------- | ---- | ------------------------------------------- | -------------------------- |
-| meta-imx       |      | https://github.com/nxp-imx/meta-imx         | NXP 官方                   |
-| meta-freescale |      | https://github.com/Freescale/meta-freescale | 社群（Freescale/NXP 社群） |
-
-### 3.2.3. Setup Yocto Project BSP
+### 3.2.1. Setup Yocto Project BSP
 
 ```bash
 $ mkdir ~/bin
@@ -136,6 +210,8 @@ $ export PATH=~/bin:$PATH
 
 #### A. walnascar (5.2)
 
+> [nxp-imx](https://github.com/nxp-imx)/[meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity), Tags: [imx_matter_2025_q2](https://github.com/nxp-imx/meta-nxp-connectivity/tree/imx_matter_2025_q2)
+
 ```bash
 $ pwd
 /yocto
@@ -145,22 +221,11 @@ $ repo init -u https://github.com/nxp-imx/imx-manifest \
  -b imx-linux-walnascar \
  -m imx-6.12.20-2.0.0.xml
 $ repo sync
-```
 
-```bash
-# Setup the build folder for a BSP release
-$ MACHINE=imx8mm-lpddr4-evk \
- DISTRO=fsl-imx-wayland \
- source ./imx-setup-release.sh -b build-wayland
-
-$ vi conf/local.conf
-DL_DIR = "/yocto-cache/downloads/"
-SSTATE_DIR = "/yocto-cache/sstate-cache"
-
-# 如果不安裝 homeassistant 可跳過以下修改
-PACKAGE_CLASSES = "package_deb"
-LICENSE_FLAGS_ACCEPTED +=' commercial'
-IMAGE_INSTALL:append = ' python3-homeassistant tree'
+# 如果要編譯 matter，抓取 branch - imx_matter_2025_q2
+$ cd /yocto/8MMINILPD4-EVKB-walnascar/sources/meta-nxp-connectivity
+$ git remote update
+$ git checkout imx_matter_2025_q2
 ```
 
 #### B. scarthgap (5.0)
@@ -176,36 +241,100 @@ $ repo init -u https://github.com/nxp-imx/imx-manifest \
 $ repo sync
 ```
 
+### 3.2.2. Setup the build folder
+
+#### A. General
+
 ```bash
+$ pwd
+/yocto/8MMINILPD4-EVKB-walnascar
+
 # Setup the build folder for a BSP release
+# Setup for wayland
 $ MACHINE=imx8mm-lpddr4-evk \
  DISTRO=fsl-imx-wayland \
- source ./imx-setup-release.sh -b build-wayland
+ source ./imx-setup-release.sh -b bld-wayland
+# or
+# Setup for XWayland
+$ MACHINE=imx8mm-lpddr4-evk \
+ DISTRO=fsl-imx-xwayland \
+ source ./imx-setup-release.sh -b bld-xwayland
+```
 
-# 修改
-# DL_DIR = "/yocto-cache/downloads/"
-# SSTATE_DIR = "/yocto-cache/sstate-cache"
+#### B. Matter
+
+> [meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity)
+
+```bash
+$ pwd
+/yocto/8MMINILPD4-EVKB-walnascar
+
+# For i.MX93 FRDM and i.MX93 EVK:
+$ MACHINE=imx93evk-iwxxx-matter DISTRO=fsl-imx-xwayland source sources/meta-nxp-connectivity/tools/imx-matter-setup.sh bld-xwayland-imx93
+
+# For i.MX8M Mini EVK
+$ MACHINE=imx8mmevk-matter DISTRO=fsl-imx-xwayland source sources/meta-nxp-connectivity/tools/imx-matter-setup.sh bld-xwayland-imx8mm
+
+# For i.MX6ULL EVK:
+$ MACHINE=imx6ullevk DISTRO=fsl-imx-xwayland source sources/meta-nxp-connectivity/tools/imx-matter-setup.sh bld-xwayland-imx6ull
+
+# For i.MX8ULP EVK:
+$ MACHINE=imx8ulpevk DISTRO=fsl-imx-xwayland source sources/meta-nxp-connectivity/tools/imx-matter-setup.sh bld-xwayland-imx8ulp
+
+# For i.MX91 EVK:
+$ MACHINE=imx91evk-iwxxx-matter DISTRO=fsl-imx-xwayland source sources/meta-nxp-connectivity/tools/imx-matter-setup.sh bld-xwayland-imx91
+
+# For i.MX91 QSB:
+$ MACHINE=imx91qsb-iwxxx-matter DISTRO=fsl-imx-xwayland source sources/meta-nxp-connectivity/tools/imx-matter-setup.sh bld-xwayland-imx91qsb
+
+# For i.MX91 FRDM:
+$ MACHINE=imx91frdm-iwxxx-matter DISTRO=fsl-imx-xwayland source sources/meta-nxp-connectivity/tools/imx-matter-setup.sh bld-xwayland-imx91frdm
+```
+
+- [nxp-imx](https://github.com/nxp-imx)/**[libtrustymatter](https://github.com/nxp-imx/libtrustymatter)**
+
+  > Trusty OS related support lib for project Matter on i.MX. The Trusty OS component will help to provide the security enhancement for Matter based on NXP i.MX SoC's security IPs.
+
+  > storageproxyd.bb
+
+### 3.2.3. Update local.conf
+
+> 使用之前保留的 DL_DIR 和 SSTATE_DIR 來加速整個編譯流程
+
+```bash
+$ pwd
+/yocto/8MMINILPD4-EVKB-walnascar
+
 $ vi conf/local.conf
 DL_DIR = "/yocto-cache/downloads/"
 SSTATE_DIR = "/yocto-cache/sstate-cache"
 
 # 如果不安裝 homeassistant 可跳過以下修改
-# package_deb 在編譯 python3-bluetooth-adapters 時會失敗
-PACKAGE_CLASSES = "package_rpm"
+PACKAGE_CLASSES = "package_deb"
 LICENSE_FLAGS_ACCEPTED +=' commercial'
 IMAGE_INSTALL:append = ' python3-homeassistant tree'
 ```
 
-### 3.2.4. Build imx-image-xxx
+### 3.2.4. Re-initialize environment
 
 ```bash
 # 如果 Ｈost 主機重新開機或是重新登入時
 $ cd /yocto/8MMINILPD4-EVKB-walnascar
-$ . setup-environment build-wayland
 
+# General 請選擇
+$ . setup-environment bld-wayland
+# Matter 請選擇
+$ . setup-environment bld-xwayland-imx8mm
+#$ . matter_venv/bin/activate
+```
+
+### 3.2.5. Build imx-image-xxx
+
+```bash
 #$ bitbake core-image-minimal
 #$ bitbake imx-image-full
 $ bitbake imx-image-core
+#$ bitbake imx-image-multimedia
 ```
 
 ## 3.3. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/helper_cookerX.md)
@@ -224,23 +353,24 @@ $ bitbake imx-image-core
 
 > imx8mm-evk-walnascar-rauc-home2025.5.1-menu.json
 
-| CONF                                    | lanka | RAUC | Home Assistant |
-| --------------------------------------- | ----- | ---- | -------------- |
-| imx8mm-walnascar-rauc-home2025.5.1.conf | v     | v    | v              |
-| imx8mm-walnascar-home2025.5.1.conf      | v     |      | v              |
-| imx8mm-walnascar-rauc.conf              | v     | v    |                |
-| imx8mm-walnascar-core.conf              | v     |      |                |
+| CONF                               | lanka | RAUC | Matter | Home Assistant | menu                                        |
+| ---------------------------------- | ----- | ---- | ------ | -------------- | ------------------------------------------- |
+| imx8mm-walnascar-all.conf          | v     | v    |        | v              | imx8mm-evk-walnascar-all-menu.json          |
+| imx8mm-walnascar-matter.conf       | v     |      | v      |                | imx8mm-evk-walnascar-matter-menu.json       |
+| imx8mm-walnascar-home2025.5.1.conf | v     |      |        | v              | imx8mm-evk-walnascar-home2025.4.0-menu.json |
+| imx8mm-walnascar-rauc.conf         | v     | v    |        |                | imx8mm-evk-walnascar-rauc-menu.json         |
+| imx8mm-walnascar-core.conf         | v     |      |        |                | imx8mm-evk-walnascar-core-menu.json         |
 
 #### B. scarthgap (5.0)
 
 > imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json
 
-| CONF                                     | lanka | RAUC | Home Assistant |
-| ---------------------------------------- | ----- | ---- | -------------- |
-| imx8mm-scarthgap-rauc-home2023.12.0.conf | v     | v    | v              |
-| imx8mm-scarthgap-home2023.12.0.conf      | v     |      | v              |
-| imx8mm-scarthgap-rauc.conf               | v     | v    |                |
-| imx8mm-scarthgap-core.conf               | v     |      |                |
+| CONF                                     | lanka | RAUC | Home Assistant | menu                                              |
+| ---------------------------------------- | ----- | ---- | -------------- | ------------------------------------------------- |
+| imx8mm-scarthgap-rauc-home2023.12.0.conf | v     | v    | v              | imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json |
+| imx8mm-scarthgap-home2023.12.0.conf      | v     |      | v              | imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json |
+| imx8mm-scarthgap-rauc.conf               | v     | v    |                | imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json |
+| imx8mm-scarthgap-core.conf               | v     |      |                | imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json |
 
 ### 3.3.2. build imx-image-xxx
 
@@ -262,12 +392,12 @@ cooker update
 cooker generate
 cooker  -v build imx8mm-evk-walnascar-core
 ```
-## 3.4. List of Images
+#### A. List of Images
 
 | IMAGE                | DESC                                                         |
 | -------------------- | ------------------------------------------------------------ |
 | imx-image-core       | This is the basic core image with minimal tests              |
-| imx-image-multimedia | NXP Image to validate i.MX machines. This image contains everything used to test i.MX machines including GUI, demos and lots of applications. This creates a very large image, not suitable for production. |
+| imx-image-multimedia | NXP Image to validate i.MX machines. This image contains everything used to test i.MX machines including GUI, demos and lots of applications. This creates a very large image, not suitable for production. |
 | imx-image-full       | NXP Image to validate i.MX machines. This image contains everything used to test i.MX machines including GUI, demos and lots of applications. This creates a very large image, not suitable for production. |
 
 ```bash
@@ -281,42 +411,27 @@ $ bitbake -e imx-image-core | grep ^DESCRIPTION=
 DESCRIPTION="This is the basic core image with minimal tests"
 ```
 
-## 3.5. List of Layers
-
 ```bash
-$ bitbake-layers show-layers
-NOTE: Starting bitbake server...
-layer                 path                                                                    priority
-========================================================================================================
-meta-arm              /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-arm/meta-arm  5
-arm-toolchain         /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-arm/meta-arm-toolchain  5
-clang-layer           /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-clang  7
-freescale-layer       /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-freescale  5
-freescale-3rdparty    /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-freescale-3rdparty  4
-freescale-distro      /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-freescale-distro  4
-homeassistant         /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-homeassistant-2025.5.1  10
-fsl-bsp-release       /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-bsp  8
-imx-machine-learning  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-ml  8
-fsl-sdk-release       /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-sdk  8
-v2x-imx               /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-imx/meta-imx-v2x  9
-meta-lanka            /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-lanka  6
-nxp-matter-baseline   /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-nxp-connectivity/meta-nxp-matter-baseline  7
-nxp-openthread        /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-nxp-connectivity/meta-nxp-openthread  7
-imx-demo              /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-nxp-demo-experience  7
-filesystems-layer     /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-filesystems  5
-gnome-layer           /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-gnome  5
-multimedia-layer      /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-multimedia  5
-networking-layer      /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-networking  5
-openembedded-layer    /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-oe  5
-meta-python           /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-openembedded/meta-python  5
-qt6-layer             /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-qt6  5
-rauc                  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-rauc  6
-meta-rauc-plus        /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-rauc-plus  6
-parsec-layer          /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-security/meta-parsec  5
-tpm-layer             /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-security/meta-tpm  6
-virtualization-layer  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/meta-virtualization  8
-core                  /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/poky/meta  5
-yocto                 /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/../../layers-walnascar/poky/meta-poky  5
+$ tree -L 1 $PJ_YOCTO_LAYERS_DIR/meta-imx/meta-imx-sdk/recipes-fsl/images
+/yocto/cookerX-walnascar/layers-walnascar/meta-imx/meta-imx-sdk/recipes-fsl/images
+├── fsl-image-gui.bb
+├── fsl-image-machine-test.bbappend
+├── fsl-image-mfgtool-initramfs.bbappend
+├── fsl-image-multimedia.bbappend
+├── fsl-image-validation-imx.bb
+├── imx-image-core.bb
+└── imx-image-multimedia.bb
+
+0 directories, 7 files
+
+$ tree -L 1 $PJ_YOCTO_LAYERS_DIR/meta-imx/meta-imx-sdk/dynamic-layers/qt6-layer/recipes-fsl/images
+/yocto/cookerX-walnascar/layers-walnascar/meta-imx/meta-imx-sdk/dynamic-layers/qt6-layer/recipes-fsl/images
+├── fsl-image-qt6.bb
+├── fsl-image-qt6-validation-imx.bb -> imx-image-full.bb
+├── imx-image-full.bb
+└── imx-image-full-dev.bb
+
+0 directories, 4 files
 ```
 
 # 4. Outputs
@@ -361,10 +476,6 @@ drwxr-xr-x 39 lanka lanka 4096 Mar  9  2018 unit_tests/
 drwxr-xr-x 11 lanka lanka 4096 Mar  9  2018 usr/
 drwxr-xr-x  9 lanka lanka 4096 Mar  9  2018 var/
 ```
-
-### 4.1.1. rebuild rootfs
-
-> 重新建立 rootfs
 
 ```bash
 # ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs $PJ_YOCTO_BUILD-rootfs
@@ -434,14 +545,6 @@ $ cat images-lnk/environment.txt
 $ cat images-lnk/$PJ_YOCTO_IMAGE_MANIFEST
 ```
 
-### 4.2.3. List of Packages
-
-> 
-
-```bash
-$ oe-pkgdata-util list-pkgs
-```
-
 ## 4.3. builds-lnk
 
 ```bash
@@ -469,6 +572,52 @@ bb-lnk/
 └── avahi_0.8.bb -> ../layers-walnascar/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
 
 0 directories, 1 file
+```
+
+## 4.5. Others
+
+### 4.5.1. List of Packages
+
+```bash
+$ oe-pkgdata-util list-pkgs
+```
+
+### 4.5.2. List of Layers
+
+```bash
+$ bitbake-layers show-layers
+```
+
+### 4.5.3. Info of kernel
+
+```bash
+$ bitbake -e virtual/kernel | grep "^PN="
+
+B="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-rauc-home/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.12.20+git/build"
+D="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-rauc-home/tmp/work/imx8mm_lpddr4_evk-poky-linux/linux-imx/6.12.20+git/image"
+DELTA_KERNEL_DEFCONFIG=" dm-verity.cfg"
+KBUILD_DEFCONFIG="imx_v8_defconfig"
+KERNEL_EXTRA_ARGS=" LOADADDR=0x40480000"
+KERNEL_IMAGETYPE="Image"
+PN="linux-imx"
+PREFERRED_PROVIDER_virtual/kernel="linux-imx"
+PV="6.12.20+git"
+SDKMACHINE="x86_64"
+SRC_URI="git://github.com/nxp-imx/linux-imx.git;protocol=https;branch=lf-6.12.y file://dm-verity.cfg"
+SRCREV="dfaf2136deb2af2e60b994421281ba42f1c087e0"
+KERNEL_DEVICETREE_BASENAME="imx8mm-evk"
+
+$ bitbake -e virtual/kernel | grep "^KERNEL_DEVICETREE="
+KERNEL_DEVICETREE="     freescale/imx8mm-evk.dtb      freescale/imx8mm-evk-pcie-ep.dtb     freescale/imx8mm-evk-rm67191.dtb     freescale/imx8mm-evk-rm67191-cmd-ram.dtb     freescale/imx8mm-evk-rm67199.dtb     freescale/imx8mm-evk-rm67199-cmd-ram.dtb      freescale/imx8mm-evk-8mic-revE.dtb     freescale/imx8mm-evk-8mic-swpdm.dtb     freescale/imx8mm-evk-ak4497.dtb     freescale/imx8mm-evk-ak5558.dtb     freescale/imx8mm-evk-audio-tdm.dtb     freescale/imx8mm-evk-dpdk.dtb     freescale/imx8mm-evk-ecspi-slave.dtb     freescale/imx8mm-evk-lk.dtb     freescale/imx8mm-evk-inmate.dtb     freescale/imx8mm-evk-qca-wifi.dtb     freescale/imx8mm-evk-revb-qca-wifi.dtb     freescale/imx8mm-evk-root.dtb     freescale/imx8mm-evk-rpmsg.dtb     freescale/imx8mm-evk-rpmsg-wm8524.dtb     freescale/imx8mm-evk-rpmsg-wm8524-lpv.dtb     freescale/imx8mm-evk-usd-wifi.dtb "
+
+$ cat ./$PJ_YOCTO_LAYERS/poky/meta-poky/conf/distro/poky.conf | grep DISTRO_VERSION
+DISTRO_VERSION = "5.2"
+SDK_VERSION = "${@d.getVar('DISTRO_VERSION').replace('snapshot-${METADATA_REVISION}', 'snapshot')}"
+```
+
+```bash
+# branch - lf-6.12.y
+$ git clone https://github.com/nxp-imx/linux-imx.git
 ```
 
 # 5. Burn Your Image
@@ -518,7 +667,7 @@ Connected Known USB Devices
 
 ### 5.2.3. Burn to eMMC
 
-#### A. NXP - android
+#### A. Android version
 
 > [Android OS for i.MX Applications Processors](https://www.nxp.com/design/design-center/software/embedded-software/i-mx-software/android-os-for-i-mx-applications-processors:IMXANDROID?tid=vanIMXANDROID)
 >
@@ -546,16 +695,18 @@ $ cp /tmp/uuu.lst ./
 $ uuu uuu.lst
 ```
 
-#### B. NXP - Linux
+#### B. Linux general version
 
+>  一般的版本
+>
 >  [Embedded Linux for i.MX Applications Processors](https://www.nxp.com/design/design-center/software/embedded-software/i-mx-software/embedded-linux-for-i-mx-applications-processors:IMXLINUX)
 >
-> Supported Platforms/Demo Images: i.MX 8M Mini EVK
+>  Supported Platforms/Demo Images: i.MX 8M Mini EVK
 >
-> [L6.12.20-2.0.0_MX8MM](https://www.nxp.com/webapp/sps/download/license.jsp?colCode=L6.12.20-2.0.0_MX8MM&appType=file1&DOWNLOAD_ID=null)
+>  prebuilt image - [L6.12.20-2.0.0_MX8MM](https://www.nxp.com/webapp/sps/download/license.jsp?colCode=L6.12.20-2.0.0_MX8MM&appType=file1&DOWNLOAD_ID=null)
 
 ```bash
-# 這個是 NXP 提供的
+# 這邊使用 NXP 提供的 prebuilt images
 $ uuu ./evkb/LF_v6.12.20-2.0.0_images_IMX8MMEVK.zip
 uuu (Universal Update Utility) for nxp imx chips -- libuuu_1.5.201-0-g727fc2b
 
@@ -634,7 +785,14 @@ New USB Device Attached at 1:2-0A1D3209DAB5B3C9
 1:2-0A1D3209DAB5B3C9>Okay (0s)
 ```
 
-#### C. Myself
+#### C. Linux Matter version
+
+> 有 matter 的版本
+>
+> [MPU / Linux® Hosted Matter Development Platform](https://www.nxp.com/design/design-center/development-boards-and-designs/MPU-LINUX-MATTER-DEV-PLATFORM)
+>
+> 需要有帳號和密碼才能下載 prebuilt image - i.MX 8M Mini pre-built binary demo file for Matter (Q2 2025)
+#### D. Myself
 
 ```bash
 # 這邊是自己編譯的
@@ -835,11 +993,11 @@ Hello world !!!
 
 ## 7.1. RAUC
 
-> [helper_Yocto-RAUC.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RAUC.md) - Yocto RAUC helper
+> [helper_Yocto-meta-RAUC.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-meta-RAUC.md) - Yocto meta `RAUC` helper
 
 ## 7.2. Home Assistant
 
-> [helper_Yocto-HomeAssistant.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-HomeAssistant.md) - Yocto Home Assistant helper
+> [helper_Yocto-meta-HomeAssistant.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-meta-HomeAssistant.md) - Yocto meta `Home Assistant` helper
 
 # Appendix
 
@@ -850,6 +1008,59 @@ Hello world !!!
 ## I.2. [MCX工业和物联网微控制器](https://www.nxp.com.cn/products/processors-and-microcontrollers/arm-microcontrollers/general-purpose-mcus/mcx-arm-cortex-m:MCX-MCUS?cid=ps_pro240034g_tac1558850_ggle_cn_mcx_tw_brand&gad_source=1&gad_campaignid=21332736863&gclid=CjwKCAjw4K3DBhBqEiwAYtG_9H9segmCvl7XwsL1HFZXCfBcBfJBR8Worw1-iJmoimel1egH8ig8zBoCeqIQAvD_BwE)
 
 ## I.3. [i.MX 8M Mini EVKB快速入门](https://www.nxp.com.cn/document/guide/getting-started-with-the-i-mx-8m-mini-evkb:GS-iMX-8M-Mini-EVK)
+
+## I.4. [ChatGPT] xwayland 和 wayland 有什麼不同
+
+> ## 1. X11 (Xorg)
+>
+> - **歷史悠久**：傳統的顯示協定，1980s 就存在。
+> - **運作方式**：
+>   - 應用程式透過 **X11 protocol** 跟 X server 溝通，X server 再把圖形畫到螢幕上。
+>   - 有 client/server 架構 → 可以做遠端顯示 (`ssh -X`)。
+> - **缺點**：
+>   - 協定太老、複雜，為了相容性背了很多技術債。
+>   - 安全性差（任何 client 幾乎都能攔截輸入事件）。
+>   - 延遲較高，效能不如新協定。
+>
+> ------
+>
+> ## 2. Wayland
+>
+> - **新一代顯示協定**，目標是取代 X11。
+> - **設計理念**：
+>   - 直接讓應用程式把內容交給 compositor（例如 GNOME 的 Mutter、KDE 的 KWin、sway）。
+>   - compositor 負責合成顯示，並直接跟 Kernel 的 DRM/KMS 介面溝通。
+> - **優點**：
+>   - 架構簡單、效率高（少了中間的 X server）。
+>   - 安全性更好：應用程式不能隨意監聽鍵盤/滑鼠事件。
+>   - 支援現代功能：高 DPI、多螢幕 scaling、touch、手勢。
+> - **缺點**：
+>   - 舊的 X11 應用不能直接跑，需要相容層。
+>   - 遠端顯示的支援還在演進中（雖然有 `waypipe`、RDP 等）。
+>
+> ------
+>
+> ## 3. Xwayland
+>
+> - **過渡方案**：在 Wayland compositor 之上跑一個 **X server (Xwayland)**。
+> - **功能**：
+>   - 讓傳統的 X11 應用程式在 Wayland 環境下繼續運作。
+>   - Wayland compositor 提供一個「假 X server」，X11 app 以為自己在跑 Xorg，但實際上由 Xwayland 把輸出轉換給 Wayland compositor。
+> - **意義**：
+>   - 解決 X11 舊程式的相容問題。
+>   - 等到應用程式都支援 Wayland API 之後，Xwayland 才會慢慢被淘汰。
+>
+> ------
+>
+> ## 4. 總結比較
+>
+> | 特性     | X11 (Xorg)               | Wayland                            | Xwayland                                     |
+> | -------- | ------------------------ | ---------------------------------- | -------------------------------------------- |
+> | 架構     | client → X server → 硬體 | client → Wayland compositor → 硬體 | client (X11) → Xwayland → Wayland compositor |
+> | 性能     | 較多中間層，延遲高       | 精簡，延遲低                       | 介於兩者之間                                 |
+> | 安全性   | 弱，容易被竊聽輸入       | 強，應用隔離                       | 繼承 X11 的弱點                              |
+> | 相容性   | 舊應用完整支援           | 新應用原生支援                     | 舊 X11 應用可在 Wayland 跑                   |
+> | 遠端顯示 | 原生強 (`ssh -X`)        | 需額外工具                         | 依賴 X11 機制                                |
 
 # II. Debug
 
