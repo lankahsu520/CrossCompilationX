@@ -56,10 +56,10 @@
 
 ## 2.2. Build
 
-| ITEM         | FILE                                              |
-| ------------ | ------------------------------------------------- |
-| configure    | imx8mm-scarthgap-rauc-home2023.12.0.conf          |
-| cooker-menu: | imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json |
+| ITEM        | FILE                                              |
+| ----------- | ------------------------------------------------- |
+| configure   | imx8mm-scarthgap-rauc-home2023.12.0.conf          |
+| cooker-menu | imx8mm-evk-scarthgap-rauc-home2023.12.0-menu.json |
 
 ```bash
 $ git clone https://github.com/lankahsu520/CrossCompilationX.git
