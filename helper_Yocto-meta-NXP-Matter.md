@@ -1,4 +1,4 @@
-# [Yocto](https://www.yoctoproject.org) [Matter](https://www.home-assistant.io/integrations/matter)
+# [Yocto](https://www.yoctoproject.org) NXP [Matter](https://www.home-assistant.io/integrations/matter)
 
 [![](https://img.shields.io/badge/Powered%20by-lankahsu%20-brightgreen.svg)](https://github.com/lankahsu520/CrossCompilationX)
 [![GitHub license][license-image]][license-url]
@@ -37,10 +37,10 @@
 
 ## 2.2. Build
 
-| ITEM         | FILE                                  |
-| ------------ | ------------------------------------- |
-| configure    | imx8mm-walnascar-matter.conf          |
-| cooker-menu: | imx8mm-evk-walnascar-matter-menu.json |
+| ITEM        | FILE                                  |
+| ----------- | ------------------------------------- |
+| configure   | imx8mm-walnascar-matter.conf          |
+| cooker-menu | imx8mm-evk-walnascar-matter-menu.json |
 
 ```bash
 $ git clone https://github.com/lankahsu520/CrossCompilationX.git
