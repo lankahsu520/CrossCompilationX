@@ -70,6 +70,8 @@ cook:
 	@if [ -d patches/$(PJ_YOCTO_LAYERS_FOLDER) ]; then \
 		cp -avr patches/$(PJ_YOCTO_LAYERS_FOLDER)/* $(PJ_YOCTO_LAYERS_FOLDER); \
 	fi
+	cd $(PJ_YOCTO_LAYERS_FOLDER) \
+	&& grep -rl '\$${BSPDIR}/sources/' meta-* | xargs -r sed -i 's#\$${BSPDIR}/sources/#\$${COOKER_LAYER_DIR}/#g'
 	touch $@
 
 .PHONY: builds-history bb-linker lnk-generate toolchain toolchain-pure rootfs $(BB_TASKS)

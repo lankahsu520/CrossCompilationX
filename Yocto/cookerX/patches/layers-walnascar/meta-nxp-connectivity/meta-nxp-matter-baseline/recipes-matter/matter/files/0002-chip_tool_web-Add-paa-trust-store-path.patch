@@ -1,0 +1,27 @@
+From b3039af28ef36e8eeb7d7f4af13daf478085e1b7 Mon Sep 17 00:00:00 2001
+From: Lanka Hsu <lankahsu@gmail.com>
+Date: Tue, 07 Oct 2025 04:36:44 
+Subject: [PATCH 2/2] chip_tool_web: Add --paa-trust-store-path option support
+
+Upstream-Status: Inappropriate  [Lanka parameters changes]
+
+diff --git a/examples/chip-tool/webui-2_0/MatterApplicationBackend/src/chip_tool_web.cpp b/examples/chip-tool/webui-2_0/MatterApplicationBackend/src/chip_tool_web.cpp
+index 3405389032..ad764657ba 100644
+--- a/examples/chip-tool/webui-2_0/MatterApplicationBackend/src/chip_tool_web.cpp
++++ b/examples/chip-tool/webui-2_0/MatterApplicationBackend/src/chip_tool_web.cpp
+@@ -140,9 +140,10 @@ void enableChipServer()
+ {
+     while (true)
+     {
+-        char * args[] = { "chip-tool", "interactive", "server", "--port", "9008" };
+-        ChipLogError(NotSpecified, "starting the chip-tool interactive servr.");
+-        int ret       = commands.Run(5, args);
++        char * args[] = { "chip-tool", "interactive", "server", "--port", "9008", "--paa-trust-store-path", "/root/paa-root-certs"};
++        size_t count = sizeof(args) / sizeof(args[0]);
++        ChipLogError(NotSpecified, "starting the chip-tool interactive servr (--paa-trust-store-path /root/paa-root-certs).");
++        int ret       = commands.Run(count, args);
+         ChipLogError(NotSpecified, "One interactive loop done!!!");
+         if (ret)
+         {
+-- 
+2.34.1

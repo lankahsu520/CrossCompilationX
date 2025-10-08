@@ -242,6 +242,57 @@ perl-module-test2-manual-tooling-formatter
 > - 如果你要在 target 上 **執行 Matter 節點或測試工具**，裝這個就夠。
 
 ```bash
+$ bitbake -c configure matter
+$ bitbake -c build matter
+$ bitbake -c install matter
+
+$ bitbake -e imx-image-multimedia | grep matter
+```
+
+```bash
+$ ll $PJ_YOCTO_LAYERS_DIR/meta-nxp-connectivity/meta-nxp-matter-baseline/recipes-matter/matter/matter.bb
+
+# git clone -b v1.4.1-branch-nxp_imx_2025_q2 https://github.com/NXP/matter.git
+
+$ bb-info matter
+
+matter                                                :1.0-r0
+matter-ncp                                            :1.0-r0
+meta-environment-extsdk-imx8mmevk-matter                   :1.0-r0
+meta-environment-imx8mmevk-matter                     :1.0-r0
+packagegroup-cross-canadian-imx8mmevk-matter                   :1.0-r0
+packagegroup-go-cross-canadian-imx8mmevk-matter                   :1.0-r0
+packagegroup-nxp-matter-baseline                      :1.0-r0
+packagegroup-rust-cross-canadian-imx8mmevk-matter                   :1.0-r0
+
+./layers-walnascar/meta-nxp-connectivity/meta-nxp-matter-baseline/recipes-matter/matter/matter.bb
+./layers-walnascar/meta-nxp-connectivity/meta-nxp-connectivity-examples/recipes-connectivity/matter-ncp/matter-ncp.bb
+
+SRC_URI="gitsm://github.com/NXP/matter.git;protocol=https;branch=v1.4.1-branch-nxp_imx_2025_q2 file://0001-MATTER-1352-2-Add-se_version.h.patch;patchdir=third_party/imx-secure-enclave/repo/ file://ota.sh"
+
+S="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0/git"
+
+WORKDIR="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0"
+
+D="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0/image"
+
+RECIPE_SYSROOT="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0/recipe-sysroot"
+
+DEPENDS="gcc-cross-aarch64 virtual/compilerlibs virtual/libc gn-native ninja-native avahi dbus-glib-native pkgconfig-native boost python3-pip-native python3-packaging python3-click zigbee-rcp-sdk"
+
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
+RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
+RDEPENDS:matter="  zigbee-rcp-sdk "
+RDEPENDS:matter-staticdev="matter-dev (= 1.0-r0)"
+RDEPENDS_matter="  libavahi-client boost boost-dev boost-staticdev "
+```
+
+```bash
 $ oe-pkgdata-util list-pkg-files matter
 matter:
         /usr/bin/M2ZigbeeRcp-bridge
@@ -339,56 +390,6 @@ matter:
         /usr/share/chip-tool-web/frontend2/styles-TEBVNUCQ.css
 ```
 
-```bash
-$ bb-info matter
-$ bitbake -c build matter
-
-$ bitbake -e imx-image-multimedia | grep matter
-```
-
-```bash
-$ ll $PJ_YOCTO_LAYERS_DIR/meta-nxp-connectivity/meta-nxp-matter-baseline/recipes-matter/matter/matter.bb
-
-# git clone -b v1.4.1-branch-nxp_imx_2025_q2 https://github.com/NXP/matter.git
-
-$ bb-info matter
-
-matter                                                :1.0-r0
-matter-ncp                                            :1.0-r0
-meta-environment-extsdk-imx8mmevk-matter                   :1.0-r0
-meta-environment-imx8mmevk-matter                     :1.0-r0
-packagegroup-cross-canadian-imx8mmevk-matter                   :1.0-r0
-packagegroup-go-cross-canadian-imx8mmevk-matter                   :1.0-r0
-packagegroup-nxp-matter-baseline                      :1.0-r0
-packagegroup-rust-cross-canadian-imx8mmevk-matter                   :1.0-r0
-
-./layers-walnascar/meta-nxp-connectivity/meta-nxp-matter-baseline/recipes-matter/matter/matter.bb
-./layers-walnascar/meta-nxp-connectivity/meta-nxp-connectivity-examples/recipes-connectivity/matter-ncp/matter-ncp.bb
-
-SRC_URI="gitsm://github.com/NXP/matter.git;protocol=https;branch=v1.4.1-branch-nxp_imx_2025_q2 file://0001-MATTER-1352-2-Add-se_version.h.patch;patchdir=third_party/imx-secure-enclave/repo/ file://ota.sh"
-
-S="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0/git"
-
-WORKDIR="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0"
-
-D="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0/image"
-
-RECIPE_SYSROOT="/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter/tmp/work/armv8a-poky-linux/matter/1.0/recipe-sysroot"
-
-DEPENDS="gcc-cross-aarch64 virtual/compilerlibs virtual/libc gn-native ninja-native avahi dbus-glib-native pkgconfig-native boost python3-pip-native python3-packaging python3-click zigbee-rcp-sdk"
-
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dx-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-a1-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-ddr3l-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8dxl-b0-lpddr4-evk=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qm-mek=""
-RDEPENDS:${KERNEL_PACKAGE_NAME}-image:imx8qxp-mek=""
-RDEPENDS:matter="  zigbee-rcp-sdk "
-RDEPENDS:matter-staticdev="matter-dev (= 1.0-r0)"
-RDEPENDS_matter="  libavahi-client boost boost-dev boost-staticdev "
-```
-
 #### B. matter-dbg
 
 > [ChatGPT]
@@ -437,6 +438,10 @@ RDEPENDS_matter="  libavahi-client boost boost-dev boost-staticdev "
 
 > 請先編譯出 image
 
+> <font color="red">客倌們請注意，只是編譯  matter-1.0 就得花 2 小時以上（這還要視各位的電腦設備），而完整的 image 就不敢想像。</font>
+>
+> 另外只是 chip-tool-web2
+
 ```bash
 # 編譯
 $ make
@@ -474,7 +479,7 @@ $ find123 ot-daemon ot-client-ctl
 
 ## 5.1. [Working with the chip-tool-web2](https://github.com/nxp-imx/meta-nxp-connectivity/blob/master/docs/guides/nxp_chip_tool_web2_guide.md)
 
-#### A. chip-tool
+### 5.1.1. chip-tool
 
 >請參考 [helper_MatterController-chip-tool.md](https://github.com/lankahsu520/HelperX/blob/master/helper_MatterController-chip-tool.md)
 
@@ -487,19 +492,63 @@ $ chip-tool interactive start --paa-trust-store-path ~/paa-root-certs
 >>> onoff toggle 1234 1
 ```
 
-#### B. chip-tool-web2
+### 5.1.2. chip-tool-web2
 
-> 不支援 --paa-trust-store-path，所以沒辦法與市售的產品進行對測。
+> 官網不支援 --paa-trust-store-path，所以沒辦法與市售的產品進行對測。
+>
+> 0002-chip_tool_web-Add-paa-trust-store-path.patch 將充許 chip-tool-web2 設定 --paa-trust-store-path，指定目錄在 /root/paa-root-certs。
+
+> Listen port 如下
+>
+> http://192.168.31.62:8889
+>
+> ws://192.168.31.62:9008 (chip-tool interactive server)
+>
+> ws://192.168.31.62:9002
 
 ```bash
 $ chip-tool-web2
 ```
 
-> http://192.168.31.62:8889
+```mermaid
+flowchart BT
+	subgraph NXP[8MMINILPD4‑EVKB]
+		subgraph chip-tool-web2[chip-tool-web2]
+			subgraph chip-tool[chip-tool]
+				subgraph ws9008[ws 9008]
+				end
+			end
+			ws9002[ws 9002]
+		end
+	end
 
-<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-chip-tool-web2.png" alt="Yocto-NXP-8MMINILPD4-EVKB-chip-tool-web" style="zoom:33%;" />
+```
+
+> 此處不演示操作過程，擷取常用畫面
+
+#### A. Main page
+
+<img src="./images/chip-tool-web2-0001.png" alt="chip-tool-web2-0001" style="zoom: 25%;" />
+
+#### B. Add Device by QRCode
+
+<img src="./images/chip-tool-web2-0002.png" alt="chip-tool-web2-0002" style="zoom: 25%;" />
+
+#### C. Devices
+
+<img src="./images/chip-tool-web2-0003.png" alt="chip-tool-web2-0003" style="zoom: 25%;" />
+
+
+
+#### D. Subscribe to device
+
+<img src="./images/chip-tool-web2-0004.png" alt="chip-tool-web2-0004" style="zoom: 25%;" />
+
+<img src="./images/chip-tool-web2-0004a.png" alt="chip-tool-web2-0004a" style="zoom:25%;" />
 
 ## 5.2. [Running Matter demos on i.MX MPU platforms](https://github.com/nxp-imx/meta-nxp-connectivity/blob/master/docs/guides/nxp_mpu_matter_demos.md)
+
+> 請客倌們自行研究，相當的複雜。
 
 # 6. Debug
 

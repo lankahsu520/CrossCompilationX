@@ -95,6 +95,7 @@ main_fn()
 	#
 	#create_lnk_fn "python3-homeassistant"
 	#create_lnk_fn "python3-ha-av"
+	#create_lnk_fn "zigbee_coordinator"
 }
 
 main_fn

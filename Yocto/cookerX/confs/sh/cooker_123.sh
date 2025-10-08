@@ -77,7 +77,8 @@ lnk_fn()
 	if [ -d $PJ_YOCTO_ROOT/builds-lnk ]; then
 		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; rm -f *;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs $PJ_YOCTO_BUILD-rootfs;)"
-		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/rpm $PJ_YOCTO_BUILD-rpm;)"
+		[ -d $PJ_YOCTO_BUILD_DIR/tmp/deploy/rpm $PJ_YOCTO_BUILD-rpm ] && do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/rpm $PJ_YOCTO_BUILD-rpm;)"
+		[ -d $PJ_YOCTO_BUILD_DIR/tmp/deploy/rpm $PJ_YOCTO_BUILD-deb ] && do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/deb $PJ_YOCTO_BUILD-deb;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/deploy/sdk;)"
 	else
