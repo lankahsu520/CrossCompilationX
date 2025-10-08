@@ -438,9 +438,9 @@ matter:
 
 > 請先編譯出 image
 
-> <font color="red">客倌們請注意，只是編譯  matter-1.0 就得花 2 小時以上（這還要視各位的電腦設備），而完整的 image 就不敢想像。</font>
+> <font color="red">客倌們請注意，編譯  matter-1.0 就得花 2 小時以上（這還要視各位的電腦設備）。</font>
 >
-> 另外只是 chip-tool-web2
+> 只是修改 chip_tool_web.cpp (chip-tool-web2) 就得再花這時間。
 
 ```bash
 # 編譯
