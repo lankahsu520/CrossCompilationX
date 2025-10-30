@@ -49,6 +49,25 @@ $ . confs/imx8mm-walnascar-matter.conf
 $ make
 ```
 
+### 2.2.1. Image
+
+> 如果只是要 image
+
+> <font color="red">客倌們請注意，編譯  matter-1.0 就得花 2 小時以上（這還要視各位的電腦設備）。</font>
+>
+> 只是修改 chip_tool_web.cpp (chip-tool-web2) 就得再花這時間。
+
+```bash
+# 編譯
+$ make image
+# or
+# bitbake $(PJ_YOCTO_IMAGE)
+$ bitbake imx-image-multimedia
+
+# the Yocto SDK toolchain with meta-nxp-connectivity
+$ bitbake imx-image-sdk -c populate_sdk
+```
+
 ## 2.3. Target
 
 | ITEM        | FILE                                                 |
@@ -76,9 +95,34 @@ $ uuu -b emmc_all \
 
 ```
 
+### 2.4.3. Burn to MicroSD
+
+> *.wic 和 .img 是相同的，只是副檔名不同而已。
+
+```bash
+$ unzstd imx-image-multimedia-imx8mmevk-matter.rootfs.wic.zst
+$ mv imx-image-multimedia-imx8mmevk-matter.rootfs.wic imx-image-multimedia-imx8mmevk-matter.rootfs.img
+```
+
+<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-rufus.png" alt="Yocto-NXP-8MMINILPD4-EVKB-rufus" style="zoom:50%;" />
+
 # 3. Layers
 
-## 3.1. [meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity)
+## 3.1. Layer Index
+
+### 3.1.1. [OpenEmbedded Layer Index](https://layers.openembedded.org/layerindex/)
+
+| Layer name | Description | Type | Repository |
+| :--------- | :---------- | :--- | :--------- |
+|            |             |      |            |
+
+### 3.1.2. [nxp-imx](https://github.com/nxp-imx)
+
+| Layer name                                                   | Description                                                  | Type     | Repository                                           |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------- | :--------------------------------------------------- |
+| [meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity) | The layer files for integrate the Matter and OpenThread into i.MX Yocto Linux | Software | https://github.com/nxp-imx/meta-nxp-connectivity.git |
+
+## 3.2. [meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity)
 
 > [MPU / Linux® Hosted Matter Development Platform](https://www.nxp.com/design/design-center/development-boards-and-designs/MPU-LINUX-MATTER-DEV-PLATFORM)
 
@@ -120,7 +164,7 @@ $ uuu -b emmc_all \
 > - ot-ctl-iwxxx: OpenThread Border Router ctrl tool of the IW612 chipset and IW610 chipset
 > - otbr-web: OpenThread Border Router web management daemon
 
-### 3.1.1. Update layer
+### 3.2.1. Update layer
 
 #### A. update $PJ_COOKER_MENU
 
@@ -201,7 +245,7 @@ matter:
   meta-nxp-matter-baseline 1.0
 ```
 
-### 3.1.2. Recipes
+### 3.2.2. Recipes
 
 ```bash
 $ oe-pkgdata-util list-pkgs | grep matter
@@ -430,45 +474,27 @@ matter:
 >   - 主 CPU (Linux) 跑 host app，透過 UART/SPI 控制
 > - 例如：在 i.MX8 上跑 Linux + NCP (802.15.4/Thread radio) 模式。
 
-# 4. Check
+# 4. Outputs
 
-## 4.1. Build
+## 4.1. Check rootfs
 
-### 4.1.1. Image
-
-> 請先編譯出 image
-
-> <font color="red">客倌們請注意，編譯  matter-1.0 就得花 2 小時以上（這還要視各位的電腦設備）。</font>
->
-> 只是修改 chip_tool_web.cpp (chip-tool-web2) 就得再花這時間。
+#### A. Matter Controller tool
 
 ```bash
-# 編譯
-$ make
-# or
-$ bitbake imx-image-multimedia
+$ make lnk-generate
 
-# the Yocto SDK toolchain with meta-nxp-connectivity
-$ bitbake imx-image-sdk -c populate_sdk
-```
-
-## 4.2. Check Image
-
-### 4.2.1. Matter Controller tool
-
-```bash
 $ cd-rootfs
 $ find123 chip-tool chip-lighting-app chip-tool-web2
 ```
 
-### 4.2.2. OpenThread Border Router (OTBR)
+#### B. OpenThread Border Router (OTBR)
 
 ```bash
 $ cd-rootfs
 $ find123 otbr-agent ot-ctl otbr-web
 ```
 
-### 4.2.3. OpenThread
+#### C. OpenThread
 
 ```bash
 $ cd-rootfs

@@ -63,6 +63,33 @@ $ . confs/imx8mm-scarthgap-rauc.conf
 $ make
 ```
 
+### 2.2.1. Image
+
+> 如果只是要 image
+
+```bash
+$ bitbake -e $(PJ_YOCTO_IMAGE) | grep ^IMAGE_FSTYPES=
+IMAGE_FSTYPES="  wic.zst ext4"
+
+# 編譯
+$ make image
+# or
+# bitbake $(PJ_YOCTO_IMAGE)
+$ bitbake imx-image-core
+```
+
+### 2.2.2. bundle
+
+> 如果只是要 bundle
+
+```bash
+# 編譯
+$ make bundle
+# or
+# bitbake $(PJ_YOCTO_BUNDLE)
+$ bitbake imx-bundle
+```
+
 ## 2.3. Target
 
 | ITEM        | FILE                                            |
@@ -90,11 +117,23 @@ $ uuu -b emmc_all \
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
 
+### 2.4.3. Burn to MicroSD
+
+> 如果的實際操作 RAUC，請用其它方法。
+
 # 3. Layers
 
-## 3.1. [meta-rauc](https://github.com/rauc/meta-rauc.git)
+## 3.1. Layer Index
 
-### 3.1.1. Add layer
+### 3.1.1. [OpenEmbedded Layer Index](https://layers.openembedded.org/layerindex/)
+
+| Layer name                                                   | Description                 | Type     | Repository                            |
+| :----------------------------------------------------------- | :-------------------------- | :------- | :------------------------------------ |
+| [meta-rauc](https://layers.openembedded.org/layerindex/branch/master/layer/meta-rauc/) | RAUC update handler support | Software | https://github.com/rauc/meta-rauc.git |
+
+## 3.2. [meta-rauc](https://github.com/rauc/meta-rauc.git)
+
+### 3.2.1. Add layer
 
 #### A. update $PJ_COOKER_MENU
 
@@ -170,13 +209,13 @@ LAYERSERIES_COMPAT_rauc = "nanbield scarthgap"
 INHERIT += "sanity-meta-rauc"
 ```
 
-### 3.1.2. Nothing
+### 3.2.2. Nothing
 
 > 如果只是加入 meta-rauc 是沒有任何功用的。
 
-## 3.2. meta-rauc-plus
+## 3.3. meta-rauc-plus
 
-### 3.2.1. create-layer
+### 3.3.1. create-layer
 
 ```bash
 $ echo $PJ_YOCTO_LAYERS_DIR
@@ -245,7 +284,7 @@ $ vi cooker-menu/$PJ_COOKER_MENU
   }
 ```
 
-### 3.2.2. RAUC system configuration & verification keyring
+### 3.3.2. RAUC system configuration & verification keyring
 
 > [Bundle Formats](https://rauc.readthedocs.io/en/latest/reference.html#id9): plain, verity and crypt
 >
@@ -368,7 +407,7 @@ do_install:append() {
 }
 ```
 
-### 3.2.3. Disk Partition
+### 3.3.3. Disk Partition
 
 > RAUC 實現了 `Dual Image`，於是 Disk 的配置也要改變。
 
@@ -490,7 +529,7 @@ do_install:append() {
 }
 ```
 
-### 3.2.4. u-boot
+### 3.3.4. u-boot
 
 > 這邊主要因為要使用 fw_printenv
 
@@ -798,7 +837,7 @@ IMAGE_BOOT_FILES += " \
 
 ```
 
-### 3.2.5. kernel
+### 3.3.5. kernel
 
 #### A. linux-imx
 
@@ -929,36 +968,9 @@ $ find * -name dm-verity.ko
 $ find * -name dm-crypt.ko
 ```
 
-# 4. Check
+# 4. Outputs
 
-## 4.1. Build
-
-### 4.1.1. Image
-
-```bash
-$ bitbake -e $(PJ_YOCTO_IMAGE) | grep ^IMAGE_FSTYPES=
-IMAGE_FSTYPES="  wic.zst ext4"
-
-# 編譯
-$ make image
-# or
-# bitbake $(PJ_YOCTO_IMAGE)
-$ bitbake imx-image-core
-```
-
-### 4.1.2. bundle
-
-```bash
-# 編譯
-$ make bundle
-# or
-# bitbake $(PJ_YOCTO_BUNDLE)
-$ bitbake imx-bundle
-```
-
-## 4.2. Check Image
-
-### 4.2.1. rootfs
+## 4.1. Check rootfs
 
 ```bash
 $ make lnk-generate
@@ -969,7 +981,7 @@ $ cat ./etc/fstab
 $ cat ./etc/rauc/system.conf 
 ```
 
-### 4.2.2. ext4 and wic
+## 4.2. ext4 and wic
 
 ```bash
 $ cd-root
@@ -1032,7 +1044,7 @@ $ tree -L 1 /tmp/wic/
 $ sudo umount /tmp/wic
 ```
 
-### 4.2.3. raucb
+## 4.3. raucb
 
 #### A. plain
 
@@ -1071,9 +1083,9 @@ $ find123 dm-verity.ko
 >
 > 暫不花時間研究 crypt。
 
-## 4.3.  Check on Board
+## 4.4.  Check on Board
 
-### 4.3.1. Partitions
+### 4.4.1. Partitions
 
 ```bash
 # 在板子查看

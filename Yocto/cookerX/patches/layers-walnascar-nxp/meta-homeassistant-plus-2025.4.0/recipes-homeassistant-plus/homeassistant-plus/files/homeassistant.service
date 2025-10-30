@@ -1,0 +1,20 @@
+[Unit]
+Description=Home Assistant
+After=network.target
+
+Requires=root.mount
+After=root.mount
+
+[Service]
+Type=simple
+User=@HOMEASSISTANT_USER@
+
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p @HOMEASSISTANT_CONFIG_DIR@
+ExecStartPre=/bin/chown homeassistant:homeassistant @HOMEASSISTANT_CONFIG_DIR@
+
+ExecStart=/usr/bin/hass --skip-pip -c "@HOMEASSISTANT_CONFIG_DIR@"
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

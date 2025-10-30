@@ -31,7 +31,7 @@
 >
 > BB 的語法太靈活，shellscript 的支援度不高；我們寫程式的時間都不夠了，還要學習這奇怪的語法。
 >
-> 在編譯時一定要上網！就算你已經編譯成功，而且已經下載過，還是會報失敗。
+> 在編譯時一定要上網！就算你已經編譯成功，而且已經下載過，還是會報失敗。<font color="red">這邊就有個疑慮，怎麼定版。</font>
 >
 > yocto 的版本變動很快，或許今年允許的 class 或語法，明年就不能用了。就連 google 大神也救不了，因為新的東西，還要等有心人把踩到的屎寫出來。
 >
@@ -88,23 +88,7 @@
 
 ## 1.2. [Release Information](https://docs.yoctoproject.org/migration-guides/index.html)
 
-## 1.3. [OpenEmbedded Layer Index](https://layers.openembedded.org/layerindex/)
-
-## 1.4. Source Tree
-
-> [meta-freescale](https://git.yoctoproject.org/meta-freescale/)
->
-> [meta-freescale-distro](https://github.com/Freescale/meta-freescale-distro)
->
-> [meta-imx](https://source.codeaurora.org/external/imx/meta-imx/)
->
-> [meta-openembedded](http://cgit.openembedded.org/meta-openembedded/tree/meta-oe?h=master)
->
-> [meta-rauc](https://github.com/rauc/meta-rauc)
->
-> [poky](https://git.yoctoproject.org/poky/)
-
-### 1.4.1. [Yocto計劃](https://zh.m.wikipedia.org/zh-tw/Yocto計劃)
+# 2. Yocto Layers
 
 > Yocto計畫主要由三個元件組成：
 >
@@ -114,9 +98,16 @@
 >
 > Poky：是一個參考系統。是許多案子與工具的集合，用來讓使用者延伸出新的發行版（Distribution)
 
-# 2. Poky
+## 2.1. Collects
 
-## 2.1. version
+| Layer name                                                   | Description                                   | Type | Repository                                          |
+| :----------------------------------------------------------- | :-------------------------------------------- | :--- | :-------------------------------------------------- |
+| [meta-openembedded](https://git.openembedded.org/meta-openembedded/) | Collection of layers for the OE-core universe | Base | https://git.openembedded.org/meta-openembedded/tree |
+| [poky](https://git.yoctoproject.org/poky)                    | Poky Build Tool and Metadata                  | Base | https://git.yoctoproject.org/poky                   |
+
+### 2.1.1. Poky
+
+#### A. version
 
 ```bash
 $ bitbake -e virtual/kernel | grep "^PN="
@@ -131,7 +122,7 @@ DISTRO_VERSION = "4.1"
 SDK_VERSION = "${@d.getVar('DISTRO_VERSION').replace('snapshot-${METADATA_REVISION}', 'snapshot')}"
 ```
 
-## 2.2. bitbake
+#### B. bitbake
 
 > bitbake -c CMD
 
@@ -160,6 +151,15 @@ SDK_VERSION = "${@d.getVar('DISTRO_VERSION').replace('snapshot-${METADATA_REVISI
 | `packagedata`      | 建立 recipe 的 .pkgedata                                     |
 | `image`            | 產生最終映像檔（如 `.wic`、`.sdimg`）                        |
 | `rootfs`           | 建立 rootfs                                                  |
+
+## 2.2. [OpenEmbedded Layer Index](https://layers.openembedded.org/layerindex/)
+
+| Layer name                                                   | Description                                            | Type          | Repository                                             |
+| :----------------------------------------------------------- | :----------------------------------------------------- | :------------ | :----------------------------------------------------- |
+| [meta-freescale](https://layers.openembedded.org/layerindex/branch/master/layer/meta-freescale/) | Freescale/NXP BSP layer                                | Machine (BSP) | https://github.com/Freescale/meta-freescale.git        |
+| [meta-freescale-distro](https://layers.openembedded.org/layerindex/branch/master/layer/meta-freescale-distro/) | OpenEmbedded/Yocto layer for NXP's Distribution images | Distribution  | https://github.com/Freescale/meta-freescale-distro.git |
+| [meta-imx-sdk](https://layers.openembedded.org/layerindex/branch/master/layer/meta-imx-sdk/) | Layer for NXP's i.MX Distribution images               | Distribution  | https://github.com/nxp-imx/meta-imx.git                |
+| [meta-rauc](https://layers.openembedded.org/layerindex/branch/master/layer/meta-rauc/) | RAUC update handler support                            | Software      | https://github.com/rauc/meta-rauc.git                  |
 
 # 3. Yocto Recipes
 
@@ -444,6 +444,30 @@ pip install
 $ find * -name bitbake.lock
 
 $ rm builds/*/bitbake.lock
+```
+
+## II.4.  An error occurred during checking the C++ toolchain for '--std=gnu++20' support. Please use a g++ compiler that supports C++20 (e.g. g++ version 10 onwards).
+
+> 發生在 ubuntu 20.04 
+
+```bash
+$ sudo apt update
+$ sudo apt upgrade
+$ sudo apt install g++-10
+
+$ sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 9
+$ sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
+$ update-alternatives --list g++
+$ sudo update-alternatives --config g++
+There are 2 choices for the alternative g++ (providing /usr/bin/g++).
+
+  Selection    Path             Priority   Status
+------------------------------------------------------------
+* 0            /usr/bin/g++-10   10        auto mode
+  1            /usr/bin/g++-10   10        manual mode
+  2            /usr/bin/g++-9    9         manual mode
+
+Press <enter> to keep the current choice[*], or type selection number:
 ```
 
 # III. Glossary

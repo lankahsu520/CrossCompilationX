@@ -134,22 +134,26 @@
     "meta-nxp-connectivity/meta-nxp-connectivity-examples",
     "meta-nxp-connectivity/meta-nxp-zigbee-rcp"
   ],
+  "local.conf": [
+    "CONF_VERSION = '2'"
+    ,"ACCEPT_FSL_EULA = '1'"
+    ,"BB_NUMBER_THREADS = '6'"
+    ,"PARALLEL_MAKE = '-j 6'"
+    ,"EXTRA_IMAGE_FEATURES = 'allow-empty-password empty-root-password allow-root-login package-management'"
+    ,"PATCHRESOLVE = 'noop'"
+    ,"PACKAGECONFIG:append:pn-qemu-system-native = 'sdl'"
+    ,"IMAGE_FSTYPES += ' wic.zst ext4'"
+    ,"PACKAGE_CLASSES = 'package_deb'"
+    ,"USER_CLASSES = 'buildstats'"
+    ,"WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'"
+		,"IMAGE_INSTALL:append = ' git tree net-tools helloworld123'"
+	],
   "builds": {
     "imx8mm-evk-walnascar-matter": {
       "target": "imx-image-multimedia",
       "local.conf": [
-        "MACHINE = 'imx8mmevk-matter'",
-        "DISTRO = 'fsl-imx-xwayland'",
-        "CONF_VERSION = '2'",
-        "ACCEPT_FSL_EULA = '1'",
-        "EXTRA_IMAGE_FEATURES  = 'allow-empty-password empty-root-password allow-root-login package-management'",
-        "PATCHRESOLVE = 'noop'",
-        "PACKAGECONFIG:append:pn-qemu-system-native = 'sdl'",
-        "IMAGE_FSTYPES += ' wic.zst ext4'",
-        "PACKAGE_CLASSES = 'package_deb'",
-        "USER_CLASSES = 'buildstats'",
-        "WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'",
-        "IMAGE_INSTALL:append = ' git tree net-tools helloworld123'"
+        "MACHINE = 'imx8mmevk-matter'"
+        ,"DISTRO = 'fsl-imx-xwayland'"
       ]
     }
   }

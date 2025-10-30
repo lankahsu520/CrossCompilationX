@@ -74,6 +74,7 @@ lnk_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
 	
+	mkdir -p $PJ_YOCTO_ROOT/builds-lnk
 	if [ -d $PJ_YOCTO_ROOT/builds-lnk ]; then
 		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; rm -f *;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; ln -s $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs $PJ_YOCTO_BUILD-rootfs;)"
@@ -85,6 +86,7 @@ lnk_fn()
 		echo "Please mkdir $PJ_YOCTO_ROOT/builds-lnk first !!!"
 	fi
 
+	mkdir -p $PJ_YOCTO_ROOT/images-lnk
 	if [ -d $PJ_YOCTO_ROOT/images-lnk ]; then
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; rm -f *;)"
 		do_command_fn "(cd $PJ_YOCTO_ROOT/images-lnk; ln -s $(readlink -f $PJ_YOCTO_BUILD_DIR/tmp/deploy/images/$PJ_YOCTO_MACHINE/$PJ_YOCTO_IMAGE_WIC) $PJ_YOCTO_IMAGE_WIC;)"

@@ -68,6 +68,33 @@ $ . confs/imx8mm-scarthgap-rauc-home2023.12.0.conf
 $ make
 ```
 
+### 2.2.1. Image
+
+> 如果只是要 image
+
+```bash
+$ bitbake -e $(PJ_YOCTO_IMAGE) | grep ^IMAGE_FSTYPES=
+IMAGE_FSTYPES="  wic.zst ext4"
+
+# 編譯
+$ make image
+# or
+# bitbake $(PJ_YOCTO_IMAGE)
+$ bitbake imx-image-core
+```
+
+### 2.2.2. bundle
+
+> 如果只是要 bundle
+
+```bash
+# 編譯
+$ make bundle
+# or
+# bitbake $(PJ_YOCTO_BUNDLE)
+$ bitbake imx-bundle
+```
+
 ## 2.3. Target
 
 | ITEM        | FILE                                            |
@@ -95,14 +122,32 @@ $ uuu -b emmc_all \
 root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.raucb
 ```
 
+### 2.4.3. Burn to MicroSD
+
+> *.wic 和 .img 是相同的，只是副檔名不同而已。
+
+```bash
+$ unzstd imx-image-multimedia-imx8mmevk-matter.rootfs.wic.zst
+$ mv imx-image-multimedia-imx8mmevk-matter.rootfs.wic imx-image-multimedia-imx8mmevk-matter.rootfs.img
+```
+
+<img src="./images/Yocto-NXP-8MMINILPD4-EVKB-rufus.png" alt="Yocto-NXP-8MMINILPD4-EVKB-rufus" style="zoom:50%;" />
+
 # 3. Layers
 
-## 3.1. [meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)
+## 3.1. Layer Index
+
+### 3.1.1. [OpenEmbedded Layer Index](https://layers.openembedded.org/layerindex/)
+
+| Layer name                                                   | Description              | Type     | Repository                                                   |
+| :----------------------------------------------------------- | :----------------------- | :------- | :----------------------------------------------------------- |
+| [meta-homeassistant](https://layers.openembedded.org/layerindex/branch/master/layer/meta-homeassistant/) | Layer for Home Assistant | Software | https://github.com/meta-homeassistant/meta-homeassistant.git |
+
+## 3.2. [meta-homeassistant](https://github.com/meta-homeassistant/meta-homeassistant)
 
 > 當初一開始接觸時是使用 2023.12.0，花了很長的時間，結果發現無法支援 HACS。
 >
 > 現在就得考慮是不是直接升級到最新版；而要升級至 2025.7.1時，yocto 的版本又要升級至 whinlatter (5.3)；之後又遇到  i.MX Repo Manifest 只支援到 walnascar (5.2)，解決了一部分，又有另一部分顯現，而結果就是環環相扣。
->
 
 | Check | Yocto                              | python3-homeassistant | Date                | rev                                      |
 | ----- | ---------------------------------- | --------------------- | ------------------- | ---------------------------------------- |
@@ -118,7 +163,7 @@ root@imx8mm-lpddr4-evk:~# rauc install /tmp/update-bundle-imx8mm-lpddr4-evk.rauc
 | v     | nanbield (4.3),<br>scarthgap (5.0) | 2023.12.0             | 2024/03/20 05:10:32 | 5ee63318c53bec1bfc2e56221783c23c61b32a1e |
 |       | nanbield (4.3)                     | 2023.12.0             | 2024/02/25 05:56:17 | 863a92980349b6a80d03843ba2958b4d1deb131a |
 
-### 3.1.1. Add layer
+### 3.2.1. Add layer
 
 > 因為 homeassistant 相依很多套件，這邊就不列出所有的。
 
@@ -187,7 +232,7 @@ $ cat $PJ_YOCTO_LAYERS_DIR/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1
 LICENSE_FLAGS = "commercial"
 ```
 
-### 3.1.2. Recipes
+### 3.2.2. Recipes
 
 #### A. python3-homeassistant
 
@@ -205,7 +250,7 @@ $ bitbake -c build python3-homeassistant
 > HOMEASSISTANT_CONFIG_DIR : /var/lib/homeassistant
 
 ```bash
-$ vi $PJ_YOCTO_LAYERS_DIR/meta-homeassistant/recipes-homeassistant/homeassistant/python3-homeassistant/homeassistant.service
+$ vi $PJ_YOCTO_LAYERS_DIR/meta-homeassistant-202*/recipes-homeassistant/homeassistant/python3-homeassistant/homeassistant.service
 [Unit]
 Description=Home Assistant
 After=network.target
@@ -244,7 +289,75 @@ $ bb-info python3-ha-ffmpeg
 $ bitbake -c build python3-ha-ffmpeg
 ```
 
-## 3.2. meta-homeassistant-plus
+#### D. [python3-python-matter-server](https://github.com/home-assistant-libs/python-matter-server)
+
+> The Open Home Foundation Matter Server is an [officially certified](https://csa-iot.org/csa_product/open-home-foundation-matter-server/) Software Component to create a Matter controller. It serves as the foundation to provide Matter support to [Home Assistant](https://home-assistant.io/) but its universal approach makes it suitable to be used in other projects too.
+>
+> - [Setting up your development environment](https://github.com/matter-js/python-matter-server/blob/main/DEVELOPMENT.md)
+
+> 基本上有編譯 matter (chip-tool) 才會有用處。
+>
+> [meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity)
+>
+> - [Running Matter Commissioning in Home Assistant application based on i.MX MPU platforms](https://github.com/nxp-imx/meta-nxp-connectivity/blob/imx_matter_2025_q1-post/docs/guides/nxp_mpu_matter_Home_Assistant.md)
+>
+>   裏面介紹在 imx93evk 使用 Docker images-homeassistant  and matter-server。
+>
+>   對於開發人員一點用處也沒有用，這邊生起一個念頭，"為什麼都是用 Docker ? 是不是有什麼不想讓別人知道裏面實際內容"
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-python-matter-server
+```
+
+```bash
+$ bb-info python3-python-matter-server
+$ bitbake -c build python3-python-matter-server
+```
+
+| rev                                  | 2023.12.0                                | 2025.4.0                                 |
+| ------------------------------------ | ---------------------------------------- | ---------------------------------------- |
+| meta-homeassistant                   | 5ee63318c53bec1bfc2e56221783c23c61b32a1e | 1b37b27b8aebee02bd5da8a43129661e5f364be3 |
+| python3-homeassistant                | 2023.12.0                                | 2025.4.0                                 |
+| python3-matter-server                | 5.0.0                                    | 7.0.1 -> 8.1.0                           |
+| python3-home-assistant-chip-clusters | 2023.10.2                                | 2024.11.4 -> 2025.7.0                    |
+|                                      |                                          |                                          |
+
+> yocto 在版本定義看似很完整，只要把所以對應的檔案抓下就可以使用。
+>
+> 但事實上並非如此，這邊就是一個很好的例子；當我要在 2025.4.0 上使用 python3-matter-server
+>
+> 目前對應到的是 python3-python-matter-server_7.0.1.bb，
+
+```bash
+$ git-log python3-python-matter-server_7.0.1.bb
+* d029c3e (2025/03/29 21:32:27) <Tom Geelen> various version fixes
+* 8edc7cf (2025/03/29 21:32:27) <Tom Geelen> python3-python-matter-server: upgrade 6.6.0 -> 7.0.1
+
+$ grep -nrs python3-python-matter-server
+recipes-homeassistant/homeassistant/python3-homeassistant/integrations.inc:614:    python3-python-matter-server (>7.0.0) \
+
+$ git-log python3-python-matter-server_8.1.0.bb
+* f619704 (2025/09/21 12:12:13) <Tom Geelen> python3-python-matter-server: clean RDEPENDS
+* 70e51e6 (2025/09/15 00:17:42) <Tom Geelen> python3-python-matter-server: upgrade 7.0.1 -> 8.1.0
+```
+
+```bash
+$ tree -L 1 $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs/usr/lib/python3.13/site-packages/matter_server
+/yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-matter-home/tmp/work/imx8mmevk_matter-poky-linux/imx-image-multimedia/1.0/rootfs/usr/lib/python3.13/site-packages/matter_server
+├── client
+├── common
+├── dashboard
+├── __init__.py
+├── __pycache__
+├── py.typed
+└── server
+
+5 directories, 2 files
+
+$ tree -L 1 $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs/usr/lib/python3.13/site-packages//homeassistant/components/matter
+```
+
+## 3.3. meta-homeassistant-plus
 
 > 這邊要先有一個重要的認知，homeassistant 算是整合各家的 IoT 系統，當要整入 embedded 時，就有可能會有`缺失`，而這`缺失`是不是剛好是自己需要的，而之後將是個很大的考驗。
 >
@@ -252,7 +365,7 @@ $ bitbake -c build python3-ha-ffmpeg
 >
 > 問題是不是這樣，這邊不多解釋，但是 embedded engineer 必須了解。
 
-### 3.2.1. create-layer
+### 3.3.1. create-layer
 
 ```bash
 $ echo $PJ_YOCTO_LAYERS_DIR
@@ -362,7 +475,7 @@ http:
 
 ```
 
-### 3.2.2. Add recipes - ONVIF
+### 3.3.2. Add recipes - ONVIF
 
 #### onvif-zeep
 
@@ -429,7 +542,7 @@ $ bb-info python3-zeep
 $ bitbake -c build python3-zeep
 ```
 
-### 3.2.3. Add recipes - Homekit
+### 3.3.3. Add recipes - Homekit
 
 #### aiohomekit
 
@@ -495,7 +608,7 @@ $ bb-info python3-lark
 $ bitbake -c build python3-lark
 ```
 
-### 3.2.4. Add recipes - Apple TV
+### 3.3.4. Add recipes - Apple TV
 
 #### chacha20poly1305
 
@@ -587,7 +700,7 @@ $ bb-info python3-srptools
 $ bitbake -c build python3-srptools
 ```
 
-### 3.2.5. Add recipes - synology
+### 3.3.5. Add recipes - synology
 
 #### py-synologydsm-api
 
@@ -602,7 +715,7 @@ $ bb-info python3-py-synologydsm-api
 $ bitbake -c build python3-py-synologydsm-api
 ```
 
-### 3.2.6. Add recipes - tuya
+### 3.3.6. Add recipes - tuya
 
 > github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[tuya](https://github.com/home-assistant/core/tree/dev/tests/components/tuya)
 
@@ -659,7 +772,7 @@ $ devtool build python3-tuya-device-sharing-sdk
 $ devtool reset python3-tuya-device-sharing-sdk
 ```
 
-### 3.2.7. Add recipes - sensibo
+### 3.3.7. Add recipes - sensibo
 
 > github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[sensibo](https://github.com/home-assistant/core/tree/dev/tests/components/sensibo)
 
@@ -697,7 +810,7 @@ $ bitbake -c cleanall python3-pysensibo
 $ bitbake -c build python3-pysensibo
 ```
 
-### 3.2.8. Add recipes - OTBR
+### 3.3.8. Add recipes - OTBR
 
 #### bitstruct
 
@@ -730,7 +843,7 @@ $ bitbake -c cleanall python3-python-otbr-api
 $ bitbake -c build python3-python-otbr-api
 ```
 
-### 3.2.9. Add recipes - Xiaomi miio
+### 3.3.9. Add recipes - Xiaomi miio
 
 ```bash
 $ pip install micloud
@@ -754,7 +867,7 @@ $ bb-info python3-python-miio
 $ bitbake -c build python3-python-miio
 ```
 
-### 3.2.10. Add recipes - No module named `xxxx`
+### 3.3.10. Add recipes - No module named `xxxx`
 
 ```bash
 # 查看是否已經安裝至 yocto-rootfs 
@@ -811,40 +924,15 @@ $ bb-info python3-pytest-sugar
 $ bitbake -c build python3-pytest-sugar
 ```
 
-# 4. Check
+# 4. Outputs
 
-## 4.1. Build
-
-### 4.1.1. Image
+## 4.1. Check rootfs
 
 ```bash
-$ bitbake -e $(PJ_YOCTO_IMAGE) | grep ^IMAGE_FSTYPES=
-IMAGE_FSTYPES="  wic.zst ext4"
+$ make lnk-generate
 
-# 編譯
-$ make image
-# or
-# bitbake $(PJ_YOCTO_IMAGE)
-$ bitbake imx-image-core
-```
-
-### 4.1.2. bundle
-
-```bash
-# 編譯
-$ make bundle
-# or
-# bitbake $(PJ_YOCTO_BUNDLE)
-$ bitbake imx-bundle
-```
-
-## 4.2. Check Image
-
-### 4.2.1. rootfs
-
-```bash
 $ cd-rootfs
-$ find123 ffmpeg pyav hass haffmpeg
+$ find123 ffmpeg pyav hass haffmpeg homeassistant.service
 ```
 
 # 5. Showtime
@@ -933,6 +1021,7 @@ Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 
+root@imx8mm-lpddr4-evk:~# systemctl daemon-reload
 root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
@@ -1441,177 +1530,4 @@ root@imx8mm-lpddr4-evk:~# dmesg
 [    2.488528] imx6q-pcie 33800000.pcie:       IO 0x001ff80000..0x001ff8ffff -> 0x0000000000
 [    2.496230] imx_sec_dsim_drv 32e10000.mipi_dsi: version number is 0x1060200
 [    2.504259] imx6q-pcie 33800000.pcie:      MEM 0x0018000000..0x001fefffff -> 0x0018000000
-[    2.511253] [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c00000/mipi_dsi@32e10000 to encoder DSI-34: -19
-[    2.531011] imx_sec_dsim_drv 32e10000.mipi_dsi: Failed to attach bridge: 32e10000.mipi_dsi
-[    2.539289] imx_sec_dsim_drv 32e10000.mipi_dsi: failed to bind sec dsim bridge: -19
-[    2.546958] imx-drm display-subsystem: bound 32e10000.mipi_dsi (ops imx_sec_dsim_ops)
-[    2.555425] [drm] Initialized imx-drm 1.0.0 20120507 for display-subsystem on minor 0
-[    2.563306] imx-drm display-subsystem: [drm] Cannot find any crtc or sizes
-[    2.574585] pps pps0: new PPS source ptp0
-[    2.690703] mdio_bus 30be0000.ethernet-1:00: Fixed dependency cycle(s) with /soc@0/bus@30800000/ethernet@30be0000/mdio/ethernet-phy@0/vddio-regulator
-[    2.734759] imx6q-pcie 33800000.pcie: iATU: unroll T, 4 ob, 4 ib, align 64K, limit 4G
-[    2.790693] vddio: Bringing 1500000uV into 1800000-1800000uV
-[    2.798356] fec 30be0000.ethernet eth0: registered PHC device 0
-[    2.811172] imx-cpufreq-dt imx-cpufreq-dt: cpu speed grade 3 mkt segment 0 supported-hw 0x8 0x1
-[    2.825525] galcore: clk_get vg clock failed, disable vg!
-[    2.825530] sdhci-esdhc-imx 30b50000.mmc: Got CD GPIO
-[    2.836609] Galcore version 6.4.11.p2.745085
-[    2.854283] mmc0: SDHCI controller on 30b40000.mmc [30b40000.mmc] using ADMA
-[    2.854560] mmc1: SDHCI controller on 30b50000.mmc [30b50000.mmc] using ADMA
-[    2.885600] [drm] Initialized vivante 1.0.0 20170808 for 38000000.gpu on minor 1
-[    2.898207] OF: graph: no port node found in /soc@0/bus@30800000/i2c@30a30000/tcpc@50/connector
-[    2.906993] OF: graph: no port node found in /soc@0/bus@30800000/i2c@30a30000/tcpc@50/connector
-[    2.915722] OF: graph: no port node found in /soc@0/bus@30800000/i2c@30a30000/tcpc@50/connector
-[    2.919965] mmc0: new ultra high speed SDR104 SDIO card at address 0001
-[    2.950312] cfg80211: Loading compiled-in X.509 certificates for regulatory database
-[    2.960078] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[    2.966364] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
-[    2.973646] clk: Disabling unused clocks
-[    2.977643] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
-[    2.980559] ALSA device list:
-[    2.986267] platform regulatory.0: Falling back to sysfs fallback for: regulatory.db
-[    2.989250]   No soundcards found.
-[    3.744596] imx6q-pcie 33800000.pcie: Phy link never came up
-[    4.003650] ddrc freq set to low bus mode
-[    4.756332] imx6q-pcie 33800000.pcie: Phy link never came up
-[    4.765502] imx6q-pcie 33800000.pcie: PCI host bridge to bus 0000:00
-[    4.772510] pci_bus 0000:00: root bus resource [bus 00-ff]
-[    4.778083] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
-[    4.784312] pci_bus 0000:00: root bus resource [mem 0x18000000-0x1fefffff]
-[    4.791418] pci 0000:00:00.0: [16c3:abcd] type 01 class 0x060400
-[    4.797559] pci 0000:00:00.0: reg 0x10: [mem 0x00000000-0x000fffff]
-[    4.804145] pci 0000:00:00.0: reg 0x38: [mem 0x00000000-0x0000ffff pref]
-[    4.811086] pci 0000:00:00.0: supports D1
-[    4.815127] pci 0000:00:00.0: PME# supported from D0 D1 D3hot D3cold
-[    4.825696] pci 0000:00:00.0: BAR 0: assigned [mem 0x18000000-0x180fffff]
-[    4.832617] pci 0000:00:00.0: BAR 6: assigned [mem 0x18100000-0x1810ffff pref]
-[    4.839877] pci 0000:00:00.0: PCI bridge to [bus 01-ff]
-[    4.848283] pcieport 0000:00:00.0: PME: Signaling with IRQ 221
-[    4.861054] ddrc freq set to high bus mode
-[    4.889965] EXT4-fs (mmcblk2p3): mounted filesystem edb0b809-343a-4c76-a5ef-e5b7f5c707a0 r/w with ordered data mode. Quota mode: none.
-[    4.902165] VFS: Mounted root (ext4 filesystem) on device 179:3.
-[    4.908934] devtmpfs: mounted
-[    4.913079] Freeing unused kernel memory: 4032K
-[    4.917733] Run /sbin/init as init process
-[    4.921837]   with arguments:
-[    4.921839]     /sbin/init
-[    4.921842]   with environment:
-[    4.921844]     HOME=/
-[    4.921846]     TERM=linux
-[    5.052074] systemd[1]: systemd 255.4^ running in system mode (+PAM -AUDIT -SELINUX -APPARMOR +IMA -SMACK +SECCOMP -GCRYPT -GNUTLS -OPENSSL +ACL +BLKID -CURL -ELFUTILS -FIDO2 -IDN2 -IDN -IPTC +KMOD -LIBCRYPTSETUP +LIBFDISK -PCRE2 -PWQUALITY -P11KIT -QRENCODE -TPM2 -BZIP2 -LZ4 -XZ -ZLIB +ZSTD -BPF_FRAMEWORK -XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)
-[    5.083965] systemd[1]: Detected architecture arm64.
-[    5.106945] systemd[1]: Hostname set to <imx8mm-lpddr4-evk>.
-[    5.200449] systemd-sysv-generator[132]: SysV service '/etc/init.d/rc.local' lacks a native systemd unit file. ~ Automatically generating a unit file for compatibility. Please update package to include a native systemd unit file, in order to make it safe, robust and future-proof. ! This compatibility logic is deprecated, expect removal soon. !
-[    5.525643] systemd[1]: Queued start job for default target Graphical Interface.
-[    5.554524] systemd[1]: Created slice Slice /system/getty.
-[    5.576702] systemd[1]: Created slice Slice /system/modprobe.
-[    5.600662] systemd[1]: Created slice Slice /system/serial-getty.
-[    5.624676] systemd[1]: Created slice Slice /system/systemd-fsck.
-[    5.648143] systemd[1]: Created slice User and Session Slice.
-[    5.670740] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
-[    5.698668] systemd[1]: Started Forward Password Requests to Wall Directory Watch.
-[    5.722468] systemd[1]: Expecting device /dev/mmcblk2p4...
-[    5.742639] systemd[1]: Reached target Path Units.
-[    5.762395] systemd[1]: Reached target Remote File Systems.
-[    5.782428] systemd[1]: Reached target Slice Units.
-[    5.802409] systemd[1]: Reached target Swaps.
-[    5.852333] systemd[1]: Listening on RPCbind Server Activation Socket.
-[    5.878532] systemd[1]: Reached target RPC Port Mapper.
-[    5.899181] systemd[1]: Listening on Syslog Socket.
-[    5.918959] systemd[1]: Listening on initctl Compatibility Named Pipe.
-[    5.943963] systemd[1]: Listening on Journal Audit Socket.
-[    5.962938] systemd[1]: Listening on Journal Socket (/dev/log).
-[    5.983126] systemd[1]: Listening on Journal Socket.
-[    6.003130] systemd[1]: Listening on Network Service Netlink Socket.
-[    6.030129] systemd[1]: Listening on udev Control Socket.
-[    6.051210] systemd[1]: Listening on udev Kernel Socket.
-[    6.071076] systemd[1]: Listening on User Database Manager Socket.
-[    6.127235] systemd[1]: Mounting Huge Pages File System...
-[    6.155362] systemd[1]: Mounting POSIX Message Queue File System...
-[    6.182304] systemd[1]: Mounting Kernel Debug File System...
-[    6.202752] systemd[1]: Kernel Trace File System was skipped because of an unmet condition check (ConditionPathExists=/sys/kernel/tracing).
-[    6.220724] systemd[1]: Mounting Temporary Directory /tmp...
-[    6.260852] systemd[1]: Starting Create List of Static Device Nodes...
-[    6.285958] systemd[1]: Starting Load Kernel Module configfs...
-[    6.310500] systemd[1]: Starting Load Kernel Module drm...
-[    6.333899] systemd[1]: Starting Load Kernel Module fuse...
-[    6.363896] systemd[1]: Starting RPC Bind...
-[    6.369635] fuse: init (API version 7.39)
-[    6.390957] systemd[1]: File System Check on Root Device was skipped because of an unmet condition check (ConditionPathIsReadWrite=!/).
-[    6.410310] systemd[1]: Starting Journal Service...
-[    6.432320] systemd[1]: Load Kernel Modules was skipped because no trigger condition checks were met.
-[    6.446139] systemd[1]: Starting Generate network units from Kernel command line...
-[    6.478544] systemd[1]: Starting Remount Root and Kernel File Systems...
-[    6.502354] systemd[1]: Starting Apply Kernel Variables...
-[    6.502938] systemd-journald[148]: Collecting audit messages is enabled.
-[    6.534142] systemd[1]: Starting Coldplug All udev Devices...
-[    6.540458] EXT4-fs (mmcblk2p3): re-mounted edb0b809-343a-4c76-a5ef-e5b7f5c707a0 r/w. Quota mode: none.
-[    6.554477] systemd[1]: Starting Virtual Console Setup...
-[    6.581508] systemd[1]: Started RPC Bind.
-[    6.599270] systemd[1]: Mounted Huge Pages File System.
-[    6.619222] systemd[1]: Started Journal Service.
-[    6.762332] systemd-journald[148]: Received client request to flush runtime journal.
-[    6.960775] audit: type=1334 audit(1754272774.644:2): prog-id=6 op=LOAD
-[    6.967512] audit: type=1334 audit(1754272774.652:3): prog-id=7 op=LOAD
-[    7.063969] audit: type=1334 audit(1754272774.748:4): prog-id=8 op=LOAD
-[    7.071010] audit: type=1334 audit(1754272774.756:5): prog-id=9 op=LOAD
-[    7.078197] audit: type=1334 audit(1754272774.760:6): prog-id=10 op=LOAD
-[    8.350558] Registered IR keymap rc-empty
-[    8.355657] rc rc0: gpio_ir_recv as /devices/platform/ir-receiver/rc/rc0
-[    8.365349] input: gpio_ir_recv as /devices/platform/ir-receiver/rc/rc0/input1
-[    8.433629] debugfs: File 'Playback' in directory 'dapm' already present!
-[    8.441742] debugfs: File 'Capture' in directory 'dapm' already present!
-[    8.452343] EXT4-fs (mmcblk2p4): mounted filesystem 130d59ae-6f2f-45bf-b247-8efb2a1726a6 r/w with ordered data mode. Quota mode: none.
-[    8.519559] caam-snvs 30370000.caam-snvs: ipid matched - 0x3e
-[    8.530982] caam-snvs 30370000.caam-snvs: violation handlers armed - non-secure state
-[    8.593501] caam 30900000.crypto: device ID = 0x0a16040100000000 (Era 9)
-[    8.600453] caam 30900000.crypto: job rings = 1, qi = 0
-[    8.847177] EXT4-fs (mmcblk2p2): mounted filesystem 98ed423a-dee0-4be7-b332-3da98b714ea7 r/w with ordered data mode. Quota mode: none.
-[    8.950859] caam algorithms registered in /proc/crypto
-[    8.956456] caam 30900000.crypto: caam pkc algorithms registered in /proc/crypto
-[    8.966846] caam 30900000.crypto: rng crypto API alg registered prng-caam
-[    8.973970] caam 30900000.crypto: registering rng-caam
-[    8.983330] random: crng init done
-[    8.989935] Device caam-keygen registered
-[    9.192467] audit: type=1334 audit(1754272776.876:7): prog-id=11 op=LOAD
-[    9.238960] audit: type=1334 audit(1754272776.924:8): prog-id=12 op=LOAD
-[   10.024154] imx-sdma 30bd0000.dma-controller: firmware found.
-[   10.024154] imx-sdma 302b0000.dma-controller: firmware found.
-[   10.024331] imx-sdma 30bd0000.dma-controller: loaded firmware 4.6
-[   10.042365] imx-sdma 302c0000.dma-controller: firmware found.
-[   10.137697] audit: type=1334 audit(1754272777.820:9): prog-id=13 op=LOAD
-[   10.144545] audit: type=1334 audit(1754272777.828:10): prog-id=14 op=LOAD
-[   10.151494] audit: type=1334 audit(1754272777.836:11): prog-id=15 op=LOAD
-[   10.742978] Qualcomm Atheros AR8031/AR8033 30be0000.ethernet-1:00: attached PHY driver (mii_bus:phy_addr=30be0000.ethernet-1:00, irq=POLL)
-[   14.851485] fec 30be0000.ethernet eth0: Link is Up - 1Gbps/Full - flow control off
-[   14.937117] kauditd_printk_skb: 19 callbacks suppressed
-[   14.937128] audit: type=1334 audit(1754272782.620:19): prog-id=19 op=LOAD
-[   14.949440] audit: type=1334 audit(1754272782.628:20): prog-id=20 op=LOAD
-[   14.956933] audit: type=1334 audit(1754272782.632:21): prog-id=21 op=LOAD
-[   19.172831] platform backlight: deferred probe pending
-[   19.178035] platform sound-ak4458: deferred probe pending
-[   32.616967] audit: type=1006 audit(1754272800.383:22): pid=649 uid=0 old-auid=4294967295 auid=0 tty=(none) old-ses=4294967295 ses=3 res=1
-[   32.630374] audit: type=1300 audit(1754272800.383:22): arch=c00000b7 syscall=64 success=yes exit=1 a0=8 a1=ffffdaa14e20 a2=1 a3=1 items=0 ppid=1 pid=649 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=3 comm="(systemd)" exe="/usr/lib/systemd/systemd-executor" key=(null)
-[   32.657126] audit: type=1327 audit(1754272800.383:22): proctitle="(systemd)"
-[   32.679922] audit: type=1334 audit(1754272800.448:23): prog-id=22 op=LOAD
-[   32.686804] audit: type=1300 audit(1754272800.448:23): arch=c00000b7 syscall=280 success=yes exit=8 a0=5 a1=ffffc5406188 a2=90 a3=0 items=0 ppid=1 pid=649 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=3 comm="systemd" exe="/usr/lib/systemd/systemd" key=(null)
-[   32.713360] audit: type=1327 audit(1754272800.448:23): proctitle="(systemd)"
-[   32.721128] audit: type=1334 audit(1754272800.448:24): prog-id=22 op=UNLOAD
-[   32.728838] audit: type=1300 audit(1754272800.448:24): arch=c00000b7 syscall=57 success=yes exit=0 a0=8 a1=1 a2=0 a3=ffffb2867e60 items=0 ppid=1 pid=649 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=3 comm="systemd" exe="/usr/lib/systemd/systemd" key=(null)
-[   32.755089] audit: type=1327 audit(1754272800.448:24): proctitle="(systemd)"
-[   32.762886] audit: type=1334 audit(1754272800.448:25): prog-id=23 op=LOAD
-
-```
-
-# III. Glossary
-
-# IV. Tool Usage
-
-# Author
-
-> Created and designed by [Lanka Hsu](lankahsu@gmail.com).
-
-# License
-
-> [CrossCompilationX](https://github.com/lankahsu520/CrossCompilationX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
-
+[    2

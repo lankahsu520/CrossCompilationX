@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
-     file://homeassistant.service \
+     file://homeassistant-bak.service \
 "
 
 #SRC_URI += "file://automations.yaml \
@@ -12,7 +12,7 @@ SRC_URI += " \
 #"
 
 #HOMEASSISTANT_CONFIG_DIR ?= "${localstatedir}/lib/homeassistant"
-HOMEASSISTANT_CONFIG_DIR= "/root/.homeassistant"
+#HOMEASSISTANT_CONFIG_DIR= "/root/.homeassistant"
 
 RDEPENDS:${PN} += " \
     python3-onvif-zeep-async \
@@ -25,9 +25,9 @@ RDEPENDS:${PN} += " \
     python3-tuya-device-sharing-sdk \
 "
 
-do_install:append() {
-    #install -d ${D}${HOMEASSISTANT_CONFIG_DIR}
-    #install -m 0644 ${UNPACKDIR}/*.yaml ${D}${HOMEASSISTANT_CONFIG_DIR}/
-    rm -rf ${D}/root
-}
+#do_install:append() {
+#    #install -d ${D}${HOMEASSISTANT_CONFIG_DIR}
+#    #install -m 0644 ${UNPACKDIR}/*.yaml ${D}${HOMEASSISTANT_CONFIG_DIR}/
+#    rm -rf ${D}/root
+#}
 

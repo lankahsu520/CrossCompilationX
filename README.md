@@ -413,6 +413,8 @@ flowchart LR
 
 ##### A.2. [helper_Yocto-cookerX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-cookerX.md) - Yocto cookerX & RaspberryPi3 helper
 
+> 本人重整出來的開發平台。以 RaspberryPi3 為範本。
+
 ##### A.3. [helper_Yocto-NXP-8MMINILPD4-EVKB.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-NXP-8MMINILPD4-EVKB.md) - Yocto NXP-8MMINILPD4‑EVKB helper
 
 ##### A.4. [helper_Yocto-RAUC.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RAUC.md) - Yocto RAUC helper

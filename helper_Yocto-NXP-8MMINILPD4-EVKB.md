@@ -253,7 +253,8 @@ $ pwd
 # Setup for wayland
 $ MACHINE=imx8mm-lpddr4-evk \
  DISTRO=fsl-imx-wayland \
- source ./imx-setup-release.sh -b bld-wayland
+ source ./imx-setup-release.sh \
+ -b bld-wayland
 # or
 # Setup for XWayland
 $ MACHINE=imx8mm-lpddr4-evk \
@@ -339,6 +340,8 @@ $ bitbake imx-image-core
 
 ## 3.3. [cookerX](https://github.com/lankahsu520/CrossCompilationX/tree/master/helper_cookerX.md)
 
+> 本人重整出來的開發平台。
+
 ### 3.3.1. Configuration
 
 > 這邊參考 [i.MX Repo Manifest](https://github.com/nxp-imx/imx-manifest) 進行整合。
@@ -353,13 +356,15 @@ $ bitbake imx-image-core
 
 > imx8mm-evk-walnascar-rauc-home2025.5.1-menu.json
 
-| CONF                               | lanka | RAUC | Matter | Home Assistant | menu                                        |
-| ---------------------------------- | ----- | ---- | ------ | -------------- | ------------------------------------------- |
-| imx8mm-walnascar-all.conf          | v     | v    |        | v              | imx8mm-evk-walnascar-all-menu.json          |
-| imx8mm-walnascar-matter.conf       | v     |      | v      |                | imx8mm-evk-walnascar-matter-menu.json       |
-| imx8mm-walnascar-home2025.5.1.conf | v     |      |        | v              | imx8mm-evk-walnascar-home2025.4.0-menu.json |
-| imx8mm-walnascar-rauc.conf         | v     | v    |        |                | imx8mm-evk-walnascar-rauc-menu.json         |
-| imx8mm-walnascar-core.conf         | v     |      |        |                | imx8mm-evk-walnascar-core-menu.json         |
+| CONF                                      | lanka | RAUC | Matter | Home Assistant | menu                                               |
+| ----------------------------------------- | ----- | ---- | ------ | -------------- | -------------------------------------------------- |
+| imx8mm-walnascar-all.conf                 | v     | v    | v      | v              | imx8mm-evk-walnascar-all-menu.json                 |
+| imx8mm-walnascar-matter-home2025.4.0.conf | v     |      | v      | v              | imx8mm-evk-walnascar-matter-home2025.4.0-menu.json |
+| imx8mm-walnascar-matter.conf              | v     |      | v      |                | imx8mm-evk-walnascar-matter-menu.json              |
+| imx8mm-walnascar-rauc-home2025.4.0.conf   | v     | v    |        | v              | imx8mm-evk-walnascar-rauc-home2025.4.0-menu.json   |
+| imx8mm-walnascar-home2025.5.1.conf        | v     |      |        | v              | imx8mm-evk-walnascar-home2025.4.0-menu.json        |
+| imx8mm-walnascar-rauc.conf                | v     | v    |        |                | imx8mm-evk-walnascar-rauc-menu.json                |
+| imx8mm-walnascar-core.conf                | v     |      |        |                | imx8mm-evk-walnascar-core-menu.json                |
 
 #### B. scarthgap (5.0)
 
@@ -445,7 +450,69 @@ $ ./confs/sh/cooker_123.sh lnk
 $ ./confs/sh/bb_linker.sh
 ```
 
-## 4.1. rootfs
+```bash
+$ cd $PJ_YOCTO_ROOT
+$ pwd
+/yocto/cookerX-walnascar
+$ tree -L 1 ./
+./
+├── bb-lnk
+├── builds
+├── builds-lnk
+├── confs -> ../cookerX/confs
+├── cooker-menu -> ../cookerX/cooker-menu
+├── images-lnk
+├── layers-walnascar
+├── Makefile -> ../cookerX/Makefile
+├── patches -> ../cookerX/patches
+└── rauc-keys -> ../cookerX/rauc-keys
+
+9 directories, 1 file
+```
+
+## 4.1. bb-lnk
+
+> 這邊是方便查看相關的 bb ，將它們進行連結
+>
+> 如果有比較常用的，可以編輯 ./confs/sh/bb_linker.sh
+
+```bash
+$ ./confs/sh/bb_linker.sh
+
+$ tree -L 1 bb-lnk/
+bb-lnk/
+└── avahi_0.8.bb -> ../layers-walnascar/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
+
+0 directories, 1 file
+```
+
+## 4.2. builds
+
+> 基本上 yocto 的工作空間都放這邊
+
+```bash
+$ tree -L 1 builds
+builds
+├── build-imx8mm-evk-walnascar-core
+└── build_log_20251009111231.txt
+
+1 directory, 1 file
+```
+
+## 4.3. builds-lnk
+
+```bash
+$ tree -L 4 builds-lnk
+builds-lnk
+├── imx8mm-evk-walnascar-core-rootfs -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/work/imx8mm_lpddr4_evk-poky-linux/imx-image-core/1.0/rootfs
+├── imx8mm-evk-walnascar-core-rpm -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/rpm
+├── imx8mm-lpddr4-evk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk
+└── sdk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/sdk
+
+2 directories, 2 files
+```
+
+#### A. rootfs
 
 > 此目錄將會是燒錄板子後的 rootfs
 
@@ -543,35 +610,6 @@ $ cat images-lnk/pn-buildlist
 $ cat images-lnk/task-depends.dot
 $ cat images-lnk/environment.txt
 $ cat images-lnk/$PJ_YOCTO_IMAGE_MANIFEST
-```
-
-## 4.3. builds-lnk
-
-```bash
-$ tree -L 4 builds-lnk
-builds-lnk
-├── imx8mm-evk-walnascar-core-rootfs -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/work/imx8mm_lpddr4_evk-poky-linux/imx-image-core/1.0/rootfs
-├── imx8mm-evk-walnascar-core-rpm -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/rpm
-├── imx8mm-lpddr4-evk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/images/imx8mm-lpddr4-evk
-└── sdk -> /yocto/cookerX-walnascar/builds/build-imx8mm-evk-walnascar-core/tmp/deploy/sdk
-
-2 directories, 2 files
-```
-
-## 4.4. bb-lnk
-
-> 這邊是方便查看相關的 bb ，將它們進行連結
->
-> 如果有比較常用的，可以編輯 ./confs/sh/bb_linker.sh
-
-```bash
-$ ./confs/sh/bb_linker.sh
-
-$ tree -L 1 bb-lnk/
-bb-lnk/
-└── avahi_0.8.bb -> ../layers-walnascar/poky/meta/recipes-connectivity/avahi/avahi_0.8.bb
-
-0 directories, 1 file
 ```
 
 ## 4.5. Others
@@ -929,7 +967,7 @@ Each time you wish to use the SDK in a new shell session, you need to source the
 
 ### 6.1.2. generic SDK
 
-> 很簡單的 cross-compiler 和 基本 C runtime（如 glibc 或 musl）
+> 很簡單的 cross-compiler 和基本 C runtime（如 glibc 或 musl）
 
 ```bash
 $ make toolchain-pure
