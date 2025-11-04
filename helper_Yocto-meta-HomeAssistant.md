@@ -147,7 +147,7 @@ $ mv imx-image-multimedia-imx8mmevk-matter.rootfs.wic imx-image-multimedia-imx8m
 
 > 當初一開始接觸時是使用 2023.12.0，花了很長的時間，結果發現無法支援 HACS。
 >
-> 現在就得考慮是不是直接升級到最新版；而要升級至 2025.7.1時，yocto 的版本又要升級至 whinlatter (5.3)；之後又遇到  i.MX Repo Manifest 只支援到 walnascar (5.2)，解決了一部分，又有另一部分顯現，而結果就是環環相扣。
+> 現在就得考慮是不是直接升級到最新版；而要升級至 2025.7.1時，yocto 的版本又要升級至 whinlatter (5.3)；之後又遇到  i.MX Repo Manifest 只支援到 walnascar (5.2)，解決了一部分，又有另一部分問題，彼此環環相扣。
 
 | Check | Yocto                              | python3-homeassistant | Date                | rev                                      |
 | ----- | ---------------------------------- | --------------------- | ------------------- | ---------------------------------------- |
@@ -359,11 +359,11 @@ $ tree -L 1 $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootf
 
 ## 3.3. meta-homeassistant-plus
 
-> 這邊要先有一個重要的認知，homeassistant 算是整合各家的 IoT 系統，當要整入 embedded 時，就有可能會有`缺失`，而這`缺失`是不是剛好是自己需要的，而之後將是個很大的考驗。
+> 這邊要先有一個重要的認知，homeassistant 算是整合各家的 IoT 系統，當要整入 embedded 時，就有可能會有`缺失`，而這`缺失`是不是剛好是自己需要的，有需要就自己解決。
 >
 > 或許聰明的人就會說，「pip 安裝就好了」、「rpm 安裝也行」、「最慘的用setup 」。
 >
-> 問題是不是這樣，這邊不多解釋，但是 embedded engineer 必須了解。
+> 問題是不是這樣，這邊不多做解釋，但是身為 embedded engineer 就無法避免。
 
 ### 3.3.1. create-layer
 
@@ -843,22 +843,24 @@ $ bitbake -c cleanall python3-python-otbr-api
 $ bitbake -c build python3-python-otbr-api
 ```
 
-### 3.3.9. Add recipes - Xiaomi miio
+### ~~3.3.9. Add recipes - Xiaomi miio~~
+
+> 目前在台灣還不是很友善，無法順利使用。
 
 ```bash
 $ pip install micloud
 $ pip install python-miio
 ```
 
-#### micloud
+#### ~~micloud~~
 
-> pypi: [micloud 0.6](https://pypi.org/project/micloud)
+> ~~pypi: [micloud 0.6](https://pypi.org/project/micloud)~~
 
-#### python-miio
+#### ~~python-miio~~
 
-> pypi: [python-miio 0.5.12](https://pypi.org/project/python-miio)
+> ~~pypi: [python-miio 0.5.12](https://pypi.org/project/python-miio)~~
 >
-> This library (and its accompanying cli tool) can be used to interface with devices using Xiaomi’s [miIO](https://github.com/OpenMiHome/mihome-binary-protocol/blob/master/doc/PROTOCOL.md) and MIoT protocols.
+> ~~This library (and its accompanying cli tool) can be used to interface with devices using Xiaomi’s [miIO](https://github.com/OpenMiHome/mihome-binary-protocol/blob/master/doc/PROTOCOL.md) and MIoT protocols.~~
 
 ```bash
 $ bitbake -s | grep python-miio
@@ -867,7 +869,257 @@ $ bb-info python3-python-miio
 $ bitbake -c build python3-python-miio
 ```
 
-### 3.3.10. Add recipes - No module named `xxxx`
+### 3.3.10. Add recipes - matter
+
+> [home-assistant-chip-repl](https://pypi.org/project/home-assistant-chip-repl/)
+>
+> [home-assistant-chip-core](https://pypi.org/project/home-assistant-chip-core/) (contains the native dependency)
+>
+> [home-assistant-chip-clusters](https://pypi.org/project/home-assistant-chip-clusters/)
+
+```bash
+root@imx8mmevk-matter:~# pip install home-assistant-chip-core
+Collecting home-assistant-chip-core
+  Downloading home_assistant_chip_core-2025.7.0-cp37-abi3-manylinux_2_31_aarch64.whl.metadata (707 bytes)
+Requirement already satisfied: coloredlogs in /usr/lib/python3.13/site-packages (from home-assistant-chip-core) (15.0.1)
+Collecting construct (from home-assistant-chip-core)
+  Downloading construct-2.10.70-py3-none-any.whl.metadata (4.2 kB)
+Requirement already satisfied: dacite in /usr/lib/python3.13/site-packages (from home-assistant-chip-core) (1.8.1)
+Collecting rich (from home-assistant-chip-core)
+  Downloading rich-14.2.0-py3-none-any.whl.metadata (18 kB)
+Requirement already satisfied: pyyaml in /usr/lib/python3.13/site-packages (from home-assistant-chip-core) (6.0.2)
+Collecting ipdb (from home-assistant-chip-core)
+  Downloading ipdb-0.13.13-py3-none-any.whl.metadata (14 kB)
+Collecting deprecation (from home-assistant-chip-core)
+  Downloading deprecation-2.1.0-py2.py3-none-any.whl.metadata (4.6 kB)
+Requirement already satisfied: cryptography in /usr/lib/python3.13/site-packages (from home-assistant-chip-core) (44.0.2)
+Requirement already satisfied: ecdsa in /usr/lib/python3.13/site-packages (from home-assistant-chip-core) (0.19.1)
+Requirement already satisfied: humanfriendly>=9.1 in /usr/lib/python3.13/site-packages (from coloredlogs->home-assistant-chip-core) (10.0)
+Requirement already satisfied: cffi>=1.12 in /usr/lib/python3.13/site-packages (from cryptography->home-assistant-chip-core) (1.17.1)
+Requirement already satisfied: packaging in /usr/lib/python3.13/site-packages (from deprecation->home-assistant-chip-core) (24.2)
+Requirement already satisfied: six>=1.9.0 in /usr/lib/python3.13/site-packages (from ecdsa->home-assistant-chip-core) (1.17.0)
+Collecting ipython>=7.31.1 (from ipdb->home-assistant-chip-core)
+  Downloading ipython-9.6.0-py3-none-any.whl.metadata (4.4 kB)
+Collecting decorator (from ipdb->home-assistant-chip-core)
+  Downloading decorator-5.2.1-py3-none-any.whl.metadata (3.9 kB)
+Collecting markdown-it-py>=2.2.0 (from rich->home-assistant-chip-core)
+  Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/lib/python3.13/site-packages (from rich->home-assistant-chip-core) (2.19.1)
+Requirement already satisfied: pycparser in /usr/lib/python3.13/site-packages (from cffi>=1.12->cryptography->home-assistant-chip-core) (2.22)
+Collecting ipython-pygments-lexers (from ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading ipython_pygments_lexers-1.1.1-py3-none-any.whl.metadata (1.1 kB)
+Collecting jedi>=0.16 (from ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading jedi-0.19.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting matplotlib-inline (from ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading matplotlib_inline-0.2.1-py3-none-any.whl.metadata (2.3 kB)
+Requirement already satisfied: pexpect>4.3 in /usr/lib/python3.13/site-packages (from ipython>=7.31.1->ipdb->home-assistant-chip-core) (4.9.0)
+Collecting prompt_toolkit<3.1.0,>=3.0.41 (from ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading prompt_toolkit-3.0.52-py3-none-any.whl.metadata (6.4 kB)
+Collecting stack_data (from ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading stack_data-0.6.3-py3-none-any.whl.metadata (18 kB)
+Collecting traitlets>=5.13.0 (from ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading traitlets-5.14.3-py3-none-any.whl.metadata (10 kB)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich->home-assistant-chip-core)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Collecting parso<0.9.0,>=0.8.4 (from jedi>=0.16->ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading parso-0.8.5-py2.py3-none-any.whl.metadata (8.3 kB)
+Requirement already satisfied: ptyprocess>=0.5 in /usr/lib/python3.13/site-packages (from pexpect>4.3->ipython>=7.31.1->ipdb->home-assistant-chip-core) (0.7.0)
+Collecting wcwidth (from prompt_toolkit<3.1.0,>=3.0.41->ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading wcwidth-0.2.14-py2.py3-none-any.whl.metadata (15 kB)
+Collecting executing>=1.2.0 (from stack_data->ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading executing-2.2.1-py2.py3-none-any.whl.metadata (8.9 kB)
+Collecting asttokens>=2.1.0 (from stack_data->ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading asttokens-3.0.0-py3-none-any.whl.metadata (4.7 kB)
+Collecting pure-eval (from stack_data->ipython>=7.31.1->ipdb->home-assistant-chip-core)
+  Downloading pure_eval-0.2.3-py3-none-any.whl.metadata (6.3 kB)
+Downloading home_assistant_chip_core-2025.7.0-cp37-abi3-manylinux_2_31_aarch64.whl (33.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 33.7/33.7 MB 2.5 MB/s eta 0:00:00
+Downloading construct-2.10.70-py3-none-any.whl (63 kB)
+Downloading deprecation-2.1.0-py2.py3-none-any.whl (11 kB)
+Downloading ipdb-0.13.13-py3-none-any.whl (12 kB)
+Downloading rich-14.2.0-py3-none-any.whl (243 kB)
+Downloading ipython-9.6.0-py3-none-any.whl (616 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 616.2/616.2 kB 1.0 MB/s eta 0:00:00
+Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+Downloading decorator-5.2.1-py3-none-any.whl (9.2 kB)
+Downloading jedi-0.19.2-py2.py3-none-any.whl (1.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 3.0 MB/s eta 0:00:00
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading prompt_toolkit-3.0.52-py3-none-any.whl (391 kB)
+Downloading traitlets-5.14.3-py3-none-any.whl (85 kB)
+Downloading ipython_pygments_lexers-1.1.1-py3-none-any.whl (8.1 kB)
+Downloading matplotlib_inline-0.2.1-py3-none-any.whl (9.5 kB)
+Downloading stack_data-0.6.3-py3-none-any.whl (24 kB)
+Downloading asttokens-3.0.0-py3-none-any.whl (26 kB)
+Downloading executing-2.2.1-py2.py3-none-any.whl (28 kB)
+Downloading parso-0.8.5-py2.py3-none-any.whl (106 kB)
+Downloading pure_eval-0.2.3-py3-none-any.whl (11 kB)
+Downloading wcwidth-0.2.14-py2.py3-none-any.whl (37 kB)
+Installing collected packages: pure-eval, wcwidth, traitlets, parso, mdurl, ipython-pygments-lexers, executing, deprecation, decorator, construct, asttokens, stack_data, prompt_toolkit, matplotlib-inline, markdown-it-py, jedi, rich, ipython, ipdb, home-assistant-chip-core
+Successfully installed asttokens-3.0.0 construct-2.10.70 decorator-5.2.1 deprecation-2.1.0 executing-2.2.1 home-assistant-chip-core-2025.7.0 ipdb-0.13.13 ipython-9.6.0 ipython-pygments-lexers-1.1.1 jedi-0.19.2 markdown-it-py-4.0.0 matplotlib-inline-0.2.1 mdurl-0.1.2 parso-0.8.5 prompt_toolkit-3.0.52 pure-eval-0.2.3 rich-14.2.0 stack_data-0.6.3 traitlets-5.14.3 wcwidth-0.2.14
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+```
+
+#### python3-home-assistant-chip-core
+
+> 雖然 meta-homeassistant 已經內建了python3-python-matter-server，但是找遍了官網內容，沒有任何一篇提及安裝 python3-home-assistant-chip-core（如果有請告知在那）。真的不知是在隱藏什麼！
+
+> pypi: [home-assistant-chip-core 2025.7.0](https://pypi.org/project/home-assistant-chip-core)
+>
+> Python-base APIs and tools for CHIP.
+
+```bash
+$ bitbake -s | grep home-assistant-chip-core
+# yocto 未內建 home-assistant-chip-core
+$ bb-info python3-home-assistant-chip-core
+$ bitbake -c build python3-home-assistant-chip-core
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-home-assistant-chip-core
+```
+
+#### python3-construct
+
+> pypi: [construct 2.10.70](https://pypi.org/project/construct/#files)
+>
+> Construct is a powerful **declarative** and **symmetrical** parser and builder for binary data.
+
+```bash
+$ bitbake -s | grep construct
+# yocto 未內建 construct
+$ bb-info python3-construct
+$ bitbake -c build python3-construct
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-construct
+```
+
+#### python3-deprecation
+
+> pypi: [deprecation 2.1.0](https://pypi.org/project/deprecation)
+>
+> The deprecation library provides a deprecated decorator and a fail_if_not_removed decorator for your tests. Together, the two enable the automation of several things.
+
+```bash
+$ bitbake -s | grep deprecation
+# yocto 未內建 deprecation
+$ bb-info python3-deprecation
+$ bitbake -c build python3-deprecation
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-deprecation
+```
+
+#### python3-ipdb
+
+> pypi: [ipdb 0.13.13](https://pypi.org/project/ipdb)
+>
+> ipdb exports functions to access the [IPython](http://ipython.org/) debugger, which features tab completion, syntax highlighting, better tracebacks, better introspection with the same interface as the pdb module.
+
+```bash
+$ bitbake -s | grep ipdb
+# yocto 未內建 ipdb
+$ bb-info python3-ipdb
+$ bitbake -c build python3-ipdb
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-ipdb
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-deprecation
+```
+
+#### python3-markdown-it-py
+
+> pypi: [markdown-it-py 4.0.0](https://pypi.org/project/markdown-it-py)
+>
+> *Markdown parser done right.*
+
+```bash
+$ bitbake -s | grep markdown-it-py
+# yocto 未內建 markdown-it-py
+$ bb-info python3-markdown-it-py
+$ bitbake -c build python3-markdown-it-py
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-markdown-it-py
+```
+
+#### python3-jedi
+
+> pypi: [jedi 0.19.2](https://pypi.org/project/jedi)
+>
+> Jedi is a static analysis tool for Python that is typically used in IDEs/editors plugins. Jedi has a focus on autocompletion and goto functionality. Other features include refactoring, code search and finding references.
+
+```bash
+$ bitbake -s | grep jedi
+# yocto 未內建 jedi
+$ bb-info python3-jedi
+$ bitbake -c build python3-jedi
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-jedi
+```
+
+#### python3-mdurl
+
+> pypi: [mdurl 0.1.2](https://pypi.org/project/mdurl)
+>
+> This is a Python port of the JavaScript [mdurl](https://www.npmjs.com/package/mdurl) package. See the [upstream README.md file](https://github.com/markdown-it/mdurl/blob/master/README.md) for API documentation.
+
+```bash
+$ bitbake -s | grep mdurl
+# yocto 未內建 mdurl
+$ bb-info python3-mdurl
+$ bitbake -c build python3-mdurl
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-mdurl
+```
+
+#### python3-ipython-pygments-lexers
+
+> pypi: [ipython-pygments-lexers 1.1.1](https://pypi.org/project/ipython-pygments-lexers)
+>
+> A [Pygments](https://pygments.org/) plugin for IPython code & console sessions
+
+```bash
+$ bitbake -s | grep ipython-pygments-lexers
+# yocto 未內建 ipython-pygments-lexers
+$ bb-info python3-ipython-pygments-lexers
+$ bitbake -c build python3-ipython-pygments-lexers
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-ipython-pygments-lexers
+```
+
+#### python3-pure-eval
+
+> pypi: [pure-eval 0.2.3](https://pypi.org/project/pure-eval)
+>
+> This is a Python package that lets you safely evaluate certain AST nodes without triggering arbitrary code that may have unwanted side effects.
+
+```bash
+$ bitbake -s | grep pure-eval
+# yocto 未內建 pure-eval
+$ bb-info python3-pure-eval
+$ bitbake -c build python3-pure-eval
+```
+
+```bash
+$ oe-pkgdata-util list-pkg-files python3-pure-eval
+```
+
+### 3.3.11. Add recipes - No module named `xxxx`
 
 ```bash
 # 查看是否已經安裝至 yocto-rootfs 

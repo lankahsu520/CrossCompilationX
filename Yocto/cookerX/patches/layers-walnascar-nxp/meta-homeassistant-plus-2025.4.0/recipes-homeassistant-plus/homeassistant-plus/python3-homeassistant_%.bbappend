@@ -23,6 +23,7 @@ RDEPENDS:${PN} += " \
     python3-python-otbr-api \
     python3-miniaudio \
     python3-tuya-device-sharing-sdk \
+    python3-home-assistant-chip-core \
 "
 
 #do_install:append() {
