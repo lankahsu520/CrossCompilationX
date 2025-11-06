@@ -73,7 +73,7 @@ pull_fn()
 lnk_fn()
 {
 	datetime_fn "${FUNCNAME[0]} ... "
-	
+
 	mkdir -p $PJ_YOCTO_ROOT/builds-lnk
 	if [ -d $PJ_YOCTO_ROOT/builds-lnk ]; then
 		do_command_fn "(cd $PJ_YOCTO_ROOT/builds-lnk; rm -f *;)"

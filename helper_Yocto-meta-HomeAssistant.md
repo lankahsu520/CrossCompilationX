@@ -73,13 +73,13 @@ $ make
 > 如果只是要 image
 
 ```bash
-$ bitbake -e $(PJ_YOCTO_IMAGE) | grep ^IMAGE_FSTYPES=
+$ bitbake -e $PJ_YOCTO_IMAGE | grep ^IMAGE_FSTYPES=
 IMAGE_FSTYPES="  wic.zst ext4"
 
 # 編譯
 $ make image
 # or
-# bitbake $(PJ_YOCTO_IMAGE)
+# bitbake $PJ_YOCTO_IMAGE
 $ bitbake imx-image-core
 ```
 
@@ -91,7 +91,7 @@ $ bitbake imx-image-core
 # 編譯
 $ make bundle
 # or
-# bitbake $(PJ_YOCTO_BUNDLE)
+# bitbake $PJ_YOCTO_BUNDLE
 $ bitbake imx-bundle
 ```
 
@@ -147,7 +147,7 @@ $ mv imx-image-multimedia-imx8mmevk-matter.rootfs.wic imx-image-multimedia-imx8m
 
 > 當初一開始接觸時是使用 2023.12.0，花了很長的時間，結果發現無法支援 HACS。
 >
-> 現在就得考慮是不是直接升級到最新版；而要升級至 2025.7.1時，yocto 的版本又要升級至 whinlatter (5.3)；之後又遇到  i.MX Repo Manifest 只支援到 walnascar (5.2)，解決了一部分，又有另一部分問題，彼此環環相扣。
+> 現在就得考慮是不是直接升級到最新版；而要升級至 2025.7.1時，yocto 的版本又要升級至 whinlatter (5.3)；之後又遇到  i.MX Repo Manifest 只支援到 walnascar (5.2)，解決了一個問題，又有一堆問題，彼此環環相扣。
 
 | Check | Yocto                              | python3-homeassistant | Date                | rev                                      |
 | ----- | ---------------------------------- | --------------------- | ------------------- | ---------------------------------------- |
@@ -232,21 +232,21 @@ $ cat $PJ_YOCTO_LAYERS_DIR/meta-freescale/recipes-multimedia/ffmpeg/ffmpeg_4.4.1
 LICENSE_FLAGS = "commercial"
 ```
 
-### 3.2.2. Recipes
+### 3.2.2. Recipes 
 
-#### A. python3-homeassistant
-
-```bash
-$ oe-pkgdata-util list-pkg-files python3-homeassistant
-```
+#### python3-homeassistant
 
 ```bash
 $ bb-info python3-homeassistant
 $ bitbake -c build python3-homeassistant
 ```
 
-##### A.1. homeassistant.service
+```bash
+$ oe-pkgdata-util list-pkg-files python3-homeassistant
+```
 
+> homeassistant.service
+>
 > HOMEASSISTANT_CONFIG_DIR : /var/lib/homeassistant
 
 ```bash
@@ -267,66 +267,52 @@ WantedBy=multi-user.target
 $ vi builds-lnk/$PJ_YOCTO_BUILD-rootfs/usr/lib/systemd/system/homeassistant.service
 ```
 
-#### B. python3-ha-av
+#### python3-ha-ffmpeg
 
-```bash
-$ oe-pkgdata-util list-pkg-files python3-ha-av
-```
-
-```bash
-$ bb-info python3-ha-av
-$ bitbake -c build python3-ha-av
-```
-
-#### C. python3-ha-ffmpeg
-
-```bash
-$ oe-pkgdata-util list-pkg-files python3-ha-ffmpeg
-```
+> github: [ha-ffmpeg](https://github.com/home-assistant-libs/ha-ffmpeg)
+>
+> A library that handling with ffmpeg for home-assistant
 
 ```bash
 $ bb-info python3-ha-ffmpeg
 $ bitbake -c build python3-ha-ffmpeg
 ```
 
-#### D. [python3-python-matter-server](https://github.com/home-assistant-libs/python-matter-server)
+```bash
+$ oe-pkgdata-util list-pkg-files python3-ha-ffmpeg
+```
+
+#### [python3-python-matter-server](https://github.com/home-assistant-libs/python-matter-server)
 
 > The Open Home Foundation Matter Server is an [officially certified](https://csa-iot.org/csa_product/open-home-foundation-matter-server/) Software Component to create a Matter controller. It serves as the foundation to provide Matter support to [Home Assistant](https://home-assistant.io/) but its universal approach makes it suitable to be used in other projects too.
 >
-> - [Setting up your development environment](https://github.com/matter-js/python-matter-server/blob/main/DEVELOPMENT.md)
 
-> 基本上有編譯 matter (chip-tool) 才會有用處。
+> 基本上有編譯 matter (chip-tool) 才會有用處。如何編譯可見 [helper_Yocto-meta-NXP-Matter.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-meta-NXP-Matter.md)。
 >
-> [meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity)
+> [meta-nxp-connectivity](https://github.com/nxp-imx/meta-nxp-connectivity/tree/imx_matter_2025_q1-post)/[docs](https://github.com/nxp-imx/meta-nxp-connectivity/tree/imx_matter_2025_q1-post/docs)/[guides](https://github.com/nxp-imx/meta-nxp-connectivity/tree/imx_matter_2025_q1-post/docs/guides)/[Running Matter Commissioning in Home Assistant application based on i.MX MPU platforms](https://github.com/nxp-imx/meta-nxp-connectivity/blob/imx_matter_2025_q1-post/docs/guides/nxp_mpu_matter_Home_Assistant.md)
 >
-> - [Running Matter Commissioning in Home Assistant application based on i.MX MPU platforms](https://github.com/nxp-imx/meta-nxp-connectivity/blob/imx_matter_2025_q1-post/docs/guides/nxp_mpu_matter_Home_Assistant.md)
+> 文中介紹在 imx93evk 使用 Docker images-homeassistant  and matter-server。
 >
->   裏面介紹在 imx93evk 使用 Docker images-homeassistant  and matter-server。
->
->   對於開發人員一點用處也沒有用，這邊生起一個念頭，"為什麼都是用 Docker ? 是不是有什麼不想讓別人知道裏面實際內容"
+> 對於開發人員一點用處也沒有用，這邊生起一個念頭，"為什麼都是用 Docker ? 是不是有什麼不想讓別人知道裏面實際內容"
 
-```bash
-$ oe-pkgdata-util list-pkg-files python3-python-matter-server
-```
 
 ```bash
 $ bb-info python3-python-matter-server
 $ bitbake -c build python3-python-matter-server
 ```
 
+```bash
+$ oe-pkgdata-util list-pkg-files python3-python-matter-server
+```
+> 注意版本
+
 | rev                                  | 2023.12.0                                | 2025.4.0                                 |
 | ------------------------------------ | ---------------------------------------- | ---------------------------------------- |
 | meta-homeassistant                   | 5ee63318c53bec1bfc2e56221783c23c61b32a1e | 1b37b27b8aebee02bd5da8a43129661e5f364be3 |
 | python3-homeassistant                | 2023.12.0                                | 2025.4.0                                 |
-| python3-matter-server                | 5.0.0                                    | 7.0.1 -> 8.1.0                           |
-| python3-home-assistant-chip-clusters | 2023.10.2                                | 2024.11.4 -> 2025.7.0                    |
-|                                      |                                          |                                          |
-
-> yocto 在版本定義看似很完整，只要把所以對應的檔案抓下就可以使用。
->
-> 但事實上並非如此，這邊就是一個很好的例子；當我要在 2025.4.0 上使用 python3-matter-server
->
-> 目前對應到的是 python3-python-matter-server_7.0.1.bb，
+| python3-matter-server                | 5.0.0                                    | 7.0.1                                    |
+| python3-home-assistant-chip-clusters | 2023.10.2                                | 2024.11.4                                |
+| python3-home-assistant-chip-core     | 未內建                                   | 未內建                                   |
 
 ```bash
 $ git-log python3-python-matter-server_7.0.1.bb
@@ -354,7 +340,46 @@ $ tree -L 1 $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootf
 
 5 directories, 2 files
 
-$ tree -L 1 $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs/usr/lib/python3.13/site-packages//homeassistant/components/matter
+$ tree -L 1 $PJ_YOCTO_BUILD_DIR/tmp/work/$PJ_YOCTO_LINUX/$PJ_YOCTO_IMAGE/*/rootfs/usr/lib/python3.13/site-packages/homeassistant/components/matter
+```
+
+> 這邊採用第二項，其它請見以下 python3-home-assistant-chip-core
+>
+> #### Installation / Running the Matter Server
+>
+> - Endusers of Home Assistant, refer to the [Home Assistant documentation](https://www.home-assistant.io/integrations/matter/) how to run Matter in Home Assistant using the official Matter Server add-on, which is based on this project.
+> - For running the server and/or client in your development environment, see the [Development documentation](https://github.com/matter-js/python-matter-server/blob/main/DEVELOPMENT.md).
+> - For running the Matter Server as a standalone docker container, see our instructions [here](https://github.com/matter-js/python-matter-server/blob/main/docs/docker.md).
+
+> paa-root-certs 的問題請見 [helper_MatterController-chip-tool.md](https://github.com/lankahsu520/HelperX/blob/master/helper_MatterController-chip-tool.md)
+
+```bash
+root@imx8mmevk-matter:~# python3 -m matter_server.server --storage-path ~/.matter_server --paa-root-cert-dir /usr/share/chip/paa-root-certs --log-level debug
+```
+
+> matter-server.service : 未內建
+>
+> HOMEASSISTANT_CONFIG_DIR : /var/lib/homeassistant
+
+```bash
+$ vi $PJ_YOCTO_LAYERS_DIR/meta-homeassistant-plus-202*/recipes-homeassistant-plus/homeassistant-plus/files/matter-server.service
+[Unit]
+Description=matter server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /data
+ExecStart=/usr/bin/python3 -m matter_server.server --storage-path /data --paa-root-cert-dir /usr/share/chip/paa-root-certs --log-level debug
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+$ vi builds-lnk/$PJ_YOCTO_BUILD-rootfs/usr/lib/systemd/system/matter-server.service
 ```
 
 ## 3.3. meta-homeassistant-plus
@@ -524,7 +549,7 @@ $ bitbake -c build python3-requests-file
 
 ```bash
 $ bitbake -s | grep wsdiscovery
-# yocto 未內建 python3-onvif-zeep-async
+# yocto 未內建 python3-wsdiscovery
 $ bb-info python3-wsdiscovery
 $ bitbake -c build python3-wsdiscovery
 ```
@@ -963,6 +988,8 @@ WARNING: Running pip as the 'root' user can result in broken permissions and con
 #### python3-home-assistant-chip-core
 
 > 雖然 meta-homeassistant 已經內建了python3-python-matter-server，但是找遍了官網內容，沒有任何一篇提及安裝 python3-home-assistant-chip-core（如果有請告知在那）。真的不知是在隱藏什麼！
+>
+> 為了配合 python3-home-assistant-chip-clusters_2024.11.4.bb，改用 home-assistant-chip-core 2024.11.4
 
 > pypi: [home-assistant-chip-core 2025.7.0](https://pypi.org/project/home-assistant-chip-core)
 >
@@ -1257,7 +1284,6 @@ root@imx8mm-lpddr4-evk:~# reboot
 ```bash
 root@imx8mm-lpddr4-evk:/# ps -aux | grep home
 homeass+     429  3.4 13.8 2771104 266664 ?      Ssl  07:38   0:46 python3 /usr/bin/hass --skip-pip -c /var/lib/homeassistant
-root         657  0.0  0.0   3508  1280 ttymxc1  S+   08:00   0:00 grep home
 
 root@imx8mm-lpddr4-evk:~# vi /usr/lib/systemd/system/homeassistant.service
 [Unit]
@@ -1302,6 +1328,36 @@ drwxr-xr-x  4 homeassistant homeassistant    4096 Jul 23 02:52 blueprints
 -rw-r--r--  1 root          root                0 Mar  9  2018 scripts.yaml
 -rw-r--r--  1 root          root              161 Mar  9  2018 secrets.yaml
 drwxr-xr-x  2 homeassistant homeassistant    4096 Jul 23 02:52 tts
+```
+
+## 6.3. matter-server.service
+
+```bash
+root@imx8mmevk-matter:~# ps -aux | grep matter_server.server
+root         760  0.0  9.3 509928 186232 ?       Ssl  Nov05   1:01 /usr/bin/python3 -m matter_server.server --storage-path /data --paa-root-cert-dir /usr/share/chip/paa-root-certs --log-level debug
+
+root@imx8mmevk-matter:~# vi /usr/lib/systemd/system/matter-server.service
+[Unit]
+Description=matter server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /data
+ExecStart=/usr/bin/python3 -m matter_server.server --storage-path /data --paa-root-cert-dir /usr/share/chip/paa-root-certs --log-level debug
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+root@imx8mmevk-matter:~# systemctl daemon-reload
+root@imx8mmevk-matter:~# systemctl status matter-server.service
+root@imx8mmevk-matter:~# systemctl stop matter-server.service
+root@imx8mmevk-matter:~# systemctl start matter-server.service
+root@imx8mmevk-matter:~# journalctl -xefu matter-server.service
 ```
 
 # Appendix
@@ -1783,3 +1839,60 @@ root@imx8mm-lpddr4-evk:~# dmesg
 [    2.496230] imx_sec_dsim_drv 32e10000.mipi_dsi: version number is 0x1060200
 [    2.504259] imx6q-pcie 33800000.pcie:      MEM 0x0018000000..0x001fefffff -> 0x0018000000
 [    2
+```
+
+# III. Glossary
+
+# IV. Tool Usage
+
+## IV.1. [matter_server.server](https://github.com/matter-js/python-matter-server/blob/main/DEVELOPMENT.md) Usage
+
+```bash
+root@imx8mmevk-matter:~# python3 -m matter_server.server --help
+usage: __main__.py [-h] [--vendorid VENDORID] [--fabricid FABRICID] [--storage-path STORAGE_PATH] [--port PORT] [--listen-address LISTEN_ADDRESS]
+                   [--log-level LOG_LEVEL] [--log-level-sdk LOG_LEVEL_SDK] [--log-file LOG_FILE] [--primary-interface PRIMARY_INTERFACE]
+                   [--paa-root-cert-dir PAA_ROOT_CERT_DIR] [--enable-test-net-dcl] [--bluetooth-adapter BLUETOOTH_ADAPTER]
+                   [--log-node-ids LOG_NODE_IDS [LOG_NODE_IDS ...]] [--ota-provider-dir OTA_PROVIDER_DIR] [--disable-server-interactions]
+
+Matter Controller Server using WebSockets.
+
+options:
+  -h, --help            show this help message and exit
+  --vendorid VENDORID   Vendor ID for the Fabric, defaults to 65521
+  --fabricid FABRICID   Fabric ID for the Fabric, defaults to 1
+  --storage-path STORAGE_PATH
+                        Storage path to keep persistent data, defaults to /root/.matter_server
+  --port PORT           TCP Port to run the websocket server, defaults to 5580
+  --listen-address LISTEN_ADDRESS
+                        IP address to bind the websocket server to, defaults to any IPv4 and IPv6 address.
+  --log-level LOG_LEVEL
+                        Global logging level. Example --log-level debug, default=info, possible=(critical, error, warning, info, debug, verbose)
+  --log-level-sdk LOG_LEVEL_SDK
+                        Matter SDK logging level. Example --log-level-sdk detail, default=error, possible=(none, error, progress, detail,
+                        automation)
+  --log-file LOG_FILE   Log file to write to (optional).
+  --primary-interface PRIMARY_INTERFACE
+                        Primary network interface for link-local addresses (optional).
+  --paa-root-cert-dir PAA_ROOT_CERT_DIR
+                        Directory where PAA root certificates are stored.
+  --enable-test-net-dcl
+                        Enable PAA root certificates and other device information from test-net DCL.
+  --bluetooth-adapter BLUETOOTH_ADAPTER
+                        Optional bluetooth adapter (id) to enable direct commisisoning support.
+  --log-node-ids LOG_NODE_IDS [LOG_NODE_IDS ...]
+                        List of node IDs to show logs from (applies only to server logs).
+  --ota-provider-dir OTA_PROVIDER_DIR
+                        Directory where OTA Provider stores software updates and configuration.
+  --disable-server-interactions
+                        Controls disabling server cluster interactions on a controller. This in turn disables advertisement of active controller
+                        operational identities.
+```
+
+# Author
+
+> Created and designed by [Lanka Hsu](lankahsu@gmail.com).
+
+# License
+
+> [CrossCompilationX](https://github.com/lankahsu520/CrossCompilationX) is available under the BSD-3-Clause license. See the LICENSE file for more info.
+

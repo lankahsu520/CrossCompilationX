@@ -1,0 +1,15 @@
+[Unit]
+Description=matter server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /data
+ExecStart=/usr/bin/python3 -m matter_server.server --storage-path /data --paa-root-cert-dir /usr/share/chip/paa-root-certs --log-level debug
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

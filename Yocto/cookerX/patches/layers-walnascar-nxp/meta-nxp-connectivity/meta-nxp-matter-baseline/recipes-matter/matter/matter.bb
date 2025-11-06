@@ -22,7 +22,7 @@ SRCREV = "${AUTOREV}"
 TARGET_CC_ARCH += "${LDFLAGS}"
 DEPENDS += " gn-native ninja-native avahi dbus-glib-native pkgconfig-native boost python3-pip-native python3-packaging python3-click "
 RDEPENDS_${PN} += " libavahi-client boost boost-dev boost-staticdev "
-FILES:${PN} += "usr/share"
+FILES:${PN} += "usr/share /usr/share/chip/paa-root-certs"
 
 INSANE_SKIP:${PN} += "dev-so debug-deps strip"
 
@@ -184,6 +184,9 @@ do_install() {
     install -d -m 755 ${D}/usr/share/chip-tool-web/
     cp -r ${S}/examples/chip-tool/webui-2_0/frontend2 ${D}/usr/share/chip-tool-web/
 
+    # Install paa-root-certs
+    install -d ${D}/usr/share/chip/paa-root-certs
+    cp -r ${S}/credentials/production/paa-root-certs/* ${D}/usr/share/chip/paa-root-certs/
 }
 
 INSANE_SKIP_${PN} = "ldflags"

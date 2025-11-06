@@ -1,7 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
-     file://homeassistant-bak.service \
+     file://homeassistant-root.service \
 "
 
 #SRC_URI += "file://automations.yaml \
