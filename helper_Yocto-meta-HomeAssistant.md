@@ -896,6 +896,35 @@ $ bitbake -c build python3-python-miio
 
 ### 3.3.10. Add recipes - matter
 
+> 此圖很清楚說明關聯。
+>
+> `聰明人` 就會說：「看到 python-matter-server 和 chip，我的 Home Assistant 就天下無敵」。
+>
+> `務實的人` 只能在那邊尋找解決方案。
+
+```mermaid
+flowchart TB
+
+subgraph Computer
+	subgraph python
+		subgraph HomeAssistant["Home Assistant"]
+			core
+			python-matter-server
+			
+			core <--> python-matter-server
+		end
+
+		home_assistant_chip_core
+		
+		python-matter-server <--> home_assistant_chip_core
+	end
+	
+	matter["matter - chip"]
+	
+	home_assistant_chip_core <--> matter
+end
+```
+
 > [home-assistant-chip-repl](https://pypi.org/project/home-assistant-chip-repl/)
 >
 > [home-assistant-chip-core](https://pypi.org/project/home-assistant-chip-core/) (contains the native dependency)
@@ -1214,6 +1243,13 @@ $ cd-rootfs
 $ find123 ffmpeg pyav hass haffmpeg homeassistant.service
 ```
 
+## 4.2. Check Matter
+
+```bash
+$ cd-rootfs
+$ find123 _ChipDeviceCtrl.so matter-server.service
+```
+
 # 5. Showtime
 
 ## 5.1. Homepage
@@ -1303,6 +1339,7 @@ root@imx8mm-lpddr4-evk:~# systemctl daemon-reload
 root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
+root@imx8mm-lpddr4-evk:~# journalctl -xefu matter-server.service
 ```
 
 ## 6.2. /var/lib/homeassistant
@@ -1363,6 +1400,30 @@ root@imx8mmevk-matter:~# journalctl -xefu matter-server.service
 # Appendix
 
 # I. Study
+
+## I.1. Home Assistant Libraries
+
+> 整理出會用的`套件`
+
+### I.1.1. Main
+
+| NAME                                                         | BB                                            | DESC                                                         |
+| ------------------------------------------------------------ | --------------------------------------------- | ------------------------------------------------------------ |
+| [home-assistant](https://github.com/home-assistant)/**[core](https://github.com/home-assistant/core)** | python3-homeassistant_2025.4.0.bb             | Open source home automation that puts local control and privacy first. |
+| [home-assistant](https://github.com/home-assistant)/**[supervisor](https://github.com/home-assistant/supervisor)** |                                               | Home Assistant Supervisor                                    |
+| [home-assistant](https://github.com/home-assistant)/**[frontend](https://github.com/home-assistant/frontend)** | python3-home-assistant-frontend_20250109.2.bb | Frontend for Home Assistant                                  |
+| [matter-js](https://github.com/matter-js)/**[python-matter-server](https://github.com/matter-js/python-matter-server)** | python3-python-matter-server_7.0.1.bb         | Python server to interact with Matter                        |
+|                                                              |                                               |                                                              |
+
+### I.1.2. Matter
+
+| NAME                                                         | BB                                                | DESC                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------- | ------------------------------------------------------------ |
+| [chip-wheels](https://github.com/home-assistant-libs/chip-wheels) |                                                   | Matter Python Device Controller Wheels                       |
+| [home-assistant-chip-repl](https://pypi.org/project/home-assistant-chip-repl/) |                                                   | 這是給 **開發者測試用的 command-line 工具**，不是 Home Assistant 運作所必需。 |
+| [home-assistant-chip-core](https://pypi.org/project/home-assistant-chip-core/) | python3-home-assistant-chip-core_2024.11.4.bb     | Home Assistant 用來跟 Matter 裝置通訊的核心 Python API       |
+| [home-assistant-chip-clusters](https://pypi.org/project/home-assistant-chip-clusters/) | python3-home-assistant-chip-clusters_2024.11.4.bb | Home Assistant 對應使用的 Matter cluster 定義與 Python API   |
+|                                                              |                                                   |                                                              |
 
 # II. Debug
 
