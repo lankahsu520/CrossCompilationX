@@ -12,6 +12,12 @@
       "rev": "9b96fdbb0cab02f4a6180e812b02bc9d4c41b1a5"
     },
     {
+      "url": "https://github.com/meta-homeassistant/meta-homeassistant",
+      "branch": "main",
+      "dir": "meta-homeassistant-2025.4.0",
+      "rev": "1b37b27b8aebee02bd5da8a43129661e5f364be3"
+    },
+    {
       "url": "https://github.com/openembedded/meta-openembedded",
       "branch": "walnascar",
       "dir": "meta-openembedded",
@@ -106,6 +112,8 @@
     "poky/meta",
     "poky/meta-poky",
     "meta-lanka",
+    "meta-homeassistant-2025.4.0",
+    "meta-homeassistant-plus-2025.4.0",
     "meta-openembedded/meta-oe",
     "meta-openembedded/meta-networking",
     "meta-openembedded/meta-python",
@@ -149,11 +157,13 @@
     ,"IMAGE_INSTALL:append = ' git tree net-tools helloworld123'"
   ],
   "builds": {
-    "imx8mm-evk-walnascar-matter": {
+    "imx8mm-evk-walnascar-matter-home": {
       "target": "imx-image-multimedia",
       "local.conf": [
         "MACHINE = 'imx8mmevk-matter'"
         ,"DISTRO = 'fsl-imx-xwayland'"
+        ,"LICENSE_FLAGS_ACCEPTED +=' commercial'"
+        ,"IMAGE_INSTALL:append = ' python3-homeassistant'"
       ]
     }
   }

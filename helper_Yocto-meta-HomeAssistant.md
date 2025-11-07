@@ -1339,7 +1339,7 @@ root@imx8mm-lpddr4-evk:~# systemctl daemon-reload
 root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
-root@imx8mm-lpddr4-evk:~# journalctl -xefu matter-server.service
+root@imx8mm-lpddr4-evk:~# journalctl -xefu homeassistant.service
 ```
 
 ## 6.2. /var/lib/homeassistant
