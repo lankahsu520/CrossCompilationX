@@ -500,7 +500,72 @@ http:
 
 ```
 
-### 3.3.2. Add recipes - ONVIF
+### 3.3.2. Add recipes - No module named `xxxx`
+
+> 如前面所提，meta-homeassistant 只是
+
+```bash
+
+```
+
+```bash
+# 可以進到 NXP 板子裏直接查看 log
+root@imx8mm-lpddr4-evk:/# cat /var/lib/homeassistant/home-assistant.log
+```
+
+```bash
+# 查看是否已經安裝至 yocto-rootfs 
+$ cd-rootfs
+$ pwd
+/yocto/cookerX-scarthgap/builds-lnk/imx8mm-evk-scarthgap-home-rootfs
+
+$ find123 pyasn1* pydantic* bitstruct* python_otbr_api* miniaudio* pysensibo* tuya_iot* srptools* chacha20poly1305* pyatv* mediafile* filetype* hap-python* aiohomekit* synology_dsm* commentjson* lark* zeep* onvif_zeep* onvif_zeep_async* requests_file* wsdiscovery*
+```
+
+
+
+#### pyasn1
+
+> pypi: [pyasn1 0.6.1](https://pypi.org/project/pyasn1/)
+>
+> This is a free and open source implementation of ASN.1 types and codecs as a Python package. It has been first written to support particular protocol (SNMP) but then generalized to be suitable for a wide range of protocols based on [ASN.1 specification](https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-X.208-198811-W!!PDF-E&type=items).
+
+```bash
+$ bitbake -s | grep pyasn1
+# yocto 已經內建 python3-pyasn1
+$ bb-info python3-pyasn1
+$ bitbake -c build python3-pyasn1
+```
+
+#### pydantic
+
+> pypi: [pydantic 2.11.7](https://pypi.org/project/pydantic/)
+>
+> Data validation using Python type hints.
+>
+> Fast and extensible, Pydantic plays nicely with your linters/IDE/brain. Define how data should be in pure, canonical Python 3.9+; validate it with Pydantic.
+
+```bash
+$ bitbake -s | grep pydantic
+# yocto 已經內建 python3-pydantic
+$ bb-info python3-pydantic
+$ bitbake -c build python3-pydantic
+```
+
+#### pytest-sugar
+
+> pypi: [pytest-sugar 1.0.0](https://pypi.org/project/pytest-sugar)
+>
+> This plugin extends [pytest](http://pytest.org/) by showing failures and errors instantly, adding a progress bar, improving the test results, and making the output look better.
+
+```bash
+$ bitbake -s | grep pytest-sugar
+# yocto 未內建 python3-pytest-sugar
+$ bb-info python3-pytest-sugar
+$ bitbake -c build python3-pytest-sugar
+```
+
+### 3.3.3. Add recipes - ONVIF
 
 #### onvif-zeep
 
@@ -567,7 +632,7 @@ $ bb-info python3-zeep
 $ bitbake -c build python3-zeep
 ```
 
-### 3.3.3. Add recipes - Homekit
+### 3.3.4. Add recipes - Homekit
 
 #### aiohomekit
 
@@ -633,7 +698,7 @@ $ bb-info python3-lark
 $ bitbake -c build python3-lark
 ```
 
-### 3.3.4. Add recipes - Apple TV
+### 3.3.5. Add recipes - Apple TV
 
 #### chacha20poly1305
 
@@ -725,7 +790,7 @@ $ bb-info python3-srptools
 $ bitbake -c build python3-srptools
 ```
 
-### 3.3.5. Add recipes - synology
+### 3.3.6. Add recipes - synology
 
 #### py-synologydsm-api
 
@@ -740,7 +805,7 @@ $ bb-info python3-py-synologydsm-api
 $ bitbake -c build python3-py-synologydsm-api
 ```
 
-### 3.3.6. Add recipes - tuya
+### 3.3.7. Add recipes - tuya
 
 > github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[tuya](https://github.com/home-assistant/core/tree/dev/tests/components/tuya)
 
@@ -797,7 +862,7 @@ $ devtool build python3-tuya-device-sharing-sdk
 $ devtool reset python3-tuya-device-sharing-sdk
 ```
 
-### 3.3.7. Add recipes - sensibo
+### 3.3.8. Add recipes - sensibo
 
 > github: [home-assistant](https://github.com/home-assistant)/[core](https://github.com/home-assistant/core/tree/dev)/[tests](https://github.com/home-assistant/core/tree/dev/tests)/[components](https://github.com/home-assistant/core/tree/dev/tests/components)/[sensibo](https://github.com/home-assistant/core/tree/dev/tests/components/sensibo)
 
@@ -835,7 +900,7 @@ $ bitbake -c cleanall python3-pysensibo
 $ bitbake -c build python3-pysensibo
 ```
 
-### 3.3.8. Add recipes - OTBR
+### 3.3.9. Add recipes - OTBR
 
 #### bitstruct
 
@@ -868,39 +933,13 @@ $ bitbake -c cleanall python3-python-otbr-api
 $ bitbake -c build python3-python-otbr-api
 ```
 
-### ~~3.3.9. Add recipes - Xiaomi miio~~
-
-> 目前在台灣還不是很友善，無法順利使用。
-
-```bash
-$ pip install micloud
-$ pip install python-miio
-```
-
-#### ~~micloud~~
-
-> ~~pypi: [micloud 0.6](https://pypi.org/project/micloud)~~
-
-#### ~~python-miio~~
-
-> ~~pypi: [python-miio 0.5.12](https://pypi.org/project/python-miio)~~
->
-> ~~This library (and its accompanying cli tool) can be used to interface with devices using Xiaomi’s [miIO](https://github.com/OpenMiHome/mihome-binary-protocol/blob/master/doc/PROTOCOL.md) and MIoT protocols.~~
-
-```bash
-$ bitbake -s | grep python-miio
-# yocto 未內建 python3-python-miio
-$ bb-info python3-python-miio
-$ bitbake -c build python3-python-miio
-```
-
 ### 3.3.10. Add recipes - matter
 
-> 此圖很清楚說明關聯。
->
 > `聰明人` 就會說：「看到 python-matter-server 和 chip，我的 Home Assistant 就天下無敵」。
 >
 > `務實的人` 只能在那邊尋找解決方案。
+>
+> 下圖很清楚說明關聯，缺少甚麼`齒輪` ?
 
 ```mermaid
 flowchart TB
@@ -925,6 +964,8 @@ subgraph Computer
 end
 ```
 
+> [Matter Python Device Controller Wheels](https://github.com/home-assistant-libs/chip-wheels)
+>
 > [home-assistant-chip-repl](https://pypi.org/project/home-assistant-chip-repl/)
 >
 > [home-assistant-chip-core](https://pypi.org/project/home-assistant-chip-core/) (contains the native dependency)
@@ -1175,61 +1216,30 @@ $ bitbake -c build python3-pure-eval
 $ oe-pkgdata-util list-pkg-files python3-pure-eval
 ```
 
-### 3.3.11. Add recipes - No module named `xxxx`
+### ~~3.3.11. Add recipes - Xiaomi miio~~
+
+> 目前在台灣還不是很友善，無法順利使用。
 
 ```bash
-# 查看是否已經安裝至 yocto-rootfs 
-$ cd-rootfs
-$ pwd
-/yocto/cookerX-scarthgap/builds-lnk/imx8mm-evk-scarthgap-home-rootfs
-
-$ find123 pyasn1* pydantic* bitstruct* python_otbr_api* miniaudio* pysensibo* tuya_iot* srptools* chacha20poly1305* pyatv* mediafile* filetype* hap-python* aiohomekit* synology_dsm* commentjson* lark* zeep* onvif_zeep* onvif_zeep_async* requests_file* wsdiscovery*
+$ pip install micloud
+$ pip install python-miio
 ```
 
-```bash
-# 可以進到 NXP 板子裏直接查看 log
-root@imx8mm-lpddr4-evk:/# cat /var/lib/homeassistant/home-assistant.log
-```
+#### ~~micloud~~
 
-#### pyasn1
+> ~~pypi: [micloud 0.6](https://pypi.org/project/micloud)~~
 
-> pypi: [pyasn1 0.6.1](https://pypi.org/project/pyasn1/)
+#### ~~python-miio~~
+
+> ~~pypi: [python-miio 0.5.12](https://pypi.org/project/python-miio)~~
 >
-> This is a free and open source implementation of ASN.1 types and codecs as a Python package. It has been first written to support particular protocol (SNMP) but then generalized to be suitable for a wide range of protocols based on [ASN.1 specification](https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-X.208-198811-W!!PDF-E&type=items).
-
-```bash
-$ bitbake -s | grep pyasn1
-# yocto 已經內建 python3-pyasn1
-$ bb-info python3-pyasn1
-$ bitbake -c build python3-pyasn1
-```
-
-#### pydantic
-
-> pypi: [pydantic 2.11.7](https://pypi.org/project/pydantic/)
->
-> Data validation using Python type hints.
->
-> Fast and extensible, Pydantic plays nicely with your linters/IDE/brain. Define how data should be in pure, canonical Python 3.9+; validate it with Pydantic.
+> ~~This library (and its accompanying cli tool) can be used to interface with devices using Xiaomi’s [miIO](https://github.com/OpenMiHome/mihome-binary-protocol/blob/master/doc/PROTOCOL.md) and MIoT protocols.~~
 
 ```bash
-$ bitbake -s | grep pydantic
-# yocto 已經內建 python3-pydantic
-$ bb-info python3-pydantic
-$ bitbake -c build python3-pydantic
-```
-
-#### pytest-sugar
-
-> pypi: [pytest-sugar 1.0.0](https://pypi.org/project/pytest-sugar)
->
-> This plugin extends [pytest](http://pytest.org/) by showing failures and errors instantly, adding a progress bar, improving the test results, and making the output look better.
-
-```bash
-$ bitbake -s | grep pytest-sugar
-# yocto 未內建 python3-pytest-sugar
-$ bb-info python3-pytest-sugar
-$ bitbake -c build python3-pytest-sugar
+$ bitbake -s | grep python-miio
+# yocto 未內建 python3-python-miio
+$ bb-info python3-python-miio
+$ bitbake -c build python3-python-miio
 ```
 
 # 4. Outputs
@@ -1339,7 +1349,7 @@ root@imx8mm-lpddr4-evk:~# systemctl daemon-reload
 root@imx8mm-lpddr4-evk:~# systemctl status homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl stop homeassistant.service
 root@imx8mm-lpddr4-evk:~# systemctl start homeassistant.service
-root@imx8mm-lpddr4-evk:~# journalctl -xefu homeassistant.service
+root@imx8mm-lpddr4-evk:~# journalctl -xefu matter-server.service
 ```
 
 ## 6.2. /var/lib/homeassistant
