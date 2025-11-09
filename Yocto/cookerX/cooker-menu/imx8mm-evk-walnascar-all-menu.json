@@ -1,0 +1,179 @@
+{
+  "notes": [
+    "Yocto Project build for NXP i.MX 8M Mini LPDDR4 EVK",
+    "Converted from imx-6.6.52-2.2.0.xml",
+    "Scarthgap-based BSP"
+  ],
+  "sources": [
+    {
+      "url": "https://git.yoctoproject.org/poky",
+      "branch": "walnascar",
+      "dir": "poky",
+      "rev": "9b96fdbb0cab02f4a6180e812b02bc9d4c41b1a5"
+    },
+    {
+      "url": "https://github.com/rauc/meta-rauc.git",
+      "branch": "walnascar",
+      "dir": "meta-rauc",
+      "rev": "a0b83842d131093e89fa4fefaaa1997f05afdf62"
+    },
+    {
+      "url": "https://github.com/meta-homeassistant/meta-homeassistant",
+      "branch": "main",
+      "dir": "meta-homeassistant-2025.4.0",
+      "rev": "1b37b27b8aebee02bd5da8a43129661e5f364be3"
+    },
+    {
+      "url": "https://github.com/openembedded/meta-openembedded",
+      "branch": "walnascar",
+      "dir": "meta-openembedded",
+      "rev": "0d2d2d193a1619b6dbebaf335f1ef785478049e3"
+    },
+    {
+      "url": "https://github.com/kraj/meta-clang",
+      "branch": "walnascar",
+      "dir": "meta-clang",
+      "rev": "2c9678cce413fa6c6c84a8a631f4635a4f862f11"
+    },
+    {
+      "url": "https://github.com/Freescale/fsl-community-bsp-base",
+      "branch": "master",
+      "dir": "base",
+      "rev": "master"
+    },
+    {
+      "url": "https://github.com/Freescale/meta-freescale",
+      "branch": "master",
+      "dir": "meta-freescale",
+      "rev": "7431918c86ac6d3be2a273e091227157446960a7"
+    },
+    {
+      "url": "https://github.com/Freescale/meta-freescale-3rdparty",
+      "branch": "master",
+      "dir": "meta-freescale-3rdparty",
+      "rev": "e7ce12ee3a3d0e6aa8dbbab598088b50b7625a33"
+    },
+    {
+      "url": "https://github.com/Freescale/meta-freescale-distro",
+      "branch": "master",
+      "dir": "meta-freescale-distro",
+      "rev": "b9c3536b68271c420fe5de36fc284781ceaa32ab"
+    },
+    {
+      "url": "https://git.yoctoproject.org/meta-arm",
+      "branch": "walnascar",
+      "dir": "meta-arm",
+      "rev": "42928dcc171629b495bbfcd8eda17ef6b8bdbfa3"
+    },
+    {
+      "url": "https://github.com/YoeDistro/meta-qt6",
+      "branch": "6.8.3",
+      "dir": "meta-qt6",
+      "rev": "00c3bd954341a2a755fdee6b978af952f51793e7"
+    },
+    {
+      "url": "https://github.com/OSSystems/meta-browser",
+      "branch": "master",
+      "dir": "meta-browser",
+      "rev": "f988d616d37ddf160d3d747ed54d0a66d549f499"
+    },
+    {
+      "url": "https://git.yoctoproject.org/meta-security",
+      "branch": "walnascar",
+      "dir": "meta-security",
+      "rev": "784ca4b6584101e971b2d5d76ec7b716ad1301b5"
+    },
+    {
+      "url": "https://github.com/TimesysGit/meta-timesys",
+      "branch": "master",
+      "dir": "meta-timesys",
+      "rev": "7e5f4a3436c2acea499349012a46a9215bb9284e"
+    },
+    {
+      "url": "https://git.yoctoproject.org/meta-virtualization",
+      "branch": "walnascar",
+      "dir": "meta-virtualization",
+      "rev": "4fedb61ebf60745a367d857af255006bd3509a39"
+    },
+    {
+      "url": "https://github.com/nxp-imx/meta-imx",
+      "branch": "walnascar-6.12.20-2.0.0",
+      "dir": "meta-imx",
+      "rev": "refs/tags/rel_imx_6.12.20_2.0.0"
+    },
+    {
+      "url": "https://github.com/nxp-imx/meta-nxp-connectivity",
+      "branch": "master",
+      "dir": "meta-nxp-connectivity",
+      "rev": "refs/tags/imx_matter_2025_q2"
+    },
+    {
+      "url": "https://github.com/nxp-imx-support/meta-nxp-demo-experience",
+      "branch": "walnascar-6.12.20-2.0.0",
+      "dir": "meta-nxp-demo-experience",
+      "rev": "refs/tags/rel_imx_6.12.20_2.0.0"
+    }
+  ],
+  "layers": [
+    "poky/meta",
+    "poky/meta-poky",
+    "meta-lanka",
+    "meta-rauc",
+    "meta-rauc-plus",
+    "meta-homeassistant-2025.4.0",
+    "meta-homeassistant-plus-2025.4.0",
+    "meta-openembedded/meta-oe",
+    "meta-openembedded/meta-networking",
+    "meta-openembedded/meta-python",
+    "meta-openembedded/meta-multimedia",
+    "meta-openembedded/meta-gnome",
+    "meta-openembedded/meta-filesystems",
+    "meta-freescale",
+    "meta-freescale-3rdparty",
+    "meta-freescale-distro",
+    "meta-imx/meta-imx-bsp",
+    "meta-imx/meta-imx-sdk",
+    "meta-imx/meta-imx-ml",
+    "meta-imx/meta-imx-v2x",
+    "meta-clang",
+    "meta-arm/meta-arm",
+    "meta-arm/meta-arm-toolchain",
+    "meta-qt6",
+    "meta-security/meta-parsec",
+    "meta-security/meta-tpm",
+    "meta-virtualization",
+    "meta-nxp-connectivity/meta-nxp-matter-baseline",
+    "meta-nxp-connectivity/meta-nxp-openthread",
+    "meta-nxp-demo-experience",
+    "meta-nxp-connectivity/meta-nxp-matter-advanced",
+    "meta-nxp-connectivity/meta-nxp-otbr",
+    "meta-nxp-connectivity/meta-nxp-connectivity-examples",
+    "meta-nxp-connectivity/meta-nxp-zigbee-rcp"
+  ],
+  "local.conf": [
+    "CONF_VERSION = '2'"
+    ,"ACCEPT_FSL_EULA = '1'"
+    ,"BB_NUMBER_THREADS = '6'"
+    ,"PARALLEL_MAKE = '-j 6'"
+    ,"EXTRA_IMAGE_FEATURES = 'allow-empty-password empty-root-password allow-root-login package-management'"
+    ,"PATCHRESOLVE = 'noop'"
+    ,"PACKAGECONFIG:append:pn-qemu-system-native = 'sdl'"
+    ,"IMAGE_FSTYPES += ' wic.zst ext4'"
+    ,"PACKAGE_CLASSES = 'package_deb'"
+    ,"USER_CLASSES = 'buildstats'"
+    ,"WKS_FILE = 'imx-imx-boot-bootpart-lanka520.wks.in'"
+    ,"IMAGE_INSTALL:append = ' git tree net-tools helloworld123'"
+  ],
+  "builds": {
+    "imx8mm-evk-walnascar-all": {
+      "target": "imx-image-multimedia",
+      "local.conf": [
+        "MACHINE = 'imx8mmevk-matter'"
+        ,"DISTRO = 'fsl-imx-xwayland'"
+        ,"DISTRO_FEATURES:append = ' rauc'"
+        ,"LICENSE_FLAGS_ACCEPTED +=' commercial'"
+        ,"IMAGE_INSTALL:append = ' rauc libubootenv-bin python3-homeassistant'"
+      ]
+    }
+  }
+}
