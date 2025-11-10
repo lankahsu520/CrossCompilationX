@@ -343,6 +343,7 @@ $ cp -av openssl-ca/dev/ca.cert.pem ${PJ_YOCTO_LAYERS_DIR}/meta-rauc-plus/recipe
 $ echo ${PJ_YOCTO_ROOT}
 /yocto/cookerX-scarthgap
 $ mkdir -p ${PJ_YOCTO_ROOT}/rauc-keys
+$ cp -av openssl-ca/dev/ca.cert.pem ${PJ_YOCTO_ROOT}/rauc-keys
 $ cp -av openssl-ca/dev/private/development-1.key.pem ${PJ_YOCTO_ROOT}/rauc-keys
 $ cp -av openssl-ca/dev/development-1.cert.pem ${PJ_YOCTO_ROOT}/rauc-keys
 

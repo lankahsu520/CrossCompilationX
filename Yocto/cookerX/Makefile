@@ -70,6 +70,9 @@ cook:
 	@if [ -d patches/$(PJ_YOCTO_LAYERS_FOLDER) ]; then \
 		cp -avr patches/$(PJ_YOCTO_LAYERS_FOLDER)/* $(PJ_YOCTO_LAYERS_FOLDER); \
 	fi
+ifeq ("$(PJ_HAS_RAUC_KEY)", "yes")
+	cp -av $(PJ_YOCTO_ROOT)/rauc-keys/ca.cert.pem $(PJ_YOCTO_LAYERS_DIR)/meta-rauc-plus/recipes-core/rauc/files
+endif
 	cd $(PJ_YOCTO_LAYERS_FOLDER) \
 	&& grep -rl '\$${BSPDIR}/sources/' meta-* | xargs -r sed -i 's#\$${BSPDIR}/sources/#\$${COOKER_LAYER_DIR}/#g'
 	touch $@
