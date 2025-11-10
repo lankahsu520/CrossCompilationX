@@ -399,27 +399,37 @@ flowchart LR
 >
 > 以下是市面常使用的
 
-#### A. [Buildroot](https://buildroot.org)
+### 4.1.1. [Buildroot](https://buildroot.org)
 
-##### A.1. [helper_Buildroot-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Buildroot-RaspberryPi3.md) - Buildroot-RaspberryPi3 helper
+#### A. [helper_Buildroot-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Buildroot-RaspberryPi3.md) - Buildroot-RaspberryPi3 helper
 
-#### B. [OpenWrt](https://openwrt.org)
+### 4.1.2. [OpenWrt](https://openwrt.org)
 
-##### A.1. [helper_OpenWrt-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_OpenWrt-RaspberryPi3.md) - OpenWrt-RaspberryPi3 helper
+#### A. [helper_OpenWrt-RaspberryPi3.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_OpenWrt-RaspberryPi3.md) - OpenWrt-RaspberryPi3 helper
 
-#### C. [Yocto](https://www.yoctoproject.org)
+### 4.1.3. [Yocto](https://www.yoctoproject.org)
 
-##### A.1. [helper_Yocto.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto.md) - Yocto helper
+#### A. [helper_Yocto.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto.md) - Yocto helper
 
-##### A.2. [helper_Yocto-cookerX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-cookerX.md) - Yocto cookerX & RaspberryPi3 helper
+#### B. [helper_Yocto-cookerX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-cookerX.md) - Yocto cookerX & RaspberryPi3 helper
 
 > 本人重整出來的開發平台。以 RaspberryPi3 為範本。
 
-##### A.3. [helper_Yocto-NXP-8MMINILPD4-EVKB.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-NXP-8MMINILPD4-EVKB.md) - Yocto NXP-8MMINILPD4‑EVKB helper
+#### C. [helper_Yocto-NXP-8MMINILPD4-EVKB.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-NXP-8MMINILPD4-EVKB.md) - Yocto NXP-8MMINILPD4‑EVKB helper
 
-##### A.4. [helper_Yocto-RAUC.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RAUC.md) - Yocto RAUC helper
+> 透過 yocto 編譯出 NXP-8MMINILPD4‑EVKB 所需 firmware。
 
-##### A.5. [helper_Yocto-HomeAssistant.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-HomeAssistant.md) - Yocto Home Assistant helper
+#### D. [helper_Yocto-RAUC.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RAUC.md) - Yocto RAUC helper
+
+> yocto 提供提供的 firmware 更新機制 RAUC (Robust Auto-Update Controller)。
+
+#### E. [helper_Yocto-HomeAssistant.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-HomeAssistant.md) - Yocto Home Assistant helper
+
+> 透過 yocto 編譯出 Home Assistant。
+
+#### F. [helper_Yocto-meta-NXP-Matter.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-meta-NXP-Matter.md) - Yocto NXP matter helper
+
+> 透過 yocto 編譯出 matter (CHIP)。
 
 ## 4.2. Toolchain generator
 
@@ -427,13 +437,15 @@ flowchart LR
 >
 ><font color="red">但是會有些 Toolchain 裏的 lib 版本 會與 Target 的 lib 版本有所不同！</font>
 
-#### A. [Crosstool-NG](https://crosstool-ng.github.io/)
+### 4.2.1. [Crosstool-NG](https://crosstool-ng.github.io/)
 
-> 自行建立 toolchain，不過要對系統本身有了解，才不會浪費時間做了白工，
+> 利用此工具建立 toolchain，不過要對系統本身有了解，才不會浪費時間做了白工，
 
-##### A.1. [helper_crosstool-ng.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstool-ng.md) - Crosstool-NG helper
+#### A. [helper_crosstool-ng.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstool-ng.md) - Crosstool-NG helper
 
-#### B. crossbuild-essential-XXX
+> 對 Crosstool-NG 提供點幫助。
+
+### 4.2.2. crossbuild-essential-XXX
 
 > 只適用通用的平台。相對的 sysroot 也比較不完整。
 
@@ -450,11 +462,9 @@ crossbuild-essential-riscv64
 crossbuild-essential-s390x
 ```
 
-#### C. Generate toolchain by ourselves
+### 4.2.3. Generate toolchain by ourselves
 
->
-
-##### C.1. [helper_crosstoolX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstoolX) - crosstoolX helper
+#### A. [helper_crosstoolX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstoolX) - crosstoolX helper
 
 > 簡化後的 toolchain 產生工具
 
@@ -462,13 +472,13 @@ crossbuild-essential-s390x
 
 > 此方法最快，也比較一致性
 
-#### A. 可以從 FAE 取得舊舊的版本，
+### 4.3.1. 可以從 FAE 取得舊舊的版本，
 
-#### B. 從你的同事取得目前使用的版本。
+### 4.3.2. 從你的同事取得目前使用的版本。
 
-#### C. 從官網取得“有可能不能用”的版本。
+### 4.3.3. 從官網取得“有可能不能用”的版本。
 
-#### D. 其它網路上的資源
+### 4.3.4. 其它網路上的資源
 
 - [gcc-linaro-5.5.0-2017.10-x86_64_aarch64-linux-gnu](https://releases.linaro.org/components/toolchain/binaries/5.5-2017.10/aarch64-linux-gnu/)
 
@@ -496,7 +506,9 @@ ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), dynamically linked, inte
 flowchart TB
 	subgraph Toolchain[Toolchain]
 		compiler[XXX compiler]
-		sysroot
+		subgraph sysroot
+			libssl.so
+		end
 	end
 ```
 
