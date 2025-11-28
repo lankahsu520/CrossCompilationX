@@ -3,7 +3,7 @@
 [![GitHub stars][stars-image]][stars-url]
 [![GitHub forks][forks-image]][forks-url]
 [![GitHub issues][issues-image]][issues-image]
-
+[![GitHub watchers][watchers-image]][watchers-image]
 
 [license-image]: https://img.shields.io/github/license/lankahsu520/CrossCompilationX.svg
 [license-url]: https://github.com/lankahsu520/CrossCompilationX/blob/master/LICENSE
@@ -13,6 +13,8 @@
 [forks-url]: https://github.com/lankahsu520/CrossCompilationX/network
 [issues-image]: https://img.shields.io/github/issues/lankahsu520/CrossCompilationX.svg
 [issues-url]: https://github.com/lankahsu520/CrossCompilationX/issues
+[watchers-image]: https://img.shields.io/github/watchers/lankahsu520/CrossCompilationX.svg
+[watchers-url]: https://github.com/lankahsu520/CrossCompilationX/watchers
 
 # 1. Overview
 
@@ -409,25 +411,23 @@ flowchart LR
 
 ### 4.1.3. [Yocto](https://www.yoctoproject.org)
 
-#### A. [helper_Yocto.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto.md) - Yocto helper
+> [cookerX](https://github.com/lankahsu520/cookerX) 本人重整出來的開發平台。以 RaspberryPi3 為範本。
 
-#### B. [helper_Yocto-cookerX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-cookerX.md) - Yocto cookerX & RaspberryPi3 helper
+#### A. [helper_Yocto.md](https://github.com/lankahsu520/cookerX/blob/main/helper_Yocto.md) - Yocto helper
 
-> 本人重整出來的開發平台。以 RaspberryPi3 為範本。
-
-#### C. [helper_Yocto-NXP-8MMINILPD4-EVKB.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-NXP-8MMINILPD4-EVKB.md) - Yocto NXP-8MMINILPD4‑EVKB helper
+#### B. [helper_Yocto-NXP-8MMINILPD4-EVKB.md](https://github.com/lankahsu520/cookerX/blob/main/helper_Yocto-NXP-8MMINILPD4-EVKB.md) - Yocto NXP-8MMINILPD4‑EVKB helper
 
 > 透過 yocto 編譯出 NXP-8MMINILPD4‑EVKB 所需 firmware。
 
-#### D. [helper_Yocto-RAUC.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-RAUC.md) - Yocto RAUC helper
+#### C. [helper_Yocto-RAUC.md](https://github.com/lankahsu520/cookerX/blob/main/helper_Yocto-meta-RAUC.md) - Yocto RAUC helper
 
 > yocto 提供提供的 firmware 更新機制 RAUC (Robust Auto-Update Controller)。
 
-#### E. [helper_Yocto-HomeAssistant.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-HomeAssistant.md) - Yocto Home Assistant helper
+#### D. [helper_Yocto-HomeAssistant.md](https://github.com/lankahsu520/cookerX/blob/main/helper_Yocto-meta-HomeAssistant.md) - Yocto Home Assistant helper
 
 > 透過 yocto 編譯出 Home Assistant。
 
-#### F. [helper_Yocto-meta-NXP-Matter.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_Yocto-meta-NXP-Matter.md) - Yocto NXP matter helper
+#### E. [helper_Yocto-meta-NXP-Matter.md](https://github.com/lankahsu520/cookerX/blob/main/helper_Yocto-meta-NXP-Matter.md) - Yocto NXP matter helper
 
 > 透過 yocto 編譯出 matter (CHIP)。
 
@@ -439,9 +439,11 @@ flowchart LR
 
 ### 4.2.1. [Crosstool-NG](https://crosstool-ng.github.io/)
 
-> 利用此工具建立 toolchain，不過要對系統本身有了解，才不會浪費時間做了白工，
+> 利用此工具建立 toolchain，不過要對系統本身有了解，才不會浪費時間做了白工。
+>
+> [crosstoolX](https://github.com/lankahsu520/crosstoolX) 本人重整出來的開發平台。
 
-#### A. [helper_crosstool-ng.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstool-ng.md) - Crosstool-NG helper
+#### A. [helper_crosstool-ng.md](https://github.com/lankahsu520/crosstoolX/blob/master/helper_crosstool-ng.md) - Crosstool-NG helper
 
 > 對 Crosstool-NG 提供點幫助。
 
@@ -461,12 +463,6 @@ crossbuild-essential-ppc64el
 crossbuild-essential-riscv64
 crossbuild-essential-s390x
 ```
-
-### 4.2.3. Generate toolchain by ourselves
-
-#### A. [helper_crosstoolX.md](https://github.com/lankahsu520/CrossCompilationX/blob/master/helper_crosstoolX) - crosstoolX helper
-
-> 簡化後的 toolchain 產生工具
 
 ## 4.3. Get from XXX
 
